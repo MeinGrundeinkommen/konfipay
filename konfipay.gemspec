@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'lib/konfipay/version'
 
 Gem::Specification.new do |spec|
@@ -5,6 +7,7 @@ Gem::Specification.new do |spec|
   spec.version       = Konfipay::VERSION
   spec.authors       = ["Pessi Virta", 'Martin Teppert']
   spec.email         = ["pessi@mein-grundeinkommen.de"]
+  spec.license       = 'MIT'
 
   spec.summary       = 'A Ruby wrapper for the Konfipay API'
   # spec.description   = %q{TODO: Write a longer description or delete this line.}
@@ -27,5 +30,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "rspec", "~> 3.10"
+  spec.add_dependency 'pry'
   spec.add_dependency "camt_parser"
 end
