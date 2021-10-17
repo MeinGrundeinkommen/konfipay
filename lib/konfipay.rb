@@ -1,21 +1,24 @@
 # frozen_string_literal: true
 
 require_relative 'konfipay/version'
-require 'net/http'
-require 'pry'
+require 'http'
+require 'pry' # TODO: Only require in development mode?
 
-# comment
 module Konfipay
+
+  # TODO: Move the config stuff into its own file?
   BASE_URL = 'https://portal.konfipay.de'
 
-  class Error < StandardError; end
+#  class Error < StandardError; end
 
-  # comment
   class Configuration
-    attr_accessor :api_key
+    attr_accessor :api_key, :logger, :timeout, :base_url, :api_client_name, :api_client_version
 
     def initialize
-      @api_key = nil
+      @timeout = 10
+      @base_url = BASE_URL
+      @api_client_name = "Konfipay Ruby Client"
+      @api_client_version = Konfipay::VERSION
     end
   end
 
@@ -27,23 +30,52 @@ module Konfipay
     @configuration ||= Configuration.new
   end
 
-  def self.reset
-    @configuration = Configuration.new
-  end
+  # def self.reset
+  #   @configuration = Configuration.new
+  # end
 
-  def self.config
+  def self.configure
     yield(configuration)
   end
 
-  # comment
-  class Connection
+  # TODO: Also should be in own file
+  class Client
+
     def initialize
-      authenticate
+      @config = Konfipay.configuration
+      @bearer_token = nil
+    end
+
+    def get_statements
+      authenticate if @bearer_token.nil?
+      # TODO: Catch and retry 401 error
+      response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt")
+      json = JSON.parse(response.body.to_s)
+
+      # probably need to get list of docs, then get each one separately
+    end
+
+    def http
+      HTTP.timeout(@config.timeout)
+        .headers(accept: "application/json")
+        .use(logging: { logger: @config.logger })
     end
 
     def authenticate
-      binding.pry
-      response = Net::HTTP.post("#{BASE_URL}/api/v4/Auth/Login/Token", {}, { 'Authorization' => "Bearer #{api_key}" })
+      response = http.post("#{@config.base_url}/api/v4/Auth/Login/Token",
+        json: {
+          "apiKey": @config.api_key,
+          "client": {
+            "name": @config.api_client_name,
+            "version": @config.api_client_version
+          }
+        }
+      )
+      raise response.inspect unless response.status.success?
+      @bearer_token = JSON.parse(response.body.to_s)["accessToken"]
+      raise "AAAAAA" unless @bearer_token # TODO: better message/error class?
+
+      # on any other api call, set @bearer_token to nil if response is 401, then use authenticate again and retry (once)
     end
   end
 end

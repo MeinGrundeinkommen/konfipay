@@ -1,36 +1,61 @@
 # Konfipay
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/konfipay`. To experiment with that code, run `bin/console` for an interactive prompt.
+Hello :) This is a gem to access the Konfipay API more easily from Ruby.
 
-TODO: Delete this and the text above, and describe your gem
+If you don't know what Konfipay is, this is probably not for you ;) Check it out here: https://portal.konfipay.de/
+
+This gem tries to abstract away some of the underlying complexities of how financial data is handled, and provide a nicer interface for Ruby applications (most likely Rails apps that handle SEPA debit/credit payments or need to access bank account data).
+
+You will need a user account with Konfipay.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'konfipay'
+gem 'konfipay', git: 'https://github.com/MeinGrundeinkommen/konfipay', branch: 'main'
 ```
 
 And then execute:
 
     $ bundle install
 
-Or install it yourself as:
+Development setup: Clone this gem (assumed to be on the same directory level as your main app, then set it as a local override):
 
-    $ gem install konfipay
+    $ bundle config local.konfipay ../konfipay
+
+Set this if branches give you trouble:
+
+    $ bundle config disable_local_branch_check true
+
+## Configuration
+
+At minimum, you will need to set an api key (configure those in the Konfipay online interface).
+In Rails, you'll want to use an initializer like this:
+
+```ruby
+
+Konfipay.configure do |c|
+  c.api_key = ENV['KONFIPAY_API_KEY']
+  c.logger = Rails.logger
+end
+
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+In the Rails console, try this:
 
-## Development
+```ruby
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+client = Konfipay::Client.new
+client.get_statements
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```
+
+Re-use the client instance to avoid multiple Authentication API calls. The client should automatically reconnect if the Authentication times out after a time of inactivity.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/konfipay.
+Bug reports and pull requests are welcome on GitHub at https://github.com/MeinGrundeinkommen/konfipay.
 
