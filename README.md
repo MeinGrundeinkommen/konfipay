@@ -8,6 +8,8 @@ This gem tries to abstract away some of the underlying complexities of how finan
 
 You will need a user account with Konfipay.
 
+You also need Sidekiq configured and running in your main app - all operations are executed asynchronously, in background jobs that this gem provides.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -44,16 +46,32 @@ end
 
 ## Usage
 
-In the Rails console, try this:
+In your including Application, you need to set up a simple class with class methods where you will receive asynchronous updates for each operation:
 
 ```ruby
 
-client = Konfipay::Client.new
-client.get_statements
+class KonfipayCallbacks
+
+  def self.wheresmymoney(statements)
+    pp statements
+  end
+end
 
 ```
 
-Re-use the client instance to avoid multiple Authentication API calls. The client should automatically reconnect if the Authentication times out after a time of inactivity.
+Make sure sidekiq is running, then kick off an operation like this, for example from the Rails console:
+```ruby
+
+Konfipay.new_statements(
+  iban: "iban to filter transactions by",
+  callback_class: "::KonfipayCallbacks",
+  callback_method: :wheresmymoney
+)
+
+```
+KonfipayCallbacks::wheresmymoney will then be called in Sidekiq with the transaction data.
+See each operation's method for details on parameters and callback arguments.
+Please note that callbacks can be called multiple times, depending on the operation.
 
 ## Contributing
 

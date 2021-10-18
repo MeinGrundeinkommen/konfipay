@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.10"
   spec.add_dependency 'pry'
   spec.add_dependency "camt_parser"
+  spec.add_dependency "sepa_king"
   spec.add_dependency "http"
   spec.add_dependency "json"
 end
