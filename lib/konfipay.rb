@@ -46,7 +46,7 @@ module Konfipay
       @bearer_token = nil
     end
 
-    def get_statements
+    def get_statements(iban)
       authenticate if @bearer_token.nil?
       # TODO: Catch and retry 401 error
       response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt")
@@ -54,6 +54,37 @@ module Konfipay
 
       # probably need to get list of docs, then get each one separately
     end
+
+    def get_camt_file(r_id)
+      authenticate if @bearer_token.nil?
+      response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt/#{r_id}")
+      # todo: parse with camt_parser
+      #json = JSON.parse(response.body.to_s)
+    end
+
+# rough sketch on payments "interface"
+#
+    # def initialize_credit_transfer(name:, bic:, ..., on_success: ~> {}, on_error: ~> {})
+
+    # end
+
+# admin area: TransferCollection.create -> causes:
+
+# client = Konfipay::Client.new
+# client.initialize_credit_transfer({
+#   iban: ...
+#   ,
+#   transfers: [
+#     {
+#       name: "martin",
+#       amount: 12_000,
+#     }
+#     ...
+#   ],
+#   on_success: ~> { Mailer.send_payouts_initialized_mail },
+#   on_invalid: ~> { Mailer.send_payouts_failed },
+# })
+
 
     def http
       HTTP.timeout(@config.timeout)
