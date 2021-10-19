@@ -1,4 +1,3 @@
-
 module Konfipay
 
   BASE_URL = 'https://portal.konfipay.de'
@@ -21,10 +20,6 @@ module Konfipay
   def self.configuration
     @configuration ||= Configuration.new
   end
-
-  # def self.reset
-  #   @configuration = Configuration.new
-  # end
 
   def self.configure
     yield(configuration)

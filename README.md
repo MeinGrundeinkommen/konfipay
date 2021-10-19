@@ -63,15 +63,14 @@ Make sure sidekiq is running, then kick off an operation like this, for example 
 ```ruby
 
 Konfipay.new_statements(
-  iban: "iban to filter transactions by",
-  callback_class: "::KonfipayCallbacks",
-  callback_method: :wheresmymoney
+  "KonfipayCallbacks", "wheresmymoney", "optional iban to filter by"
 )
 
 ```
 KonfipayCallbacks::wheresmymoney will then be called in Sidekiq with the transaction data.
 See each operation's method for details on parameters and callback arguments.
 Please note that callbacks can be called multiple times, depending on the operation.
+Also note that parameters need to be JSON-compatible - use strings as hash keys, no symobls, and no complex datatypes!
 
 ## Contributing
 

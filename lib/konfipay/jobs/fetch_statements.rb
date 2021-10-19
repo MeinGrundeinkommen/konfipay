@@ -1,21 +1,10 @@
 module Konfipay
   module Jobs
-    class FetchStatements
-      include Sidekiq::Worker # TODO: This should be configurable
+    class FetchStatements < Konfipay::Jobs::Base
 
-      def perform(which_ones, iban, callback_class, callback_method)
-        client = Konfipay::Client.new
-        list = case which_ones.to_s
-        when 'new'
-          client.new_statements
-        else
-          raise "not implemented yet"
-        end
-
-        # get each camt file and parse etc.
-        # TODO: filter by iban?
-
-        callback_class.constantize.send(callback_method, list)
+      def perform(callback_class, callback_method, which_ones, filters = {})
+        data = Konfipay::Operations::FetchStatements.new.fetch(which_ones, filters)
+        run_callback(callback_class, callback_method, data)
       end
     end
   end
