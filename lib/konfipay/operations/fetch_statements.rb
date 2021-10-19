@@ -12,13 +12,14 @@ module Konfipay
           raise "not implemented yet"
         end
 
+        result = []
+
         if json.nil? # you would think they could return an empty json list...
           logger.info "No #{which_ones} statement docs found"
-          return
+          return result
         end
 
         list = json["documentItems"]
-        result = []
 
         logger.info "#{list.size} #{which_ones} statement docs found"
         list.each do |doc|
