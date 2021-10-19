@@ -2,18 +2,35 @@ module Konfipay
 
   class Client
 
-
     #  class Error < StandardError; end
-
 
     def initialize
       @config = Konfipay.configuration
       @bearer_token = nil
     end
 
+    def logger
+      @config.logger
+    end
+
+    def authenticate
+      response = http.post("#{@config.base_url}/api/v4/Auth/Login/Token",
+        json: {
+          "apiKey": @config.api_key,
+          "client": {
+            "name": @config.api_client_name,
+            "version": @config.api_client_version
+          }
+        }
+      )
+      json = raise_error_or_parse!(response)
+      @bearer_token = json["accessToken"]
+      raise "Couldnt' get a bearer token in #{json.inspect}! What now?" unless @bearer_token.present?
+      @bearer_token
+    end
+
     def new_statements(params = {})
       authenticate if @bearer_token.nil?
-      # TODO: Catch and retry 401 error
       response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt#{query_params(params)}")
       raise_error_or_parse!(response)
     end
@@ -22,6 +39,7 @@ module Konfipay
       authenticate if @bearer_token.nil?
       # this also marks this file as "read" and it will not show up in the default overview
       response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt/#{r_id}")
+      raise_error_or_parse!(response)
     end
 
     def http
@@ -42,6 +60,9 @@ module Konfipay
       case response.status
       when 200
         parse(response)
+      when 204
+        # "The request was processed successfully, but no data is available."
+        nil
       # TODO: Create error classes for common errors
       when 400
         # {"errorItems":[{"errorCode":"ERR-04-0009","errorMessage":"UnknownBankAccount","timestamp":"2021-10-19T15:10:45.767"}]}
@@ -59,26 +80,16 @@ module Konfipay
       case response.content_type.mime_type
       when "application/json"
         JSON.parse(response.body.to_s)
+      when "text/xml" # sigh, the schema is not part of the mimetype...
+        body = response.body.to_s
+        if body.include?("urn:iso:std:iso:20022:tech:xsd:camt.053.001.02")
+          CamtParser::String.parse(body)
+        else
+          raise "Response is XML, but no known XML Schema found! Sad."
+        end
       else
         raise "Unknown content_type #{response.content_type.inspect}!"
       end
-    end
-
-    def authenticate
-      response = http.post("#{@config.base_url}/api/v4/Auth/Login/Token",
-        json: {
-          "apiKey": @config.api_key,
-          "client": {
-            "name": @config.api_client_name,
-            "version": @config.api_client_version
-          }
-        }
-      )
-      raise response.inspect unless response.status.success?
-      @bearer_token = JSON.parse(response.body.to_s)["accessToken"]
-      raise "AAAAAA" unless @bearer_token # TODO: better message/error class?
-
-      # on any other api call, set @bearer_token to nil if response is 401, then use authenticate again and retry (once)
     end
   end
 end
