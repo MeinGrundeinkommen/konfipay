@@ -26,7 +26,7 @@ module Konfipay
                when 'new'
                  @client.new_statements(opts)
                else
-                 raise 'not implemented yet'
+                 raise "#{which_ones.inspect} mode is not implemented yet!"
                end
 
         result = []
@@ -45,9 +45,6 @@ module Konfipay
 
           logger&.info "fetching #{r_id.inspect}"
           camt = @client.camt_file(r_id)
-          # TODO: We need to understand the camt format better, the results don't seem to be right
-          # but we need something with an end2endid...
-
           camt.statements.each do |statement|
             # https://github.com/viafintech/camt_parser/blob/master/lib/camt_parser/general/entry.rb
             statement.entries.each do |entry|

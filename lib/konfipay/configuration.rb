@@ -11,6 +11,9 @@ module Konfipay
       @base_url = BASE_URL
       @api_client_name = 'Konfipay Ruby Client'
       @api_client_version = Konfipay::VERSION
+
+      # TODO: If logger is given, maybe wrap, copy, or extend the instance somehow so
+      # log messages get prefixed with something like "Konfipay #{VERSION}: " ?
     end
   end
 

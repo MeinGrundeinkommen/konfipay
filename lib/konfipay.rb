@@ -20,20 +20,23 @@ require_relative 'konfipay/jobs/monitor_credit_transfer'
 module Konfipay
   # https://portal.konfipay.de/doc/PaymentWorkflow.png
   class << self
-    # Fetches and returns financial statements for all configured accounts.
+    # Fetches financial statements for all configured accounts.
     # This returns all "new" statements since the last time this was called.
     # Filter accounts by iban argument.
+    # callback_class::callback_method will be called asynchronously with a list of statements, for the format
+    # see Konfipay::Operations::FetchStatements#show
     def new_statements(callback_class, callback_method, iban = nil)
       # TODO: validate input, check that class and method are implemented, check if iban is valid
       Konfipay::Jobs::FetchStatements.perform_async(callback_class, callback_method, 'new', { 'iban' => iban })
     end
 
-    def statements(callback_class, callback_method, iban = nil, from = nil, to = nil)
-      # TODO: validate input, check that class and method are implemented, check if iban is valid,
-      # check from and to are Date objects, check dates are logical
-      Konfipay::Jobs::FetchStatements.perform_async(callback_class, callback_method, 'history',
-                                                    { 'iban' => iban, 'from' => from, 'to' => to })
-    end
+    # TODO: Not needed now, but might be useful
+    # def statements(callback_class, callback_method, iban = nil, from = nil, to = nil)
+    #   # TODO: validate input, check that class and method are implemented, check if iban is valid,
+    #   # check from and to are Date objects, check dates are logical
+    #   Konfipay::Jobs::FetchStatements.perform_async(callback_class, callback_method, 'history',
+    #                                                 { 'iban' => iban, 'from' => from, 'to' => to })
+    # end
 
     def initialize_credit_transfer(callback_class, callback_method, payment_data = {})
       # TODO: validate input, check that class and method are implemented
