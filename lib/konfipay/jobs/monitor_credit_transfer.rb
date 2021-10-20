@@ -2,23 +2,13 @@
 
 module Konfipay
   module Jobs
-    class MonitorCreditTransfer
-      include Sidekiq::Worker # TODO: This should be configurable
+    class MonitorCreditTransfer < Konfipay::Jobs::Base
 
       def perform(r_id, callback_class, callback_method)
-        client = Konfipay::Client.new
-
-        # TODO:
-        # get status from konfipay
-        puts 'hey there, just checking for the dang transfer again yo'
-        puts r_id
-        # parse/check result
-
-        callback_class.constantize.send(callback_method, { data: :data })
-
-        # TODO: if not one of the final states, schedule yourself again
-
-        Konfipay::Jobs::MonitorCreditTransfer.perform_in(10.seconds, r_id, callback_class, callback_method)
+        data = Konfipay::Operations::CreditTransfer.new.fetch(r_id)
+        run_callback(callback_class, callback_method, data)
+        # TODO: stop this if a final state is reached
+        schedule_credit_monitor(callback_class, callback_method, r_id)
       end
     end
   end

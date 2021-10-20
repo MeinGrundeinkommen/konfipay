@@ -9,7 +9,9 @@ require_relative 'konfipay/configuration'
 require_relative 'konfipay/client'
 require_relative 'konfipay/operations'
 require_relative 'konfipay/operations/base'
+require_relative 'konfipay/operations/credit_transfer'
 require_relative 'konfipay/operations/fetch_statements'
+require_relative 'konfipay/operations/initialize_credit_transfer'
 require_relative 'konfipay/jobs'
 require_relative 'konfipay/jobs/base'
 # TODO: Do this less clumsily and according to configured jobs adapter
@@ -38,6 +40,9 @@ module Konfipay
     #                                                 { 'iban' => iban, 'from' => from, 'to' => to })
     # end
 
+    # TODO: Document payment_data format
+    # TODO: Document format of info passed to callback
+    # TODO: IMplement some sort of validator class and use in all these kickoff-methods?
     def initialize_credit_transfer(callback_class, callback_method, payment_data = {})
       # TODO: validate input, check that class and method are implemented
       Konfipay::Jobs::InitializeCreditTransfer.perform_async(callback_class, callback_method, payment_data)
