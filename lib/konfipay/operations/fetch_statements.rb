@@ -1,16 +1,18 @@
+# frozen_string_literal: true
+
 module Konfipay
   module Operations
     class FetchStatements < Base
       def fetch(which_ones, filters = {})
-        iban = filters["iban"].presence
+        iban = filters['iban'].presence
         opts = {}
-        opts["iban"] = iban if iban
+        opts['iban'] = iban if iban
         json = case which_ones
-        when "new"
-          @client.new_statements(opts)
-        else
-          raise "not implemented yet"
-        end
+               when 'new'
+                 @client.new_statements(opts)
+               else
+                 raise 'not implemented yet'
+               end
 
         result = []
 
@@ -19,12 +21,13 @@ module Konfipay
           return result
         end
 
-        list = json["documentItems"]
+        list = json['documentItems']
 
         logger.info "#{list.size} #{which_ones} statement docs found"
         list.each do |doc|
-          r_id = doc["rId"]
+          r_id = doc['rId']
           raise unless r_id.present?
+
           logger.info "fetching #{r_id.inspect}"
           camt = @client.camt_file(r_id)
           # TODO: We need to understand the camt format better, the results don't seem to be right

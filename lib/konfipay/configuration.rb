@@ -1,5 +1,6 @@
-module Konfipay
+# frozen_string_literal: true
 
+module Konfipay
   BASE_URL = 'https://portal.konfipay.de'
 
   class Configuration
@@ -8,7 +9,7 @@ module Konfipay
     def initialize
       @timeout = 10
       @base_url = BASE_URL
-      @api_client_name = "Konfipay Ruby Client"
+      @api_client_name = 'Konfipay Ruby Client'
       @api_client_version = Konfipay::VERSION
     end
   end
