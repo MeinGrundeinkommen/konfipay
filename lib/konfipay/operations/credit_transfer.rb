@@ -14,6 +14,8 @@ module Konfipay
 #        puts r_id
         # parse/check result
 
+        # TODO: if 404, return a "final" state to stop monitoring / alert main app code
+
 
 
         {
