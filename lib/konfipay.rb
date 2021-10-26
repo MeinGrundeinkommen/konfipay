@@ -24,12 +24,19 @@ module Konfipay
   class << self
     # Fetches financial statements for all configured accounts.
     # This returns all "new" statements since the last time this was called.
-    # Filter accounts by iban argument.
+    # Use mark_as_read = false to keep retrieved data "unread", for testing.
+    # Filter accounts by iban argument, if non-empty.
     # callback_class::callback_method will be called asynchronously with a list of statements, for the format
     # see Konfipay::Operations::FetchStatements#show
-    def new_statements(callback_class, callback_method, iban = nil)
+    def new_statements(callback_class, callback_method, iban = nil, mark_as_read = true)
       # TODO: validate input, check that class and method are implemented, check if iban is valid
-      Konfipay::Jobs::FetchStatements.perform_async(callback_class, callback_method, 'new', { 'iban' => iban })
+      Konfipay::Jobs::FetchStatements.perform_async(
+        callback_class,
+        callback_method,
+        'new',
+        { 'iban': iban },
+        { 'mark_as_read': mark_as_read }
+      )
     end
 
     # TODO: Not needed now, but might be useful

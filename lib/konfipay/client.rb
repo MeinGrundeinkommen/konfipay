@@ -35,10 +35,13 @@ module Konfipay
       raise_error_or_parse!(response)
     end
 
-    def camt_file(r_id)
+    def camt_file(r_id, mark_as_read = true)
       authenticate if @bearer_token.nil?
-      # this also marks this file as "read" and it will not show up in the default overview
-      response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt/#{r_id}")
+      # this also marks this file as "read" and it will not show up in the default overview, unless
+      # we set "ack" = false
+      params = {}
+      params["ack"] = "false" unless mark_as_read
+      response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt/#{r_id}#{query_params(params)}")
       raise_error_or_parse!(response)
     end
 

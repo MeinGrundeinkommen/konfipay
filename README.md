@@ -40,6 +40,8 @@ In Rails, you'll want to use an initializer like this:
 Konfipay.configure do |c|
   c.api_key = ENV['KONFIPAY_API_KEY']
   c.logger = Rails.logger
+  # You can also customize values:
+  c.api_client_name = "Your organization (#{Rails.env}) #{c.api_client_name}"
 end
 
 ```
@@ -76,7 +78,7 @@ For developing features or hacking on this gem, note that all business logic is 
 you can use directly without the Sidekiq jobs:
 
 ```ruby
-result = Konfipay::Operations::FetchStatements.new.fetch("new", "iban" => "DE36733900000000121738")
+result = Konfipay::Operations::FetchStatements.new.fetch("new", "iban": "DE36733900000000121738", 'mark_as_read': false)
 ```
 
 ## Development Notes
