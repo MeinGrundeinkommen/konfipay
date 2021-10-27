@@ -78,7 +78,7 @@ For developing features or hacking on this gem, note that all business logic is 
 you can use directly without the Sidekiq jobs:
 
 ```ruby
-result = Konfipay::Operations::FetchStatements.new.fetch("new", "iban": "DE36733900000000121738", 'mark_as_read': false)
+result = Konfipay::Operations::FetchStatements.new.fetch("new", {"iban" => "an iban"}, {"mark_as_read" => false})
 ```
 
 ## Development Notes
