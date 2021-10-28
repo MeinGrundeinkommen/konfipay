@@ -22,7 +22,7 @@ RSpec.describe Konfipay::Configuration do
   context 'with setting changed' do
     [
       [:api_key, 'aaaaaaaaaaaaaaaa'],
-      [:logger, Logger.new(STDOUT)],
+      [:logger, Logger.new($stdout)],
       [:timeout, 666],
       [:base_url, 'https://zombo.com'],
       [:api_client_name, 'die singende Herrentorte'],

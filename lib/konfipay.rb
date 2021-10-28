@@ -19,7 +19,7 @@ require_relative 'konfipay/jobs/fetch_statements'
 require_relative 'konfipay/jobs/initialize_credit_transfer'
 require_relative 'konfipay/jobs/monitor_credit_transfer'
 
-module Konfipay
+module Konfipay # rubocop:disable Style/Documentation
   class << self
     # Fetches financial statements for all configured accounts.
     # This returns all "new" statements since the last time this was called.
@@ -27,7 +27,7 @@ module Konfipay
     # Filter accounts by iban argument, if non-empty.
     # callback_class::callback_method will be called asynchronously with a list of statements, for the format
     # see Konfipay::Operations::FetchStatements#show
-    def new_statements(callback_class, callback_method, iban = nil, mark_as_read = true)
+    def new_statements(callback_class, callback_method, iban = nil, mark_as_read = true) # rubocop:disable Style/OptionalBooleanParameter
       # TODO: validate input, check that class and method are implemented, check if iban is valid
       Konfipay::Jobs::FetchStatements.perform_async(
         callback_class,
