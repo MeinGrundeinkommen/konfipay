@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module Konfipay
+  # API Client for the Konfipay API (see https://portal.konfipay.de/api-docs/index.html)
+  # Only selected API Endpoints are implemented.
+  # Authentication is done automatically, and the auth token is cached in an instance of this class.
   class Client
     #  class Error < StandardError; end
 
@@ -14,41 +17,63 @@ module Konfipay
     end
 
     def authenticate
-      response = http.post("#{@config.base_url}/api/v4/Auth/Login/Token",
-                           json: {
-                             apiKey: @config.api_key,
-                             client: {
-                               name: @config.api_client_name,
-                               version: @config.api_client_version
-                             }
-                           })
+      response = http.post(authentication_url(@config), authentication_params(@config))
       json = raise_error_or_parse!(response)
       @bearer_token = json['accessToken']
-      raise "Couldnt' get a bearer token in #{json.inspect}! What now?" unless @bearer_token.present?
+      raise "Couldn't get a bearer token in #{json.inspect}! What now?" unless @bearer_token.present?
 
       @bearer_token
     end
 
+    def authentication_url(config)
+      "#{config.base_url}/api/v4/Auth/Login/Token"
+    end
+
+    def authentication_params(config)
+      {
+        json: {
+          apiKey: config.api_key,
+          client: {
+            name: config.api_client_name,
+            version: config.api_client_version
+          }
+        }
+      }
+    end
+
     def new_statements(params = {})
-      authenticate if @bearer_token.nil?
-      response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt#{query_params(params)}")
+      response = authed_http.get(new_statements_url(@config, params))
       raise_error_or_parse!(response)
     end
 
+    def new_statements_url(config, params)
+      "#{config.base_url}/api/v4/Document/Camt#{query_params(params)}"
+    end
+
     def camt_file(r_id, mark_as_read = true)
-      authenticate if @bearer_token.nil?
       # this also marks this file as "read" and it will not show up in the default overview, unless
       # we set "ack" = false
       params = {}
       params['ack'] = 'false' unless mark_as_read
-      response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt/#{r_id}#{query_params(params)}")
+      response = authed_http.get(camt_file_url(@config, r_id, params))
       raise_error_or_parse!(response)
+    end
+
+    def camt_file_url(config, r_id, params)
+      "#{config.base_url}/api/v4/Document/Camt/#{r_id}#{query_params(params)}"
     end
 
     def http
       HTTP.timeout(@config.timeout)
           .headers(accept: 'application/json')
           .use(logging: { logger: @config.logger })
+    end
+
+    def authed_http
+      authenticate if @bearer_token.nil?
+      raise 'Something went really wrong with the authentication!' if @bearer_token.nil?
+
+      http.auth("Bearer #{@bearer_token}")
     end
 
     def query_params(params)
