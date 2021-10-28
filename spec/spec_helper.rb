@@ -13,4 +13,8 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.after do
+    Konfipay.reset_configuration!
+  end
 end
