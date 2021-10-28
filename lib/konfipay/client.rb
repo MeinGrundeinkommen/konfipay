@@ -50,7 +50,7 @@ module Konfipay
       "#{config.base_url}/api/v4/Document/Camt#{query_params(params)}"
     end
 
-    def camt_file(r_id, mark_as_read = true)
+    def camt_file(r_id, mark_as_read = true) # rubocop:disable Style/OptionalBooleanParameter
       # this also marks this file as "read" and it will not show up in the default overview, unless
       # we set "ack" = false
       params = {}
@@ -84,7 +84,7 @@ module Konfipay
       end
     end
 
-    def raise_error_or_parse!(response)
+    def raise_error_or_parse!(response) # rubocop:disable Metrics/MethodLength
       case response.status
       when 200
         parse(response)
@@ -93,11 +93,15 @@ module Konfipay
         nil
       # TODO: Create error classes for common errors
       when 400
-        # {"errorItems":[{"errorCode":"ERR-04-0009","errorMessage":"UnknownBankAccount","timestamp":"2021-10-19T15:10:45.767"}]}
+        # {"errorItems":[{"errorCode":"ERR-04-0009","errorMessage":"UnknownBankAccount",
+        #  "timestamp":"2021-10-19T15:10:45.767"}]}
         errors = parse(response)['errorItems'].map { |e| e['errorMessage'] }.join(', ')
         raise "400 Bad Request, errors: #{errors}"
       when 404
-        # {"Message":"Welcome to konfipay. There is no API-Endpoint defined for 'https://portal.konfipay.de/api/v4/Document/Camtiban=aaaa'. Please take a look at the konfipay API-Documentation for valid API-Endpoints","ApiDocumentationLink":"https://portal.konfipay.de/Info/Api_Doc"}
+        # {"Message":"Welcome to konfipay. There is no API-Endpoint defined for
+        #  'https://portal.konfipay.de/api/v4/Document/Camtiban=aaaa'. Please take a
+        #  look at the konfipay API-Documentation for valid API-Endpoints",
+        #  "ApiDocumentationLink":"https://portal.konfipay.de/Info/Api_Doc"}
         raise "404 Error: #{parse(response)['Message'].inspect}"
       else
         raise "Unhandled HTTP response code: #{response.status.inspect}: \"#{response.body}\""
@@ -105,18 +109,27 @@ module Konfipay
     end
 
     def parse(response)
-      case response.content_type.mime_type
+      body = response.body.to_s
+      content_type = response.content_type
+      case content_type.mime_type
       when 'application/json'
-        JSON.parse(response.body.to_s)
+        parse_json(body)
       when 'text/xml' # sigh, the schema is not part of the mimetype...
-        body = response.body.to_s
-        if body.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02')
-          CamtParser::String.parse(body)
-        else
-          raise 'Response is XML, but no known XML Schema found! Sad.'
-        end
+        parse_xml(body)
       else
-        raise "Unknown content_type #{response.content_type.inspect}!"
+        raise "Unknown content_type #{content_type.inspect}!"
+      end
+    end
+
+    def parse_json(string)
+      JSON.parse(string)
+    end
+
+    def parse_xml(string)
+      if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02')
+        CamtParser::String.parse(string)
+      else
+        raise 'Response is XML, but no known XML Schema found! Sad.'
       end
     end
   end
