@@ -3,6 +3,7 @@
 require 'http'
 require 'sepa_king'
 require 'camt_parser'
+require 'sidekiq'
 
 require_relative 'konfipay/version'
 require_relative 'konfipay/configuration'
@@ -14,13 +15,11 @@ require_relative 'konfipay/operations/fetch_statements'
 require_relative 'konfipay/operations/initialize_credit_transfer'
 require_relative 'konfipay/jobs'
 require_relative 'konfipay/jobs/base'
-# TODO: Do this less clumsily and according to configured jobs adapter
 require_relative 'konfipay/jobs/fetch_statements'
 require_relative 'konfipay/jobs/initialize_credit_transfer'
 require_relative 'konfipay/jobs/monitor_credit_transfer'
 
 module Konfipay
-  # https://portal.konfipay.de/doc/PaymentWorkflow.png
   class << self
     # Fetches financial statements for all configured accounts.
     # This returns all "new" statements since the last time this was called.
@@ -34,9 +33,10 @@ module Konfipay
         callback_class,
         callback_method,
         'new',
-        { 'iban': iban },
-        { 'mark_as_read': mark_as_read }
+        { 'iban' => iban },
+        { 'mark_as_read' => mark_as_read }
       )
+      true
     end
 
     # TODO: Not needed now, but might be useful

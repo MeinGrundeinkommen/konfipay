@@ -4,7 +4,8 @@ module Konfipay
   BASE_URL = 'https://portal.konfipay.de'
 
   class Configuration
-    attr_accessor :api_key, :logger, :timeout, :base_url, :api_client_name, :api_client_version, :credit_monitoring_interval
+    attr_accessor :api_key, :logger, :timeout, :base_url, :api_client_name, :api_client_version,
+                  :credit_monitoring_interval
 
     def initialize
       @timeout = 10

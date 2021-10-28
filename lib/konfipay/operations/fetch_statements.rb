@@ -3,7 +3,6 @@
 module Konfipay
   module Operations
     class FetchStatements < Base
-
       # Returns transactions like this:
       # [
       #   {
@@ -19,17 +18,20 @@ module Konfipay
       #   },
       # ]
       #
+      # Or an empty array if there is nothing new or matching.
+      #
       # "which_ones" argument only supports "new" currently.
       # In this "mode", transactions are retrieved and marked as "read" after successful
       # return of data, so transactions are only returned once.
       #
       # Use {'mark_as_read' => false} in options argument to disable this behaviour (for testing etc.).
-      # 
-      # Returns transaction from all configured accounts by default.
-      # Filter by using {'iban': 'an account iban'} as filters argument.
       #
-      # 
+      # Returns transaction from all configured accounts by default.
+      # Filter by using {'iban' => 'an account iban'} as filters argument.
+      #
+      #
       def fetch(which_ones, filters = {}, options = {})
+        # TODO: Check that only known keys are in both hashes
 
         mark_as_read = true
         mark_as_read = false if options['mark_as_read'] == false
@@ -74,12 +76,15 @@ module Konfipay
                   currency: transaction.currency,
                   executed_on: entry.value_date.iso8601,
                   reference: transaction.remittance_information,
-                  end_to_end_reference: transaction.end_to_end_reference,
+                  end_to_end_reference: transaction.end_to_end_reference
                 }.stringify_keys
               end
             end
           end
         end
+
+        # TODO: Get each camt in readonly mode, pass out all results, and if that returns successfully,
+        # loop over camt files and mark all as read
 
         result
       end

@@ -3,14 +3,13 @@
 module Konfipay
   module Operations
     class InitializeCreditTransfer < Base
-
       # Starts a credit transfer (Überweisung) from one of our accounts to one or many recipients.
       # TODO: format
       def submit(payment_data)
         pp(payment_data)
         # TODO: validate payment data again?
 
-        #client = Konfipay::Client.new
+        # client = Konfipay::Client.new
 
         # TODO: check data
         ## pp data
@@ -20,7 +19,7 @@ module Konfipay
         # parse/check result
 
         {
-          "r_id" => "aaaaaaaaaaaa"
+          'r_id' => 'aaaaaaaaaaaa'
         }
       end
     end

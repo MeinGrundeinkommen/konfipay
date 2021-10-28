@@ -3,7 +3,6 @@
 module Konfipay
   module Jobs
     class MonitorCreditTransfer < Konfipay::Jobs::Base
-
       def perform(r_id, callback_class, callback_method)
         data = Konfipay::Operations::CreditTransfer.new.fetch(r_id)
         run_callback(callback_class, callback_method, data)

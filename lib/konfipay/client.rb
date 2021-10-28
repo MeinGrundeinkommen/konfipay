@@ -40,7 +40,7 @@ module Konfipay
       # this also marks this file as "read" and it will not show up in the default overview, unless
       # we set "ack" = false
       params = {}
-      params["ack"] = "false" unless mark_as_read
+      params['ack'] = 'false' unless mark_as_read
       response = http.auth("Bearer #{@bearer_token}").get("#{@config.base_url}/api/v4/Document/Camt/#{r_id}#{query_params(params)}")
       raise_error_or_parse!(response)
     end

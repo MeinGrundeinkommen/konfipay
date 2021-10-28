@@ -38,4 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'http'
   spec.add_dependency 'json'
   spec.add_dependency 'sepa_king'
+  spec.add_dependency 'sidekiq'
 end

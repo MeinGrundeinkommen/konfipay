@@ -6,6 +6,7 @@ PATH
       http
       json
       sepa_king
+      sidekiq
 
 GEM
   remote: https://rubygems.org/
@@ -25,6 +26,7 @@ GEM
       nokogiri
     coderay (1.1.3)
     concurrent-ruby (1.1.9)
+    connection_pool (2.2.5)
     diff-lcs (1.4.4)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -43,7 +45,7 @@ GEM
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
     iban-tools (1.1.0)
-    json (2.6.0)
+    json (2.6.1)
     llhttp-ffi (0.4.0)
       ffi-compiler (~> 1.0)
       rake (~> 13.0)
@@ -61,8 +63,10 @@ GEM
       method_source (~> 1.0)
     public_suffix (4.0.6)
     racc (1.6.0)
+    rack (2.2.3)
     rainbow (3.0.0)
     rake (13.0.6)
+    redis (4.5.1)
     regexp_parser (2.1.1)
     rexml (3.2.5)
     rspec (3.10.0)
@@ -78,7 +82,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
     rspec-support (3.10.2)
-    rubocop (1.22.1)
+    rubocop (1.22.2)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -99,13 +103,17 @@ GEM
       activemodel (>= 3.1)
       iban-tools
       nokogiri
+    sidekiq (6.2.2)
+      connection_pool (>= 2.2.2)
+      rack (~> 2.0)
+      redis (>= 4.2.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8)
     unicode-display_width (2.1.0)
-    zeitwerk (2.4.2)
+    zeitwerk (2.5.1)
 
 PLATFORMS
   ruby
