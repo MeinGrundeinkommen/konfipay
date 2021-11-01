@@ -7,8 +7,8 @@ module Konfipay
   class Client
     #  class Error < StandardError; end
 
-    def initialize
-      @config = Konfipay.configuration
+    def initialize(config = Konfipay.configuration)
+      @config = config
       @bearer_token = nil
     end
 
@@ -41,6 +41,24 @@ module Konfipay
       }
     end
 
+    # Get "new" statements from Konfipay API from this endpoint:
+    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt/get
+    # Returns the parsed JSON as Ruby objects, or nil if there are no (new) documents:
+    # 
+    #{"documentItems"=>
+    #  [{"rId"=>"5c19b66h-3d6e-4e8a-4548-622bd50a7af2",
+    #    "href"=>"api/v4.0/Document/Camt/5c19b66h-3d6e-4e8a-4548-622bd50a7af2",
+    #    "timestamp"=>"2021-10-28T23:21:59+02:00",
+    #    "iban"=>"DE02300606010002474689",
+    #    "isNew"=>true,
+    #    "format"=>"camt.053",
+    #    "fileName"=>"2021-10-28_C53_DE02300606010002474689_EUR_365352.xml"}
+    #]}
+    #
+    # Pass in a params hash, it will be turned into query params, for example for iban filtering:
+    # { "iban" => "DE02300606010002474689" }
+    #
+    # Can raise various network errors.
     def new_statements(params = {})
       response = authed_http.get(new_statements_url(@config, params))
       raise_error_or_parse!(response)
@@ -50,9 +68,13 @@ module Konfipay
       "#{config.base_url}/api/v4/Document/Camt#{query_params(params)}"
     end
 
+    # Get and parse a single camt.053 document with given r_id from endpoint:
+    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt~1{rId}/get
+    # If mark_as_read = false, will not mark the document as read, i.e. keep as "new".
+    # Returns an instance of CamtParser::Format053::Base :
+    # https://github.com/viafintech/camt_parser/blob/master/lib/camt_parser/053/base.rb
+    # Can raise various network errors.
     def camt_file(r_id, mark_as_read = true) # rubocop:disable Style/OptionalBooleanParameter
-      # this also marks this file as "read" and it will not show up in the default overview, unless
-      # we set "ack" = false
       params = {}
       params['ack'] = 'false' unless mark_as_read
       response = authed_http.get(camt_file_url(@config, r_id, params))
