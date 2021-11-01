@@ -57,6 +57,9 @@ module Konfipay
         list = json['documentItems']
 
         logger&.info "#{list.size} #{which_ones} statement docs found"
+
+        # TODO: Do this in threads?
+
         list.each do |doc|
           r_id = doc['rId']
           raise unless r_id.present?
@@ -68,15 +71,15 @@ module Konfipay
             statement.entries.each do |entry|
               entry.transactions.each do |transaction|
                 result << {
-                  name: transaction.name,
-                  iban: transaction.iban,
-                  bic: transaction.bic,
-                  type: entry.debit? ? 'debit' : 'credit',
-                  amount_in_cents: entry.amount_in_cents,
-                  currency: transaction.currency,
+                  name: transaction.name.presence,
+                  iban: transaction.iban.presence,
+                  bic: transaction.bic.presence,
+                  type: transaction.debit? ? 'debit' : 'credit',
+                  amount_in_cents: transaction.amount_in_cents,
+                  currency: transaction.currency.presence,
                   executed_on: entry.value_date.iso8601,
-                  reference: transaction.remittance_information,
-                  end_to_end_reference: transaction.end_to_end_reference
+                  reference: transaction.remittance_information.presence,
+                  end_to_end_reference: transaction.end_to_end_reference.presence
                 }.stringify_keys
               end
             end
