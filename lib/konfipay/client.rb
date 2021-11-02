@@ -47,8 +47,8 @@ module Konfipay
     # Get "new" statements from Konfipay API from this endpoint:
     # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt/get
     # Returns the parsed JSON as Ruby objects, or nil if there are no (new) documents:
-    # 
-    #{"documentItems"=>
+    #
+    # {"documentItems"=>
     #  [{"rId"=>"5c19b66h-3d6e-4e8a-4548-622bd50a7af2",
     #    "href"=>"api/v4.0/Document/Camt/5c19b66h-3d6e-4e8a-4548-622bd50a7af2",
     #    "timestamp"=>"2021-10-28T23:21:59+02:00",
@@ -56,7 +56,7 @@ module Konfipay
     #    "isNew"=>true,
     #    "format"=>"camt.053",
     #    "fileName"=>"2021-10-28_C53_DE02300606010002474689_EUR_365352.xml"}
-    #]}
+    # ]}
     #
     # Pass in a params hash, it will be turned into query params, for example for iban filtering:
     # { "iban" => "DE02300606010002474689" }
@@ -90,11 +90,7 @@ module Konfipay
 
     def http
       http = HTTP.timeout(@config.timeout).headers(accept: 'application/json')
-
-      if logger
-        http = http.use(logging: { logger: logger })
-      end
-
+      http = http.use(logging: { logger: logger }) if logger
       http
     end
 
@@ -157,7 +153,7 @@ module Konfipay
     end
 
     def parse_xml(string)
-      if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02')
+      if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02') # rubocop:disable Style/GuardClause
         CamtParser::String.parse(string)
       else
         raise 'Response is XML, but no known XML Schema found! Sad.'
