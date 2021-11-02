@@ -7,14 +7,17 @@ require 'spec_helper'
 # rubocop:disable RSpec/NestedGroups
 RSpec.describe Konfipay::Client do
   let(:api_key) { "le key d'api" }
-  let(:access_token) { 'xyz123' }
 
-  let!(:config) do
+  let(:config) do
     Konfipay.configure do |c|
       c.api_key = api_key
       # Uncomment this for debug output from http gem during specs
       # c.logger = Logger.new($stdout)
     end
+  end
+
+  let(:client) do
+    described_class.new(config)
   end
 
   let(:request_headers) do
@@ -26,6 +29,8 @@ RSpec.describe Konfipay::Client do
       'User-Agent' => 'http.rb/5.0.4'
     }
   end
+
+  let(:access_token) { 'xyz123' }
 
   let(:response_headers) do
     { 'Content-Type' => 'application/json; charset=UTF-8' }
@@ -129,7 +134,7 @@ RSpec.describe Konfipay::Client do
 
   describe 'new_statements' do
     let(:stubbed_url) { 'https://portal.konfipay.de/api/v4/Document/Camt' }
-    let(:result) { described_class.new.new_statements }
+    let(:result) { client.new_statements }
 
     it_behaves_like 'api error handling'
 
@@ -187,7 +192,7 @@ RSpec.describe Konfipay::Client do
 
       context 'with iban filter argument' do
         let(:stubbed_url) { 'https://portal.konfipay.de/api/v4/Document/Camt?iban=an%20iban%20maybe' }
-        let(:result) { described_class.new.new_statements('iban' => 'an iban maybe') }
+        let(:result) { client.new_statements('iban' => 'an iban maybe') }
 
         it 'returns list of new documents' do
           expect(result).to eq(expected_parsed_json)
