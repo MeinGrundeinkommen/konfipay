@@ -32,8 +32,12 @@ RSpec.describe Konfipay::Client do
 
   let(:access_token) { 'xyz123' }
 
-  let(:response_headers) do
+  let(:response_is_json) do
     { 'Content-Type' => 'application/json; charset=UTF-8' }
+  end
+
+  let(:response_is_xml) do
+    { 'Content-Type' => 'text/xml; charset=UTF-8' }
   end
 
   def stub_login_token_api_call!
@@ -60,7 +64,7 @@ RSpec.describe Konfipay::Client do
                    expiresIn: 1800,
                    tokenType: 'bearer'
                  }.to_json,
-                 headers: response_headers)
+                 headers: response_is_json)
   end
 
   shared_examples 'api error handling' do
@@ -90,7 +94,7 @@ RSpec.describe Konfipay::Client do
           .with(headers: request_headers)
           .to_return(status: 400,
                      body: generic_error_body.to_json,
-                     headers: response_headers)
+                     headers: response_is_json)
       end
 
       it 'raises error message with details from api response' do
@@ -105,7 +109,7 @@ RSpec.describe Konfipay::Client do
           .with(headers: request_headers)
           .to_return(status: 403,
                      body: generic_error_body.to_json,
-                     headers: response_headers)
+                     headers: response_is_json)
       end
 
       it 'raises error message with details from api response' do
@@ -123,7 +127,7 @@ RSpec.describe Konfipay::Client do
                        Message: 'Welcome to konfipay. Blub blub',
                        ApiDocumentationLink: 'https://portal.konfipay.de/Info/Api_Doc'
                      }.to_json,
-                     headers: response_headers)
+                     headers: response_is_json)
       end
 
       it 'raises error message with details from api response' do
@@ -181,7 +185,7 @@ RSpec.describe Konfipay::Client do
                          }
                        ]
                      }.to_json,
-                     headers: response_headers)
+                     headers: response_is_json)
       end
 
       context 'without arguments' do
@@ -202,6 +206,39 @@ RSpec.describe Konfipay::Client do
   end
 
   describe 'camt_file' do
+    let(:r_id) { 'a-b-c' }
+    let(:stubbed_url) { "https://portal.konfipay.de/api/v4/Document/Camt/#{r_id}" }
+    let(:result) { client.camt_file(r_id) }
+
+    let(:camt_xml) { File.read('spec/examples/camt053/CAMT.053_458b71be-2ba3-488e-a898-11e6a5b421d6.XML') }
+
+    it_behaves_like 'api error handling'
+
+    context 'when konfipay returns success' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:get, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 200,
+                     body: camt_xml,
+                     headers: response_is_xml)
+      end
+
+      context 'without arguments' do
+        it 'returns a parsed camt file' do
+          expect(result).to be_an_instance_of(CamtParser::Format053::Base)
+        end
+      end
+
+      context 'with mark_as_read = false' do
+        let(:stubbed_url) { "https://portal.konfipay.de/api/v4/Document/Camt/#{r_id}?ack=false" }
+        let(:result) { client.camt_file(r_id, false) }
+
+        it 'returns a parsed camt file' do
+          expect(result).to be_an_instance_of(CamtParser::Format053::Base)
+        end
+      end
+    end
   end
 end
 # rubocop:enable Metrics/BlockLength
