@@ -27,6 +27,10 @@ RSpec.describe Konfipay::Client do
     }
   end
 
+  let(:response_headers) do
+    { 'Content-Type' => 'application/json; charset=UTF-8' }
+  end
+
   def stub_login_token_api_call!
     stub_request(:post, 'https://portal.konfipay.de/api/v4/Auth/Login/Token')
       .with(
@@ -51,12 +55,83 @@ RSpec.describe Konfipay::Client do
                    expiresIn: 1800,
                    tokenType: 'bearer'
                  }.to_json,
-                 headers: { 'Content-Type' => 'application/json; charset=UTF-8' })
+                 headers: response_headers)
+  end
+
+  shared_examples 'api error handling' do
+    let(:generic_error_body) do
+      {
+        errorItems: [
+          {
+            errorCode: 'ERR-00-0000',
+            errorMessage: 'ErrorMessage1',
+            errorDetails: 'ErrorDetails1',
+            timestamp: '2021-11-02T15:17:42+01:00'
+          },
+          {
+            errorCode: 'ERR-11-1111',
+            errorMessage: 'ErrorMessage2',
+            errorDetails: 'ErrorDetails2',
+            timestamp: '2021-11-02T15:17:42+01:00'
+          }
+        ]
+      }
+    end
+
+    context 'when konfipay returns 400 error' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:get, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 400,
+                     body: generic_error_body.to_json,
+                     headers: response_headers)
+      end
+
+      it 'raises error message with details from api response' do
+        expect { result }.to raise_error('400 Bad Request, messages: ErrorMessage1, ErrorMessage2')
+      end
+    end
+
+    context 'when konfipay returns 403 error' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:get, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 403,
+                     body: generic_error_body.to_json,
+                     headers: response_headers)
+      end
+
+      it 'raises error message with details from api response' do
+        expect { result }.to raise_error('403 Forbidden, messages: ErrorMessage1, ErrorMessage2')
+      end
+    end
+
+    context 'when konfipay returns 404 error' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:get, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 404,
+                     body: {
+                       Message: 'Welcome to konfipay. Blub blub',
+                       ApiDocumentationLink: 'https://portal.konfipay.de/Info/Api_Doc'
+                     }.to_json,
+                     headers: response_headers)
+      end
+
+      it 'raises error message with details from api response' do
+        expect { result }.to raise_error('404 Not Found, message: "Welcome to konfipay. Blub blub"')
+      end
+    end
   end
 
   describe 'new_statements' do
     let(:stubbed_url) { 'https://portal.konfipay.de/api/v4/Document/Camt' }
     let(:result) { described_class.new.new_statements }
+
+    it_behaves_like 'api error handling'
 
     context 'when konfipay returns no content' do
       before do
@@ -101,7 +176,7 @@ RSpec.describe Konfipay::Client do
                          }
                        ]
                      }.to_json,
-                     headers: { 'Content-Type' => 'application/json; charset=UTF-8' })
+                     headers: response_headers)
       end
 
       context 'without arguments' do

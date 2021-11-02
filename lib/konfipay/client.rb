@@ -114,26 +114,28 @@ module Konfipay
     end
 
     def raise_error_or_parse!(response) # rubocop:disable Metrics/MethodLength
-      case response.status
+      status = response.status
+      case status
       when 200
         parse(response)
       when 204
         # "The request was processed successfully, but no data is available."
         nil
       # TODO: Create error classes for common errors
-      when 400
+      # TODO: Also handle 401 and 500
+      when 400, 403
         # {"errorItems":[{"errorCode":"ERR-04-0009","errorMessage":"UnknownBankAccount",
         #  "timestamp":"2021-10-19T15:10:45.767"}]}
         errors = parse(response)['errorItems'].map { |e| e['errorMessage'] }.join(', ')
-        raise "400 Bad Request, errors: #{errors}"
+        raise "#{status}, messages: #{errors}"
       when 404
         # {"Message":"Welcome to konfipay. There is no API-Endpoint defined for
         #  'https://portal.konfipay.de/api/v4/Document/Camtiban=aaaa'. Please take a
         #  look at the konfipay API-Documentation for valid API-Endpoints",
         #  "ApiDocumentationLink":"https://portal.konfipay.de/Info/Api_Doc"}
-        raise "404 Error: #{parse(response)['Message'].inspect}"
+        raise "#{status}, message: #{parse(response)['Message'].inspect}"
       else
-        raise "Unhandled HTTP response code: #{response.status.inspect}: \"#{response.body}\""
+        raise "Unhandled HTTP response code: #{status.inspect}: \"#{response.body}\""
       end
     end
 
