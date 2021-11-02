@@ -16,6 +16,9 @@ module Konfipay
       @config.logger
     end
 
+    # Get a bearer token to use in subsequent requests from the same client instance.
+    # This will be called automatically by other methods on this class, no need to use it directly.
+    # Uses https://portal.konfipay.de/api-docs/index.html#tag/Auth/paths/~1api~1v4~1Auth~1Login~1Token/post
     def authenticate
       response = http.post(authentication_url(@config), authentication_params(@config))
       json = raise_error_or_parse!(response)
@@ -86,9 +89,13 @@ module Konfipay
     end
 
     def http
-      HTTP.timeout(@config.timeout)
-          .headers(accept: 'application/json')
-          .use(logging: { logger: @config.logger })
+      http = HTTP.timeout(@config.timeout).headers(accept: 'application/json')
+
+      if logger
+        http = http.use(logging: { logger: logger })
+      end
+
+      http
     end
 
     def authed_http
