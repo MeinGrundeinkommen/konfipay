@@ -3,13 +3,13 @@
 module Konfipay
   module Operations
     class Base
-      def initialize
-        @config = Konfipay.configuration
-        @client = Konfipay::Client.new
+      def initialize(config = nil, client = nil)
+        @config = (config || Konfipay.configuration)
+        @client = (client || Konfipay::Client.new(@config))
       end
 
       def logger
-        @config.logger
+        @config&.logger
       end
     end
   end

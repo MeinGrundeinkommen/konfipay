@@ -172,19 +172,7 @@ RSpec.describe Konfipay::Client do
         stub_request(:get, stubbed_url)
           .with(headers: request_headers)
           .to_return(status: 200,
-                     body: {
-                       documentItems: [
-                         {
-                           rId: '5c19b66h-3d6e-4e8a-4548-622bd50a7af2',
-                           href: 'api/v4.0/Document/Camt/5c19b66h-3d6e-4e8a-4548-622bd50a7af2',
-                           timestamp: '2021-10-28T23:21:59+02:00',
-                           iban: 'DE02300606010002474689',
-                           isNew: true,
-                           format: 'camt.053',
-                           fileName: '2021-10-28_C53_DE02300606010002474689_EUR_365352.xml'
-                         }
-                       ]
-                     }.to_json,
+                     body: expected_parsed_json.to_json,
                      headers: response_is_json)
       end
 

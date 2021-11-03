@@ -21,12 +21,12 @@ require_relative 'konfipay/jobs/monitor_credit_transfer'
 
 module Konfipay # rubocop:disable Style/Documentation
   class << self
-    # Fetches financial statements for all configured accounts.
-    # This returns all "new" statements since the last time this was called.
+    # Fetches all "new" statements for all configured accounts since the last time successfully used.
     # Use mark_as_read = false to keep retrieved data "unread", for testing.
     # Filter accounts by iban argument, if non-empty.
-    # callback_class::callback_method will be called asynchronously with a list of statements, for the format
+    # callback_class::callback_method will be called asynchronously with the resulting list of statements, for the format
     # see Konfipay::Operations::FetchStatements#show
+    # This method itself only returns true.
     def new_statements(callback_class, callback_method, iban = nil, mark_as_read = true) # rubocop:disable Style/OptionalBooleanParameter
       # TODO: validate input, check that class and method are implemented, check if iban is valid
       Konfipay::Jobs::FetchStatements.perform_async(
@@ -47,14 +47,15 @@ module Konfipay # rubocop:disable Style/Documentation
     #                                                 { 'iban' => iban, 'from' => from, 'to' => to })
     # end
 
-    # TODO: Document payment_data format
-    # TODO: Document format of info passed to callback
-    # TODO: IMplement some sort of validator class and use in all these kickoff-methods?
-    def initialize_credit_transfer(callback_class, callback_method, payment_data = {})
-      # TODO: validate input, check that class and method are implemented
-      Konfipay::Jobs::InitializeCreditTransfer.perform_async(callback_class, callback_method, payment_data)
-    end
+    # TODO: Implement when needed
+    # # TODO: Document payment_data format
+    # # TODO: Document format of info passed to callback
+    # # TODO: IMplement some sort of validator class and use in all these kickoff-methods?
+    # def initialize_credit_transfer(callback_class, callback_method, payment_data = {})
+    #   # TODO: validate input, check that class and method are implemented
+    #   Konfipay::Jobs::InitializeCreditTransfer.perform_async(callback_class, callback_method, payment_data)
+    # end
 
-    def initialize_direct_debit(opts); end
+    # def initialize_direct_debit(opts); end
   end
 end

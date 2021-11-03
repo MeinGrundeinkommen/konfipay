@@ -28,8 +28,6 @@ module Konfipay
       #
       # Returns transaction from all configured accounts by default.
       # Filter by using {'iban' => 'an account iban'} as filters argument.
-      #
-      #
       def fetch(which_ones, filters = {}, options = {})
         # TODO: Check that only known keys are in both hashes
 
@@ -57,8 +55,6 @@ module Konfipay
         list = json['documentItems']
 
         logger&.info "#{list.size} #{which_ones} statement docs found"
-
-        # TODO: Do this in threads?
 
         list.each do |doc|
           r_id = doc['rId']

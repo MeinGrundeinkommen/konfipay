@@ -5,12 +5,12 @@ module Konfipay
     class Base
       include Sidekiq::Worker # TODO: This should be configurable
 
-      def initialize
-        @config = Konfipay.configuration
+      def initialize(config = nil)
+        @config = (config || Konfipay.configuration)
       end
 
       def logger
-        @config.logger
+        @config&.logger
       end
 
       def run_callback(callback_class, callback_method, data)
