@@ -12,22 +12,24 @@ RSpec.describe Konfipay do
     let(:callback_method) { 'example_callback_class_method' }
 
     describe 'new_statements' do
-      subject do
+      subject { request_fetch }
+
+      let(:request_fetch) do
         described_class.new_statements(callback_class, callback_method, iban, mark_as_read)
       end
-
       let(:iban) { nil }
       let(:mark_as_read) { nil }
 
       it 'enqueues a job with passed-in arguments' do
-        expect(Konfipay::Jobs::FetchStatements).to receive(:perform_async).with(
+        allow(Konfipay::Jobs::FetchStatements).to receive(:perform_async)
+        request_fetch
+        expect(Konfipay::Jobs::FetchStatements).to have_received(:perform_async).with(
           callback_class,
           callback_method,
           'new',
           { 'iban' => iban },
           { 'mark_as_read' => mark_as_read }
         )
-        subject
       end
 
       it { is_expected.to eq(true) }
@@ -36,7 +38,7 @@ RSpec.describe Konfipay do
       # TODO: check without arguments (errors for needed, defaults)
     end
 
-    xit 'initialize_credit_transfer'
-    xit 'initialize_direct_debit'
+    # xit 'initialize_credit_transfer'
+    # xit 'initialize_direct_debit'
   end
 end

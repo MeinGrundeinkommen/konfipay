@@ -109,7 +109,7 @@ module Konfipay
       end
     end
 
-    def raise_error_or_parse!(response) # rubocop:disable Metrics/MethodLength
+    def raise_error_or_parse!(response)
       status = response.status
       case status
       when 200

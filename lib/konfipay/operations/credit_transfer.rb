@@ -6,8 +6,7 @@ module Konfipay
       # Returns info about this Credit Transfer's status:
       # TODO: format
       def fetch(_r_id)
-        # TODO:
-        # get status from konfipay
+        # TODO: get status from konfipay
         puts 'hey there, just checking for the dang transfer again yo'
         #        puts r_id
         # parse/check result

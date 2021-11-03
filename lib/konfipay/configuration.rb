@@ -10,7 +10,8 @@ module Konfipay
                   :base_url,
                   :api_client_name, # sent to konfipay with each http request as a papertrail
                   :api_client_version, # ditto
-                  :credit_monitoring_interval # in seconds, 10 minutes by default - how often to check for updates on a payment process
+                  # in seconds, 10 minutes by default - how often to check for updates on a payment process
+                  :credit_monitoring_interval
 
     def initialize
       @timeout = 10

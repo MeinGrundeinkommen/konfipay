@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-# rubocop:disable Metrics/BlockLength
-# rubocop:disable Metrics/MethodLength
-# rubocop:disable RSpec/MultipleMemoizedHelpers
-# rubocop:disable RSpec/NestedGroups
 RSpec.describe Konfipay::Client do
   let(:api_key) { "le key d'api" }
 
@@ -229,7 +225,3 @@ RSpec.describe Konfipay::Client do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength
-# rubocop:enable Metrics/MethodLength
-# rubocop:enable RSpec/MultipleMemoizedHelpers
-# rubocop:enable RSpec/NestedGroups

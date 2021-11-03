@@ -2,8 +2,6 @@
 
 require 'spec_helper'
 
-# rubocop:disable Metrics/BlockLength
-# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe Konfipay::Operations::FetchStatements do
   let(:config) { Konfipay.configuration }
   let(:client) do
@@ -106,5 +104,3 @@ RSpec.describe Konfipay::Operations::FetchStatements do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength
-# rubocop:enable RSpec/MultipleMemoizedHelpers
