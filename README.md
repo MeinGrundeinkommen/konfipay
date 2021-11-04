@@ -48,28 +48,41 @@ end
 
 ## Usage
 
-In your including Application, you need to set up a simple class with class methods where you will receive asynchronous updates for each operation:
+### Operations
+
+1) Fetch statements
+
+This gem currently supports only one "operation", which is fetching any recent financial statements from the account(s) configured in the Konfipay Portal. I.e. get a list of each incoming or outgoing transaction.
+
+To do that, make sure sidekiq is running, then kick off the fetching like this, for example from the Rails console:
 
 ```ruby
 
+Konfipay.new_statements(
+  "KonfipayCallbacks", "callback_for_new_statements", "optional iban to filter by"
+)
+
+```
+You will notice that this method immediately returns just "true". This is because all operations are actually executed asynchronously as Jobs in Sidekiq.
+But where does the data end up, you ask?
+You need to set up a simple class with a class method where you will receive asynchronous updates for each operation:
+
+
+```ruby
+
+# ./lib/konfipay_callbacks.rb
 class KonfipayCallbacks
 
-  def self.wheresmymoney(statements)
+  def self.callback_for_new_statements(statements)
     pp statements
   end
 end
 
 ```
 
-Make sure sidekiq is running, then kick off an operation like this, for example from the Rails console:
-```ruby
+KonfipayCallbacks::callback_for_new_statements will then be called in Sidekiq with the transaction data.
 
-Konfipay.new_statements(
-  "KonfipayCallbacks", "wheresmymoney", "optional iban to filter by"
-)
 
-```
-KonfipayCallbacks::wheresmymoney will then be called in Sidekiq with the transaction data.
 See each operation's method for details on parameters and callback arguments.
 Please note that callbacks can be called multiple times, depending on the operation.
 Also note that parameters need to be JSON-compatible - use strings as hash keys, no symbols, and no complex datatypes! Similarly, all returned data, while being Ruby objects, are also all JSON-compatible (for example, dates are formatted as ISO-8601 strings, no symbols, etc.).
