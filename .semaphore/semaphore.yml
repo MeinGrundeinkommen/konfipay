@@ -5,18 +5,23 @@ agent:
     type: e1-standard-2
     os_image: ubuntu2004
 blocks:
-  - name: bundle exec rspec
-    task:
-      jobs:
-        - name: bundle install
-          commands:
-            - checkout
-            - sem-version ruby 2.6.0
-            - bundle install --deployment --path vendor/bundle
-            - bundle exec rspec
   - name: rubocop
     task:
       jobs:
         - name: rubocop
           commands:
-            - bundle exec rubocop
+            - checkout
+            - sem-version ruby 2.6.0
+            - gem install bundler -Nf
+            - bundle install --deployment --path vendor/bundle
+            - bundle exec rspec
+  - name: rspec
+    task:
+      jobs:
+        - name: respec
+          commands:
+            - checkout
+            - sem-version ruby 2.6.0
+            - gem install bundler -Nf
+            - bundle install --deployment --path vendor/bundle
+            - bundle exec rspec
