@@ -20,8 +20,11 @@ RSpec.describe Konfipay do
       let(:iban) { nil }
       let(:mark_as_read) { nil }
 
-      it 'enqueues a job with passed-in arguments' do
+      before do
         allow(Konfipay::Jobs::FetchStatements).to receive(:perform_async)
+      end
+
+      it 'enqueues a job with passed-in arguments' do
         request_fetch
         expect(Konfipay::Jobs::FetchStatements).to have_received(:perform_async).with(
           callback_class,
