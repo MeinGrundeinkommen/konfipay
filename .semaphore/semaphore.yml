@@ -7,20 +7,26 @@ agent:
 blocks:
   - name: rubocop
     task:
+      prologue:
+        commands:
+          - checkout
       jobs:
         - name: rubocop
           commands:
-            - checkout
             - sem-version ruby 2.6.0
             - gem install bundler -Nf
             - bundle install --deployment --path vendor/bundle
-            - bundle exec rspec
+            - cache store gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock) vendor/bundle
+            - bundle exec rubocop
   - name: rspec
     task:
+      prologue:
+        commands:
+          - checkout
       jobs:
         - name: respec
           commands:
-            - checkout
+            - cache restore gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),gems-$SEMAPHORE_GIT_BRANCH-,gems-master-
             - sem-version ruby 2.6.0
             - gem install bundler -Nf
             - bundle install --deployment --path vendor/bundle
