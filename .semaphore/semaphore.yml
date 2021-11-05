@@ -13,9 +13,12 @@ blocks:
       jobs:
         - name: rubocop
           commands:
-            - sem-version ruby 2.6.0
+            - cache restore gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),gems-$SEMAPHORE_GIT_BRANCH-,gems-master-
+            - sem-version ruby $(cat .ruby-version)
             - gem install bundler -Nf
-            - bundle install --deployment --path vendor/bundle
+            - bundle config set --local deployment 'true'
+            - bundle config set --local path 'vendor/bundle'
+            - bundle install -j 4
             - cache store gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock) vendor/bundle
             - bundle exec rubocop
   - name: rspec
@@ -24,10 +27,12 @@ blocks:
         commands:
           - checkout
       jobs:
-        - name: respec
+        - name: rspec
           commands:
             - cache restore gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),gems-$SEMAPHORE_GIT_BRANCH-,gems-master-
-            - sem-version ruby 2.6.0
+            - sem-version ruby $(cat .ruby-version)
             - gem install bundler -Nf
-            - bundle install --deployment --path vendor/bundle
+            - bundle config set --local deployment 'true'
+            - bundle config set --local path 'vendor/bundle'
+            - bundle install -j 4
             - bundle exec rspec
