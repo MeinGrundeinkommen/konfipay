@@ -53,7 +53,8 @@ module Konfipay
 
         if json.nil? # you would think they could return an empty json list...
           logger&.info "No #{which_ones} statement docs found"
-          return result
+          yield result
+          return
         end
 
         list = json['documentItems']

@@ -2,6 +2,9 @@
 
 require 'spec_helper'
 
+# rubocop:disable RSpec/MessageSpies
+# rubocop:disable RSpec/StubbedMock
+# rubocop:disable RSpec/MultipleExpectations
 RSpec.describe Konfipay::Operations::FetchStatements do
   let(:config) { Konfipay.configuration }
   let(:client) do
@@ -11,7 +14,13 @@ RSpec.describe Konfipay::Operations::FetchStatements do
   let(:iban) { 'DE02300606010002474689' }
 
   describe 'fetch new' do
-    let(:fetch_it) { operation.fetch('new') }
+    let(:fetch_it) do
+      x = nil
+      operation.fetch('new') do |result|
+        x = result
+      end
+      x
+    end
 
     let(:r_id1) { 'x-y-z' }
     let(:r_id2) { 'f-g-h' }
@@ -71,10 +80,24 @@ RSpec.describe Konfipay::Operations::FetchStatements do
       expected_parsed_statement1 + expected_parsed_statement2
     end
 
+    let(:acknowledged_camt_file_json) do
+      {
+        'rId' => 'not important',
+        'href' => 'not important',
+        'timestamp' => 'not important',
+        'iban' => 'not important',
+        'isNew' => false,
+        'format' => 'not important',
+        'fileName' => 'not important'
+      }
+    end
+
     it 'returns list of statements' do
-      allow(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
-      allow(client).to receive(:camt_file).with(r_id1, true).and_return(parsed_camt_file1)
-      allow(client).to receive(:camt_file).with(r_id2, true).and_return(parsed_camt_file2)
+      expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
+      expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+      expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+      expect(client).to receive(:acknowledge_camt_file).with(r_id1).and_return(acknowledged_camt_file_json)
+      expect(client).to receive(:acknowledge_camt_file).with(r_id2).and_return(acknowledged_camt_file_json)
       expect(fetch_it).to eq(expected_parsed_statements)
     end
 
@@ -85,22 +108,89 @@ RSpec.describe Konfipay::Operations::FetchStatements do
       end
     end
 
+    context 'when there is an error fetching the second camt file' do
+      it "doesn't acknowledge the files" do
+        expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
+        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+        expect(client).to receive(:camt_file).with(r_id2, false).and_raise('timeout haha')
+        expect { fetch_it }.to raise_error('timeout haha')
+      end
+    end
+
+    context 'when there is an error processing the results' do
+      let(:fetch_it) do
+        x = nil
+        operation.fetch('new') do |_result|
+          raise 'whups butter fingers'
+        end
+        x
+      end
+
+      it "doesn't acknowledge the files" do
+        expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
+        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+        expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+        expect { fetch_it }.to raise_error('whups butter fingers')
+      end
+    end
+
+    context "when an acknowledge doesn't work" do
+      it 'raises an error about it' do
+        expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
+        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+        expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+        expect(client).to receive(:acknowledge_camt_file).with(r_id1).and_return(
+          {
+            'rId' => 'not important',
+            'href' => 'not important',
+            'timestamp' => 'not important',
+            'iban' => 'not important',
+            'isNew' => true,
+            'format' => 'not important',
+            'fileName' => 'not important'
+          }
+        )
+        expect { fetch_it }.to raise_error("Tried to acknowledge #{r_id1} but was still shown as new after!")
+      end
+    end
+
     context 'with filters' do
+      let(:fetch_it) do
+        x = nil
+        operation.fetch('new', { 'iban' => iban }) do |result|
+          x = result
+        end
+        x
+      end
+
       it 'passes iban filter to client' do
-        allow(client).to receive(:new_statements).with({ 'iban' => iban }).and_return(statements_parsed_json)
-        allow(client).to receive(:camt_file).with(r_id1, true).and_return(parsed_camt_file1)
-        allow(client).to receive(:camt_file).with(r_id2, true).and_return(parsed_camt_file2)
-        expect(operation.fetch('new', { 'iban' => iban })).to eq(expected_parsed_statements)
+        expect(client).to receive(:new_statements).with({ 'iban' => iban }).and_return(statements_parsed_json)
+        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+        expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+        expect(client).to receive(:acknowledge_camt_file).with(r_id1).and_return(acknowledged_camt_file_json)
+        expect(client).to receive(:acknowledge_camt_file).with(r_id2).and_return(acknowledged_camt_file_json)
+        expect(fetch_it).to eq(expected_parsed_statements)
       end
     end
 
     context 'with options' do
+      let(:fetch_it) do
+        x = nil
+        operation.fetch('new', {}, { 'mark_as_read' => false }) do |result|
+          x = result
+        end
+        x
+      end
+
       it 'passes mark_as_read to client' do
-        allow(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
-        allow(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
-        allow(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
-        expect(operation.fetch('new', {}, { 'mark_as_read' => false })).to eq(expected_parsed_statements)
+        expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
+        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+        expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+        expect(fetch_it).to eq(expected_parsed_statements)
       end
     end
   end
 end
+# rubocop:enable RSpec/MessageSpies
+# rubocop:enable RSpec/StubbedMock
+# rubocop:enable RSpec/MultipleExpectations

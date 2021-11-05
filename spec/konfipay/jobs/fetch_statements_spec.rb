@@ -24,10 +24,12 @@ RSpec.describe Konfipay::Jobs::FetchStatements do
         { 'bla' => 'blub' },
         { 'ladi' => 'da' }
       ).and_return(data)
+      allow(ExampleCallbackClass).to receive(:example_callback_fetch_statements)
     end
 
-    it 'just calls the operation and runs the callback with the result' do
-      expect(do_it).to eq([:example_callback_fetch_statements, data])
+    it 'calls the operation' do
+      do_it
+      expect(operation).to have_received(:fetch)
     end
   end
 end
