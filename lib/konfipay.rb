@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require 'active_support'
+require 'active_support/core_ext'
 require 'http'
-require 'sepa_king'
+# require 'sepa_king'
 require 'camt_parser'
 require 'sidekiq'
 

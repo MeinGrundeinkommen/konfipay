@@ -36,9 +36,13 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop-rspec'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'webmock'
+  spec.add_dependency 'activesupport'
   spec.add_dependency 'camt_parser'
   spec.add_dependency 'http'
   spec.add_dependency 'json'
-  spec.add_dependency 'sepa_king'
+  # spec.add_dependency 'sepa_king'
   spec.add_dependency 'sidekiq'
+  spec.metadata = {
+    'rubygems_mfa_required' => 'true'
+  }
 end
