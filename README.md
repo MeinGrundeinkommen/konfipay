@@ -71,7 +71,7 @@ You need to set up a simple class with a class method where you will receive asy
 
 ```ruby
 
-# lib/konfipay_callbacks.rb
+# lib/konfipay_callbacks.rb # for example, a model works too, this class just needs to be loaded in the sidekiq process
 class KonfipayCallbacks
 
   def self.callback_for_new_statements(statements)
