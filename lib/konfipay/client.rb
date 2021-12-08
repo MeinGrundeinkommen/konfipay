@@ -88,6 +88,19 @@ module Konfipay
       "#{config.base_url}/api/v4/Document/Camt/#{r_id}#{query_params(params)}"
     end
 
+    # Acknowledge a camt file, i.e. mark it as "read".
+    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt~1{rId}~1Acknowledge/post
+    # Returns the same output as #new_statements, but with only one document.
+    # Can raise various network errors.
+    def acknowledge_camt_file(r_id)
+      response = authed_http.post(acknowledge_camt_file_url(@config, r_id))
+      raise_error_or_parse!(response)
+    end
+
+    def acknowledge_camt_file_url(config, r_id)
+      "#{config.base_url}/api/v4/Document/Camt/#{r_id}/Acknowledge"
+    end
+
     def http
       http = HTTP.timeout(@config.timeout).headers(accept: 'application/json')
       http = http.use(logging: { logger: logger }) if logger

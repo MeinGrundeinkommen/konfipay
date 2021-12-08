@@ -58,6 +58,7 @@ To do that, make sure sidekiq is running, then kick off the fetching like this, 
 
 ```ruby
 
+# rails c
 Konfipay.new_statements(
   "KonfipayCallbacks", "callback_for_new_statements", "optional iban to filter by"
 )
@@ -70,7 +71,7 @@ You need to set up a simple class with a class method where you will receive asy
 
 ```ruby
 
-# ./lib/konfipay_callbacks.rb
+# lib/konfipay_callbacks.rb # for example, a model works too, this class just needs to be loaded in the sidekiq process
 class KonfipayCallbacks
 
   def self.callback_for_new_statements(statements)
@@ -91,7 +92,9 @@ For developing features or hacking on this gem, note that all business logic is 
 you can use directly without the Sidekiq jobs:
 
 ```ruby
-result = Konfipay::Operations::FetchStatements.new.fetch("new", {"iban" => "an iban"}, {"mark_as_read" => false})
+Konfipay::Operations::FetchStatements.new.fetch("new", {"iban" => "an iban"}, {"mark_as_read" => false}) do |result|
+  pp result
+end
 ```
 
 ## Development Notes

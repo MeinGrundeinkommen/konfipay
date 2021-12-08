@@ -2,6 +2,6 @@
 
 class ExampleCallbackClass
   def self.example_callback_fetch_statements(results)
-    [:example_callback_fetch_statements, results]
+    results
   end
 end
