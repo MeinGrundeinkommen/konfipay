@@ -71,6 +71,34 @@ module Konfipay
       "#{config.base_url}/api/v4/Document/Camt#{query_params(params)}"
     end
 
+    # Get "history" statements from Konfipay API from this endpoint:
+    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt~1History/get
+    #
+    # Same return format as #new_statements
+    #
+    # Pass in a params hash, it will be turned into query params.
+    #
+    # You will always need "start" and "end" as date strings in format
+    # "yyyy-MM-dd", i.e. ISO 8601.
+    #
+    # Optonally an IBAN to filter by.
+    #
+    # {
+    #   "iban"  => "DE02300606010002474689",
+    #   "start" => "1999-12-31",
+    #   "end"   => "3000-01-01"
+    # }
+    #
+    # Can raise various network errors.
+    def statement_history(params = {})
+      response = authed_http.get(statement_history_url(@config, params))
+      raise_error_or_parse!(response)
+    end
+
+    def statement_history_url(config, params)
+      "#{config.base_url}/api/v4/Document/Camt/History#{query_params(params)}"
+    end
+
     # Get and parse a single camt.053 document with given r_id from endpoint:
     # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt~1{rId}/get
     # If mark_as_read = false, will not mark the document as read, i.e. keep as "new".

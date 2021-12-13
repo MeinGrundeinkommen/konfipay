@@ -52,9 +52,11 @@ end
 
 1) Fetch statements
 
-This gem currently supports only one "operation", which is fetching any recent financial statements from the account(s) configured in the Konfipay Portal. I.e. get a list of each incoming or outgoing transaction.
+This gem currently supports only one "operation", but in two "modes":
+1a) "new" statements, which is fetching any recent financial statements from the account(s) configured in the Konfipay Portal. I.e. get a list of each incoming or outgoing transaction.
+1b) "history" of statements, i.e. get a list of financial statements in a given timeframe.
 
-To do that, make sure sidekiq is running, then kick off the fetching like this, for example from the Rails console:
+To use this, make sure sidekiq is running, then kick off the fetching like this, for example from the Rails console:
 
 ```ruby
 

@@ -27,10 +27,9 @@ module Konfipay
     # Use mark_as_read = false to keep retrieved data "unread", for testing.
     # Filter accounts by iban argument, if non-empty.
     # callback_class::callback_method will be called asynchronously with the resulting list of statements,
-    # for the format see Konfipay::Operations::FetchStatements#show
+    # for the format see Konfipay::Operations::FetchStatements#fetch
     # This method itself only returns true.
     def new_statements(callback_class, callback_method, iban = nil, mark_as_read = true) # rubocop:disable Style/OptionalBooleanParameter
-      # TODO: validate input, check that class and method are implemented, check if iban is valid
       Konfipay::Jobs::FetchStatements.perform_async(
         callback_class,
         callback_method,
@@ -41,13 +40,22 @@ module Konfipay
       true
     end
 
-    # TODO: Not needed now, but might be useful
-    # def statements(callback_class, callback_method, iban = nil, from = nil, to = nil)
-    #   # TODO: validate input, check that class and method are implemented, check if iban is valid,
-    #   # check from and to are Date objects, check dates are logical
-    #   Konfipay::Jobs::FetchStatements.perform_async(callback_class, callback_method, 'history',
-    #                                                 { 'iban' => iban, 'from' => from, 'to' => to })
-    # end
+    # Fetches "history" of statements for all configured accounts between the two given dates
+    # (as strings in iso-8601 format).
+    # Filter accounts by iban argument, if non-empty.
+    # callback_class::callback_method will be called asynchronously with the resulting list of statements,
+    # for the format see Konfipay::Operations::FetchStatements#fetch
+    # This method itself only returns true.
+    def statement_history(callback_class, callback_method, iban = nil, from = Date.today.iso8601, to = from)
+      Konfipay::Jobs::FetchStatements.perform_async(
+        callback_class,
+        callback_method,
+        'history',
+        { 'iban' => iban, 'from' => from, 'to' => to },
+        {}
+      )
+      true
+    end
 
     # TODO: Implement when needed
     # # TODO: Document payment_data format
