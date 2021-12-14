@@ -57,7 +57,7 @@ module Konfipay
         if mark_as_read
           acknowledge_camt_files(r_ids_fetched)
         else
-          logger&.debug 'Leaving files as unread'
+          logger&.info 'Leaving files as unread'
         end
 
         true
