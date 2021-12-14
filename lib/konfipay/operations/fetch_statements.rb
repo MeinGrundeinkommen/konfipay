@@ -74,7 +74,7 @@ module Konfipay
           mark_as_read = false
           from_date = begin
             Date.parse(filters['from'])
-          rescue Date::Error
+          rescue Date::Error, TypeError
             nil
           end
           unless from_date.is_a?(Date)
@@ -84,7 +84,7 @@ module Konfipay
 
           to_date = begin
             Date.parse(filters['to'])
-          rescue Date::Error
+          rescue Date::Error, TypeError
             nil
           end
           unless to_date.is_a?(Date)
