@@ -132,12 +132,7 @@ RSpec.describe Konfipay::Client do
     end
   end
 
-  describe 'new_statements' do
-    let(:stubbed_url) { 'https://portal.konfipay.de/api/v4/Document/Camt' }
-    let(:result) { client.new_statements }
-
-    it_behaves_like 'api error handling', :get
-
+  shared_examples_for 'no-content handling' do
     context 'when konfipay returns no content' do
       before do
         stub_login_token_api_call!
@@ -150,7 +145,9 @@ RSpec.describe Konfipay::Client do
         expect(result).to eq(nil)
       end
     end
+  end
 
+  shared_examples_for 'documentItems response parsing' do
     context 'when konfipay returns success' do
       let(:expected_parsed_json) do
         { 'documentItems' =>
@@ -177,16 +174,25 @@ RSpec.describe Konfipay::Client do
           expect(result).to eq(expected_parsed_json)
         end
       end
-
-      context 'with iban filter argument' do
-        let(:stubbed_url) { 'https://portal.konfipay.de/api/v4/Document/Camt?iban=an%20iban%20maybe' }
-        let(:result) { client.new_statements('iban' => 'an iban maybe') }
-
-        it 'returns list of new documents' do
-          expect(result).to eq(expected_parsed_json)
-        end
-      end
     end
+  end
+
+  describe 'new_statements' do
+    let(:stubbed_url) { 'https://portal.konfipay.de/api/v4/Document/Camt' }
+    let(:result) { client.new_statements }
+
+    it_behaves_like 'api error handling', :get
+    it_behaves_like 'no-content handling'
+    it_behaves_like 'documentItems response parsing'
+  end
+
+  describe 'statement_history' do
+    let(:stubbed_url) { 'https://portal.konfipay.de/api/v4/Document/Camt/History' }
+    let(:result) { client.statement_history }
+
+    it_behaves_like 'api error handling', :get
+    it_behaves_like 'no-content handling'
+    it_behaves_like 'documentItems response parsing'
   end
 
   describe 'camt_file' do
