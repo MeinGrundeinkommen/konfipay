@@ -39,6 +39,7 @@ In Rails, you'll want to use an initializer like this:
 
 Konfipay.configure do |c|
   c.api_key = ENV['KONFIPAY_API_KEY']
+  # Tip: Use https://api.rubyonrails.org/classes/ActiveSupport/TaggedLogging.html
   c.logger = Rails.logger
   # You can also customize values:
   c.api_client_name = "Your organization (#{Rails.env}) #{c.api_client_name}"
@@ -66,7 +67,18 @@ Konfipay.new_statements(
 )
 
 ```
-You will notice that this method immediately returns just "true". This is because all operations are actually executed asynchronously as Jobs in Sidekiq.
+
+or
+
+```ruby
+
+Konfipay.statement_history(
+  "KonfipayCallbacks", "callback_for_history_statements", "optional iban to filter by", (Date.today - 3).iso8601, Date.today.iso8601
+)
+
+```
+
+You will notice that these methods immediately return just "true". This is because all operations are actually executed asynchronously as Jobs in Sidekiq.
 But where does the data end up, you ask?
 You need to set up a simple class with a class method where you will receive asynchronous updates for each operation:
 

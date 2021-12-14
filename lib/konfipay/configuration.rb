@@ -19,9 +19,6 @@ module Konfipay
       @api_client_name = 'Konfipay Ruby Client'
       @api_client_version = Konfipay::VERSION
       @credit_monitoring_interval = 10 * 60 * 60
-
-      # TODO: If logger is given, maybe wrap, copy, or extend the instance somehow so
-      # log messages get prefixed with something like "Konfipay #{VERSION}: " ?
     end
 
     def check!
