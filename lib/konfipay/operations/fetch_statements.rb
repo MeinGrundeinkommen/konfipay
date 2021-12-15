@@ -37,12 +37,14 @@ module Konfipay
       def fetch(which_ones, filters = {}, options = {})
         raise 'You need to provide a block' unless block_given?
 
+        logger&.info "#{which_ones.inspect} fetch operation started"
+
         filter_opts, mark_as_read = *prepare_options(which_ones, filters, options)
 
         docs = fetch_document_list(which_ones, filter_opts)
 
         if docs.nil? # you would think they could return an empty docs list...
-          logger&.info "No #{which_ones} statement docs found"
+          logger&.info "No #{which_ones} statement docs found, operation finished"
           yield []
           return
         end
@@ -59,6 +61,8 @@ module Konfipay
         else
           logger&.info 'Leaving files as unread'
         end
+
+        logger&.info "#{which_ones.inspect} fetch operation finished"
 
         true
       end
