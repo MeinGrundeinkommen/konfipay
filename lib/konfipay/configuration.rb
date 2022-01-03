@@ -6,7 +6,7 @@ module Konfipay
   class Configuration
     attr_accessor :api_key, # API key used to access Konfipay API. Can be configured in Konfipay Portal.
                   :logger, # Optional logger object - has to respond to debug, info, etc.
-                  :timeout, # for http requests to API, 10s by default
+                  :timeout, # for http requests to API, 30s by default
                   :base_url,
                   :api_client_name, # sent to konfipay with each http request as a papertrail
                   :api_client_version, # ditto
@@ -14,7 +14,7 @@ module Konfipay
                   :credit_monitoring_interval
 
     def initialize
-      @timeout = 10
+      @timeout = 30
       @base_url = BASE_URL
       @api_client_name = 'Konfipay Ruby Client'
       @api_client_version = Konfipay::VERSION

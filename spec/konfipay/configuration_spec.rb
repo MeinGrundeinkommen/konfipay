@@ -7,7 +7,7 @@ RSpec.describe Konfipay::Configuration do
     [
       [:api_key, nil],
       [:logger, nil],
-      [:timeout, 10],
+      [:timeout, 30],
       [:base_url, 'https://portal.konfipay.de'],
       [:api_client_name, 'Konfipay Ruby Client'],
       [:api_client_version, Konfipay::VERSION],
