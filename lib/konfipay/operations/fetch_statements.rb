@@ -20,7 +20,7 @@ module Konfipay
       #
       # Or an empty array if there is nothing new or matching.
       #
-      # "which_ones" argument supports "new" and "history" currently.
+      # "mode" argument supports "new" and "history" currently.
       #
       # In "new" mode, transactions are retrieved and marked as "read" after successful
       # return of data, so transactions are only returned once.
@@ -34,23 +34,23 @@ module Konfipay
       #
       # Returns transaction from all configured accounts by default.
       # Filter by using {'iban' => 'an account iban'} as filters argument.
-      def fetch(which_ones, filters = {}, options = {})
+      def fetch(mode, filters = {}, options = {})
         raise 'You need to provide a block' unless block_given?
 
-        logger&.info "#{which_ones.inspect} fetch operation started"
+        logger&.info "#{mode.inspect} fetch operation started"
 
-        filter_opts, mark_as_read = *prepare_options(which_ones, filters, options)
+        filter_opts, mark_as_read = *prepare_options(mode, filters, options)
 
-        docs = fetch_document_list(which_ones, filter_opts)
+        docs = fetch_document_list(mode, filter_opts)
 
         if docs.nil? # you would think they could return an empty docs list...
-          logger&.info "No #{which_ones} statement docs found, operation finished"
+          logger&.info "No #{mode} statement docs found, operation finished"
           yield []
           return
         end
 
         list = docs['documentItems']
-        logger&.info "#{list.size} #{which_ones} statement docs found"
+        logger&.info "#{list.size} #{mode} statement docs found"
 
         r_ids_fetched, result = *fetch_and_parse_documents(list)
 
@@ -62,15 +62,15 @@ module Konfipay
           logger&.info 'Leaving files as unread'
         end
 
-        logger&.info "#{which_ones.inspect} fetch operation finished"
+        logger&.info "#{mode.inspect} fetch operation finished"
 
         true
       end
 
-      def prepare_options(which_ones, filters = {}, options = {})
+      def prepare_options(mode, filters = {}, options = {})
         filter_opts = {}
 
-        case which_ones
+        case mode
         when 'new'
           mark_as_read = true
           mark_as_read = false if options['mark_as_read'] == false
@@ -104,7 +104,7 @@ module Konfipay
           filter_opts['start'] = from_date.iso8601
           filter_opts['end'] = to_date.iso8601
         else
-          raise "#{which_ones.inspect} mode is not implemented yet!"
+          raise "#{mode.inspect} mode is not implemented yet!"
         end
 
         iban = filters['iban'].presence
@@ -113,14 +113,14 @@ module Konfipay
         [filter_opts, mark_as_read]
       end
 
-      def fetch_document_list(which_ones, filter_opts = {})
-        case which_ones
+      def fetch_document_list(mode, filter_opts = {})
+        case mode
         when 'new'
           @client.new_statements(filter_opts)
         when 'history'
           @client.statement_history(filter_opts)
         else
-          raise "#{which_ones.inspect} mode is not implemented yet!"
+          raise "#{mode.inspect} mode is not implemented yet!"
         end
       end
 
