@@ -39,6 +39,7 @@ In Rails, you'll want to use an initializer like this:
 
 Konfipay.configure do |c|
   c.api_key = ENV['KONFIPAY_API_KEY']
+  # Tip: Use https://api.rubyonrails.org/classes/ActiveSupport/TaggedLogging.html
   c.logger = Rails.logger
   # You can also customize values:
   c.api_client_name = "Your organization (#{Rails.env}) #{c.api_client_name}"
@@ -52,9 +53,11 @@ end
 
 1) Fetch statements
 
-This gem currently supports only one "operation", which is fetching any recent financial statements from the account(s) configured in the Konfipay Portal. I.e. get a list of each incoming or outgoing transaction.
+This gem currently supports only one "operation", but in two "modes":
+1a) "new" statements, which is fetching any recent financial statements from the account(s) configured in the Konfipay Portal. I.e. get a list of each incoming or outgoing transaction.
+1b) "history" of statements, i.e. get a list of financial statements in a given timeframe.
 
-To do that, make sure sidekiq is running, then kick off the fetching like this, for example from the Rails console:
+To use this, make sure sidekiq is running, then kick off the fetching like this, for example from the Rails console:
 
 ```ruby
 
@@ -64,7 +67,18 @@ Konfipay.new_statements(
 )
 
 ```
-You will notice that this method immediately returns just "true". This is because all operations are actually executed asynchronously as Jobs in Sidekiq.
+
+or
+
+```ruby
+
+Konfipay.statement_history(
+  "KonfipayCallbacks", "callback_for_history_statements", "optional iban to filter by", "2022-01-15", "2022-01-31"
+)
+
+```
+
+You will notice that these methods immediately return just "true". This is because all operations are actually executed asynchronously as Jobs in Sidekiq.
 But where does the data end up, you ask?
 You need to set up a simple class with a class method where you will receive asynchronous updates for each operation:
 

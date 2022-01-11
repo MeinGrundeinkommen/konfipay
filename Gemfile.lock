@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    konfipay (1.1.0)
+    konfipay (1.2.0)
       activesupport
       camt_parser
       http
@@ -11,12 +11,11 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.4.4)
+    activesupport (7.0.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.2)
@@ -27,11 +26,11 @@ GEM
     connection_pool (2.2.5)
     crack (0.4.5)
       rexml
-    diff-lcs (1.4.4)
+    diff-lcs (1.5.0)
     docile (1.4.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    ffi (1.15.4)
+    ffi (1.15.5)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
@@ -51,10 +50,10 @@ GEM
       ffi-compiler (~> 1.0)
       rake (~> 13.0)
     method_source (1.0.0)
-    mini_portile2 (2.6.1)
+    mini_portile2 (2.7.1)
     minitest (5.15.0)
-    nokogiri (1.12.5)
-      mini_portile2 (~> 2.6.1)
+    nokogiri (1.13.0)
+      mini_portile2 (~> 2.7.0)
       racc (~> 1.4)
     parallel (1.21.0)
     parser (3.1.0.0)
@@ -65,7 +64,7 @@ GEM
     public_suffix (4.0.6)
     racc (1.6.0)
     rack (2.2.3)
-    rainbow (3.0.0)
+    rainbow (3.1.1)
     rake (13.0.6)
     redis (4.5.1)
     regexp_parser (2.2.0)
@@ -120,7 +119,6 @@ GEM
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
-    zeitwerk (2.5.3)
 
 PLATFORMS
   ruby
