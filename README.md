@@ -73,7 +73,7 @@ or
 ```ruby
 
 Konfipay.statement_history(
-  "KonfipayCallbacks", "callback_for_history_statements", "optional iban to filter by", (Date.today - 3).iso8601, Date.today.iso8601
+  "KonfipayCallbacks", "callback_for_history_statements", "optional iban to filter by", "2022-01-15", "2022-01-31"
 )
 
 ```
