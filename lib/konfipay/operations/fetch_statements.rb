@@ -146,13 +146,18 @@ module Konfipay
         result = []
         statement.entries.each do |entry|
           entry.transactions.each do |transaction|
+
+
             result << {
               'name' => transaction.name.presence,
               'iban' => transaction.iban.presence,
               'bic' => transaction.bic.presence,
               'type' => transaction.debit? ? 'debit' : 'credit',
               'amount_in_cents' => transaction.amount_in_cents,
+              'fees_in_cents' => nil,
               'currency' => transaction.currency.presence,
+              # TODO: For bounces, use "book(ing) date" or return as "bounced_on"?
+              'bounced_on' => nil,
               'executed_on' => entry.value_date.iso8601,
               'reference' => transaction.remittance_information.presence,
               'end_to_end_reference' => transaction.end_to_end_reference.presence

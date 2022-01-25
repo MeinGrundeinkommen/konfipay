@@ -44,7 +44,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
   end
 
   let(:parsed_camt_file2) do
-    CamtParser::String.parse(File.read('spec/examples/camt053/failed_debit.xml'))
+    CamtParser::String.parse(File.read('spec/examples/camt053/failed_debit_with_charges.xml'))
   end
 
   let(:expected_parsed_statement1) do
@@ -53,16 +53,17 @@ RSpec.describe Konfipay::Operations::FetchStatements do
 
   let(:expected_parsed_statement2) do
     [
-      { 'amount_in_cents' => 68,
+      { 'amount_in_cents' => 1000,
+        'fees_in_cents' => 550,
         'bic' => nil,
         'currency' => 'EUR',
-        'end_to_end_reference' => nil,
-        'executed_on' => '2021-11-01',
-        'iban' => nil,
-        'name' => nil,
+        'end_to_end_reference' => "MANDATE123-05.01.2022",
+        'executed_on' => '2022-01-05',
+        'bounced_on' => '2022-01-22',
+        'iban' => "DE02700205000007808005",
+        'name' => "Unsere Organisation",
         'reference' =>
-        'BERECHTIGTE ABLEHNUNG EINER AUTORISIERTEN UBERWEISUNG / LASTSCHRIFT MANGELS ' \
-        'KONTODECKUNG ODER WEGEN FEHLENDER / FEHLERHAFTEN ANGABEN.',
+        'Retoure SEPA Lastschrift vom 07.01.2022, Rueckgabegrund: MD06 Lastschriftwiderspruch durch den Zahlungspflichtigen SVWZ: RETURN/REFUND, MAND ATE123: 8.00 EUR in den Grundeinkommenstopf - 2.00 EUR Spende an den Verein. Vielen Dank EREF: MANDATE123-05.01.2022 ENTG: 3,00 EUR Entgelt Rück lastschrift/Rückscheck und 2,50 EUR Entgelt eingehende Rücklastschrift ORG.BETR.: 10,00 EUR IBAN: DE80733900000100121738 BIC:',
         'type' => 'debit' }
     ]
   end
