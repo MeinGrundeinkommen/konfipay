@@ -200,7 +200,7 @@ RSpec.describe Konfipay::Client do
     let(:stubbed_url) { "https://portal.konfipay.de/api/v4/Document/Camt/#{r_id}" }
     let(:result) { client.camt_file(r_id) }
 
-    let(:camt_xml) { File.read('spec/examples/camt053/CAMT.053_458b71be-2ba3-488e-a898-11e6a5b421d6.XML') }
+    let(:camt_xml) { File.read('spec/examples/camt053/mixed_examples.xml') }
 
     it_behaves_like 'api error handling', :get
 
