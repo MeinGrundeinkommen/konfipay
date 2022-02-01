@@ -135,37 +135,9 @@ module Konfipay
           r_ids_fetched << r_id
           logger&.info "fetching #{r_id.inspect}"
           camt = @client.camt_file(r_id, false)
-          camt.statements.each do |statement|
-            result += parse_statement(statement)
-          end
+          result += Konfipay::CamtDigester.new(camt).statements
         end
         [r_ids_fetched, result]
-      end
-
-      def parse_statement(statement)
-        result = []
-        statement.entries.each do |entry|
-          entry.transactions.each do |transaction|
-
-#            binding.pry
-
-            result << {
-              'name' => transaction.name.presence,
-              'iban' => transaction.iban.presence,
-              'type' => transaction.debit? ? 'debit' : 'credit',
-              'amount_in_cents' => transaction.amount_in_cents,
-              'currency' => transaction.currency.presence,
-              "original_amount_in_cents" => nil,
-              'fees' => nil,
-              'executed_on' => entry.booking_date.iso8601,
-              'end_to_end_reference' => transaction.end_to_end_reference.presence,
-              'remittance_information' => transaction.remittance_information.presence,
-              "return_information" => nil,
-              "additional_information" => entry.additional_information.presence,
-            }
-          end
-        end
-        result
       end
 
       def acknowledge_camt_files(r_ids_fetched)
