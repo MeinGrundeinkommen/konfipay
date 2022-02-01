@@ -35,8 +35,8 @@ module Konfipay
 
     def base_hash(entry, transaction)
       {
-        'name' => nil,
-        'iban' => nil,
+        'name' => transaction.name.presence,
+        'iban' => transaction.iban.presence,
         'type' => transaction.debit? ? 'debit' : 'credit',
         'amount_in_cents' => nil,
         'currency' => transaction.currency.presence,
@@ -58,8 +58,6 @@ module Konfipay
       original_amount = parse_cents(xml.xpath('AmtDtls/InstdAmt/Amt').text)
 
       {
-        'name' => transaction.debitor.name.presence || transaction.creditor.name.presence,
-        'iban' => transaction.debitor.iban.presence,
         'amount_in_cents' => transaction_amount,
         'original_amount_in_cents' => original_amount,
         'fees' => extract_fees(xml),
@@ -69,9 +67,7 @@ module Konfipay
 
     def credit_hash(transaction)
       {
-        'amount_in_cents' => transaction.amount_in_cents,
-        'name' => transaction.name.presence,
-        'iban' => transaction.iban.presence
+        'amount_in_cents' => transaction.amount_in_cents
       }
     end
 
