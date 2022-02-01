@@ -2,6 +2,11 @@
 
 module Konfipay
   # Adds functionality on top of camt_parser gem
+  # To use directly for debugging:
+  #
+  # rails c (in including project):
+  #
+  # Konfipay::CamtDigester.new(CamtParser::String.parse(File.read("camtfile.XML"))).statements
   class CamtDigester
 
     # Expects an instance of CamtParser::Format053::Base :
