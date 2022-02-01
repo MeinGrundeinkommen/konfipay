@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require "pry"
+require 'pry'
 require 'simplecov'
 SimpleCov.start
 require 'konfipay'
