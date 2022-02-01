@@ -5,16 +5,26 @@ module Konfipay
     class FetchStatements < Base
       # Returns transactions like this to the provided block:
       # [
+      #
       #   {
-      #     "name" => "John Doe",
-      #     "iban" => "DE02700205000007808005",
-      #     "bic" => "DEUS2149509",
-      #     "type" => "credit", # or "debit"
-      #     "amount_in_cents" => 10023,
-      #     "currency" => "EUR",
-      #     "executed_on" => "2016-05-02", # also called "value date"
-      #     "reference" => "Text on bank statement",
-      #     "end_to_end_reference" => "some-unique-ref-1", # not always present
+      #     'amount_in_cents' => 1350,
+      #     'currency' => 'EUR',
+      #     'end_to_end_reference' => 'some-unique-ref-1', # not always present or unique
+      #     'executed_on' => '2022-01-05', # the "booking date"
+      #     'iban' => 'DE02300606010002474689', # name and iban are those of the debitor if this is a debit or vice versa
+      #     'name' => 'Unsere Organisation',
+      #     'remittance_information' => 'text on bank statement',
+      #     'type' => 'debit', # or "credit" - i.e. money going out from this account or money going in
+      #     'additional_information' => 'Retourenbelastung', # basically a comment
+      #     # The following fields are not nil only for "failed" debits (returns/reversals):
+      #     'original_amount_in_cents' => 1100,
+      #     'fees' => [
+      #       {
+      #         'amount_in_cents' => 250,
+      #         'from_bic' => 'OURBIC123'
+      #       }
+      #     ],
+      #     'return_information' => 'Konto aufgelöst'
       #   },
       # ]
       #
