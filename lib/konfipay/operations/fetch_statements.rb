@@ -11,7 +11,8 @@ module Konfipay
       #     'currency' => 'EUR',
       #     'end_to_end_reference' => 'some-unique-ref-1', # not always present or unique
       #     'executed_on' => '2022-01-05', # the "booking date"
-      #     'iban' => 'DE02300606010002474689', # name and iban are those of the debitor if this is a debit or vice versa
+      #     'iban' => 'DE02300606010002474689', # name and iban are those of the debitor
+      #                                         # if this is a debit or vice versa
       #     'name' => 'Unsere Organisation',
       #     'remittance_information' => 'text on bank statement',
       #     'type' => 'debit', # or "credit" - i.e. money going out from this account or money going in
