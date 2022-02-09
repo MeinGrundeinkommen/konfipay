@@ -28,11 +28,7 @@ module Konfipay
 
     def create_hash(entry, transaction)
       base_hash(entry, transaction).tap do |base|
-        if transaction.debit?
-          base.merge!(debit_hash(transaction))
-        else
-          base.merge!(credit_hash(transaction))
-        end
+        base.merge!(transaction.debit? ? debit_hash(transaction) : credit_hash(transaction))
       end
     end
 
