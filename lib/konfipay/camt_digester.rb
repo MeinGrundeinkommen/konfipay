@@ -19,18 +19,21 @@ module Konfipay
       @camt.statements.each do |statement|
         statement.entries.each do |entry|
           entry.transactions.each do |transaction|
-            base = base_hash(entry, transaction)
-            if transaction.debit?
-              base.merge!(debit_hash(transaction))
-            else
-              base.merge!(credit_hash(transaction))
-            end
-
-            result << base
+            result << create_hash(entry, transaction)
           end
         end
       end
       result
+    end
+
+    def create_hash(entry, transaction)
+      base_hash(entry, transaction).tap do |base|
+        if transaction.debit?
+          base.merge!(debit_hash(transaction))
+        else
+          base.merge!(credit_hash(transaction))
+        end
+      end
     end
 
     def base_hash(entry, transaction)

@@ -6,8 +6,9 @@ RSpec.describe Konfipay::CamtDigester do
 
   let(:parsed_camt_file) do
     # This file is based on a real example, but anonymized.
-    # It contains an entry with a debit collection with two transactions - i.e.
-    # "our" side sent out money to two recipients in one go.
+    # It contains an entry with a credit collection with two transactions - i.e.
+    # "our" side sent out money to two recipients in one go, and this shows up in our
+    # account as a debit with two transactions.
     CamtParser::String.parse(File.read('spec/examples/camt053/outgoing_collection.xml'))
   end
 
