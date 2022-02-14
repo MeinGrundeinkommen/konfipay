@@ -21,51 +21,176 @@ RSpec.describe Konfipay::Operations::FetchStatements do
       [{
         'rId' => r_id1,
         'href' => "api/v4.0/Document/Camt/#{r_id1}",
-        'timestamp' => '2021-10-28T23:21:59+02:00',
+        'timestamp' => '2022-01-05T23:21:59+02:00',
         'iban' => iban,
         'isNew' => true,
         'format' => 'camt.053',
-        'fileName' => "2021-10-28_C53_#{iban}_EUR_365352.xml"
+        'fileName' => "2021-01-05_C53_#{iban}_EUR_365352.xml"
       },
 
        {
          'rId' => r_id2,
          'href' => "api/v4.0/Document/Camt/#{r_id2}",
-         'timestamp' => '2021-10-28T23:21:59+02:00',
+         'timestamp' => '2022-01-21T23:21:59+02:00',
          'iban' => iban,
          'isNew' => true,
          'format' => 'camt.053',
-         'fileName' => "2021-10-28_C53_#{iban}_EUR_365352.xml"
+         'fileName' => "2022-01-21_C53_#{iban}_EUR_365352.xml"
        }] }
   end
 
   let(:parsed_camt_file1) do
-    CamtParser::String.parse(File.read('spec/examples/camt053/CAMT.053_458b71be-2ba3-488e-a898-11e6a5b421d6.XML'))
+    # This file is based on a real example, but anonymized. It contains several types of transactions:
+    # * a normal credit - someone sent us money via Dauerauftrag
+    # * a debit by our bank - they charge us for account fees
+    # * a debit collection - we request money from three different user accounts in one "batch"
+    # * a debit return - one of the debits has "bounced" as the account is no more (it is an ex-account)
+    # * a debit return - one of the debits is canceled without fees, a "Storno"
+    CamtParser::String.parse(File.read('spec/examples/camt053/mixed_examples.xml'))
   end
 
   let(:parsed_camt_file2) do
-    CamtParser::String.parse(File.read('spec/examples/camt053/failed_debit.xml'))
+    # Just another failed debit, just to have a second file
+    CamtParser::String.parse(File.read('spec/examples/camt053/failed_debit_with_charges.xml'))
   end
 
+  # rubocop:disable Layout/LineLength
   let(:expected_parsed_statement1) do
-    JSON.parse(File.read('spec/examples/camt053/CAMT.053_458b71be-2ba3-488e-a898-11e6a5b421d6-parsed-by-gem.json'))
+    [
+      {
+        'amount_in_cents' => 500,
+        'currency' => 'EUR',
+        'end_to_end_reference' => 'NOTPROVIDED',
+        'executed_on' => '2022-01-05',
+        'iban' => 'DE02120300000000202051',
+        'name' => 'J.P. Morgan',
+        'remittance_information' => 'Spende',
+        'type' => 'credit',
+        'additional_information' => 'Dauerauftragsgutschr',
+        'original_amount_in_cents' => nil,
+        'fees' => nil,
+        'return_information' => nil
+      },
+      {
+        'amount_in_cents' => 2167,
+        'currency' => 'EUR',
+        'end_to_end_reference' => nil,
+        'executed_on' => '2022-01-05',
+        'iban' => nil,
+        'name' => 'Unsere Bank',
+        'remittance_information' => 'Einlagenentgelt 11.2021',
+        'type' => 'debit',
+        'additional_information' => 'Entgelt/Auslagen',
+        'original_amount_in_cents' => nil,
+        'fees' => nil,
+        'return_information' => nil
+      },
+      {
+        'amount_in_cents' => 1100,
+        'currency' => 'EUR',
+        'end_to_end_reference' => 'Mandat15-05.01.2022',
+        'executed_on' => '2022-01-05',
+        'iban' => 'DE02500105170137075030',
+        'name' => 'David Rockefeller',
+        'remittance_information' => 'Mandat15: 9.00 EUR in den Grundeinkommenstopf - 2.00 EUR Spende an den Verein. Vielen Dank',
+        'type' => 'credit',
+        'additional_information' => 'Basislastschrift Ev',
+        'original_amount_in_cents' => nil,
+        'fees' => nil,
+        'return_information' => nil
+      },
+      {
+        'amount_in_cents' => 2200,
+        'currency' => 'EUR',
+        'end_to_end_reference' => 'Mandat21-05.01.2022',
+        'executed_on' => '2022-01-05',
+        'iban' => 'DE02100500000054540402',
+        'name' => 'Mayer Amschel Rothschild',
+        'remittance_information' => 'Mandat21: 0.00 EUR in den Grundeinkommenstopf - 22.00 EUR Spende an den Verein. Vielen Dank',
+        'type' => 'credit',
+        'additional_information' => 'Basislastschrift Ev',
+        'original_amount_in_cents' => nil,
+        'fees' => nil,
+        'return_information' => nil
+      },
+      {
+        'amount_in_cents' => 3300,
+        'currency' => 'EUR',
+        'end_to_end_reference' => 'Mandat22-05.01.2022',
+        'executed_on' => '2022-01-05',
+        'iban' => 'DE02300209000106531065',
+        'name' => 'Herman Cain',
+        'remittance_information' => 'Mandat22: 27.00 EUR in den Grundeinkommenstopf - 5.00 EUR Spende an den Verein. Vielen Dank',
+        'type' => 'credit',
+        'additional_information' => 'Basislastschrift Ev',
+        'original_amount_in_cents' => nil,
+        'fees' => nil,
+        'return_information' => nil
+      },
+      {
+        'amount_in_cents' => 1350,
+        'currency' => 'EUR',
+        'end_to_end_reference' => 'Mandat15-05.01.2022',
+        'executed_on' => '2022-01-05',
+        'iban' => 'DE02300606010002474689',
+        'name' => 'Unsere Organisation',
+        'remittance_information' => 'Retoure, Rueckgabegrund: AC04 Konto aufgelöst SVWZ: RETURN/REFUND Dibbel dabbel zweite Zeile',
+        'type' => 'debit',
+        'additional_information' => 'Retourenbelastung',
+        'original_amount_in_cents' => 1100,
+        'fees' => [
+          {
+            'amount_in_cents' => 250,
+            'from_bic' => 'OURBIC123'
+          }
+        ],
+        'return_information' => 'Konto aufgelöst'
+      },
+      {
+        'amount_in_cents' => 2200,
+        'currency' => 'EUR',
+        'end_to_end_reference' => 'Mandat21-05.01.2022',
+        'executed_on' => '2022-01-05',
+        'iban' => 'DE02300606010002474689',
+        'name' => 'Unsere Organisation',
+        'remittance_information' => 'Retoure aus SEPA Basislastschrift, Rueckweisungsgrund: Wegen Fehler zurückgewiesen SVWZ: RETURN/REFUND',
+        'type' => 'debit',
+        'additional_information' => 'Storno',
+        'original_amount_in_cents' => nil,
+        'fees' => nil,
+        'return_information' => nil
+      }
+    ]
   end
 
   let(:expected_parsed_statement2) do
     [
-      { 'amount_in_cents' => 68,
-        'bic' => nil,
+      {
+        'amount_in_cents' => 1550,
         'currency' => 'EUR',
-        'end_to_end_reference' => nil,
-        'executed_on' => '2021-11-01',
-        'iban' => nil,
-        'name' => nil,
-        'reference' =>
-        'BERECHTIGTE ABLEHNUNG EINER AUTORISIERTEN UBERWEISUNG / LASTSCHRIFT MANGELS ' \
-        'KONTODECKUNG ODER WEGEN FEHLENDER / FEHLERHAFTEN ANGABEN.',
-        'type' => 'debit' }
+        'end_to_end_reference' => 'MANDATE123-05.01.2022',
+        'executed_on' => '2022-01-21',
+        'iban' => 'DE02300606010002474689',
+        'name' => 'Unsere Organisation',
+        'remittance_information' => 'Retoure SEPA Lastschrift vom 07.01.2022, Rueckgabegrund: MD06 Lastschriftwiderspruch durch den Zahlungspflichtigen SVWZ: RETURN/REFUND, MAND ATE123: 8.00 EUR in den Grundeinkommenstopf - 2.00 EUR Spende an den Verein. Vielen Dank EREF: MANDATE123-05.01.2022 ENTG: 3,00 EUR Entgelt Rück lastschrift/Rückscheck und 2,50 EUR Entgelt eingehende Rücklastschrift ORG.BETR.: 10,00 EUR IBAN: DE80733900000100121738 BIC:',
+        'type' => 'debit',
+        'additional_information' => 'Retourenbelastung',
+        'original_amount_in_cents' => 1000,
+        'fees' => [
+          {
+            'amount_in_cents' => 300,
+            'from_bic' => 'THEIRBIC123'
+          },
+          {
+            'amount_in_cents' => 250,
+            'from_bic' => 'OURBIC123'
+          }
+        ],
+        'return_information' => 'Lastschriftwiderspruch durch den Zahlungspflichtig'
+      }
     ]
   end
+  # rubocop:enable Layout/LineLength
 
   let(:expected_parsed_statements) do
     expected_parsed_statement1 + expected_parsed_statement2

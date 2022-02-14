@@ -131,6 +131,8 @@ module Konfipay
 
     def http
       http = HTTP.timeout(@config.timeout).headers(accept: 'application/json')
+      # the api doesn't seem to support compression but it can't hurt to ask for it
+      http = http.use(:auto_inflate).headers('Accept-Encoding' => 'deflate, gzip;q=1.0, *;q=0.5')
       http = http.use(logging: { logger: logger }) if logger
       http
     end

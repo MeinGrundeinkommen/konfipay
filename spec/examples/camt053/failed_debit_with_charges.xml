@@ -1,0 +1,179 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02 camt.053.001.02.xsd">
+  <BkToCstmrStmt>
+    <GrpHdr>
+      <MsgId>53D20220121T2141384867230N220000015</MsgId>
+      <CreDtTm>2022-01-21T21:41:03.0+01:00</CreDtTm>
+      <MsgPgntn>
+        <PgNb>001</PgNb>
+        <LastPgInd>true</LastPgInd>
+      </MsgPgntn>
+    </GrpHdr>
+    <Stmt>
+      <Id>4967C532022012121413848011165313800</Id>
+      <ElctrncSeqNb>220000015</ElctrncSeqNb>
+      <LglSeqNb>003</LglSeqNb>
+      <CreDtTm>2022-01-21T21:41:03.0+01:00</CreDtTm>
+      <FrToDt>
+        <FrDtTm>2022-01-21T00:00:00+01:00</FrDtTm>
+        <ToDtTm>2022-01-21T23:59:59+01:00</ToDtTm>
+      </FrToDt>
+      <Acct>
+        <Id>
+          <IBAN>DE02300606010002474689</IBAN>
+        </Id>
+        <Ccy>EUR</Ccy>
+        <Ownr>
+          <Nm>Unsere Organisation</Nm>
+        </Ownr>
+        <Svcr>
+          <FinInstnId>
+            <BIC>OURBIC123</BIC>
+            <Nm>Unsere Bank 123</Nm>
+            <Othr>
+              <Id>DE 1234567</Id>
+              <Issr>UmsStId</Issr>
+            </Othr>
+          </FinInstnId>
+        </Svcr>
+      </Acct>
+      <Bal>
+        <Tp>
+          <CdOrPrtry>
+            <Cd>PRCD</Cd>
+          </CdOrPrtry>
+        </Tp>
+        <Amt Ccy="EUR">1000.41</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt>
+          <Dt>2022-01-21</Dt>
+        </Dt>
+      </Bal>
+      <Bal>
+        <Tp>
+          <CdOrPrtry>
+            <Cd>CLBD</Cd>
+          </CdOrPrtry>
+        </Tp>
+        <Amt Ccy="EUR">1000.94</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt>
+          <Dt>2022-01-21</Dt>
+        </Dt>
+      </Bal>
+      <Ntry>
+        <Amt Ccy="EUR">15.50</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <Sts>BOOK</Sts>
+        <BookgDt>
+          <Dt>2022-01-21</Dt>
+        </BookgDt>
+        <ValDt>
+          <Dt>2022-01-05</Dt>
+        </ValDt>
+        <AcctSvcrRef>2022012104102506000</AcctSvcrRef>
+        <BkTxCd>
+          <Domn>
+            <Cd>PMNT</Cd>
+            <Fmly>
+              <Cd>IDDT</Cd>
+              <SubFmlyCd>UPDD</SubFmlyCd>
+            </Fmly>
+          </Domn>
+          <Prtry>
+            <Cd>NRTI+109+00931</Cd>
+            <Issr>DK</Issr>
+          </Prtry>
+        </BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <Refs>
+              <EndToEndId>MANDATE123-05.01.2022</EndToEndId>
+              <TxId>2022010469355955090164830010077440</TxId>
+              <MndtId>MANDATE123</MndtId>
+            </Refs>
+            <AmtDtls>
+              <InstdAmt>
+                <Amt Ccy="EUR">10.00</Amt>
+              </InstdAmt>
+              <TxAmt>
+                <Amt Ccy="EUR">15.50</Amt>
+              </TxAmt>
+            </AmtDtls>
+            <BkTxCd>
+              <Domn>
+                <Cd>PMNT</Cd>
+                <Fmly>
+                  <Cd>IDDT</Cd>
+                  <SubFmlyCd>UPDD</SubFmlyCd>
+                </Fmly>
+              </Domn>
+              <Prtry>
+                <Cd>NRTI+109+00931</Cd>
+                <Issr>DK</Issr>
+              </Prtry>
+            </BkTxCd>
+            <Chrgs>
+              <Amt Ccy="EUR">3.00</Amt>
+              <Pty>
+                <FinInstnId>
+                  <BIC>THEIRBIC123</BIC>
+                </FinInstnId>
+              </Pty>
+            </Chrgs>
+            <Chrgs>
+              <Amt Ccy="EUR">2.50</Amt>
+              <Pty>
+                <FinInstnId>
+                  <BIC>OURBIC123</BIC>
+                </FinInstnId>
+              </Pty>
+            </Chrgs>
+            <RltdPties>
+              <Dbtr>
+                <Nm>Max Mustermann</Nm>
+              </Dbtr>
+              <DbtrAcct>
+                <Id>
+                  <IBAN>DE80733900000100121738</IBAN>
+                </Id>
+              </DbtrAcct>
+              <Cdtr>
+                <Nm>Unsere Organisation</Nm>
+              </Cdtr>
+              <CdtrAcct>
+                <Id>
+                  <IBAN>DE02300606010002474689</IBAN>
+                </Id>
+              </CdtrAcct>
+            </RltdPties>
+            <RmtInf>
+              <Ustrd>Retoure SEPA Lastschrift vom 07.01.2022, Rueckgabegrund: MD06 Lastschriftwiderspruch durch den Zahlungspflichtigen SVWZ: RETURN/REFUND, MAND</Ustrd>
+              <Ustrd>ATE123: 8.00 EUR in den Grundeinkommenstopf - 2.00 EUR Spende an den Verein. Vielen Dank EREF: MANDATE123-05.01.2022 ENTG: 3,00 EUR Entgelt Rück</Ustrd>
+              <Ustrd>lastschrift/Rückscheck und 2,50 EUR Entgelt eingehende Rücklastschrift ORG.BETR.: 10,00 EUR IBAN: DE80733900000100121738 BIC:</Ustrd>
+            </RmtInf>
+            <RtrInf>
+              <OrgnlBkTxCd>
+                <Prtry>
+                  <Cd>171</Cd>
+                  <Issr>DK</Issr>
+                </Prtry>
+              </OrgnlBkTxCd>
+              <Orgtr>
+                <Id>
+                  <OrgId>
+                    <BICOrBEI>OURBIC123</BICOrBEI>
+                  </OrgId>
+                </Id>
+              </Orgtr>
+              <Rsn>
+                <Cd>MD06</Cd>
+              </Rsn>
+              <AddtlInf>Lastschriftwiderspruch durch den Zahlungspflichtig</AddtlInf>
+            </RtrInf>
+          </TxDtls>
+        </NtryDtls>
+        <AddtlNtryInf>Retourenbelastung</AddtlNtryInf>
+      </Ntry>
+    </Stmt>
+  </BkToCstmrStmt>
+</Document>

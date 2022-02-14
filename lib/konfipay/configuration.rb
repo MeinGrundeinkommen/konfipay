@@ -14,7 +14,7 @@ module Konfipay
                   :credit_monitoring_interval
 
     def initialize
-      @timeout = 30
+      @timeout = 180
       @base_url = BASE_URL
       @api_client_name = 'Konfipay Ruby Client'
       @api_client_version = Konfipay::VERSION
