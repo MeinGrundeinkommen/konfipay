@@ -115,7 +115,7 @@ RSpec.describe Konfipay::Client do
                      headers: response_is_auth_error)
       end
 
-      it 'raises Unauthorized error with mesage from header' do
+      it 'raises Unauthorized error with message from header' do
         expect { result }.to raise_error(Konfipay::Client::Unauthorized, 'You shall not pass.')
       end
     end
