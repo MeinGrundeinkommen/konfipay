@@ -49,9 +49,8 @@ end
 
 ## Usage
 
-Note: Unless otherwise noted, all API calls handle Authentication "under the hood" by requesting a token from the API if needed, and will
-retry this once on subsequent api calls with the same client instance (if operations take very long, it's possible that the token
-expires before the operation is finished, retrying authentication once allows everything to finish).
+Note: API calls handle Authentication "under the hood" by requesting a token from the API if needed, and will reauthenticate once on subsequent API calls with the same client instance. If an operation takes long, it's possible that the token
+expires before the operation is finished. Retrying authentication once allows everything to finish.
 
 ### Operations
 
