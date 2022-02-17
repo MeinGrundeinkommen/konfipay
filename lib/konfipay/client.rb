@@ -5,7 +5,8 @@ module Konfipay
   # Only selected API Endpoints are implemented.
   # Authentication is done automatically, and the auth token is cached in an instance of this class.
   class Client
-    #  class Error < StandardError; end
+    class Error < StandardError; end
+    class Unauthorized < Error; end
 
     def initialize(config = Konfipay.configuration)
       @config = config
@@ -63,8 +64,10 @@ module Konfipay
     #
     # Can raise various network errors.
     def new_statements(params = {})
-      response = authed_http.get(new_statements_url(@config, params))
-      raise_error_or_parse!(response)
+      with_auth_retry do
+        response = authed_http.get(new_statements_url(@config, params))
+        raise_error_or_parse!(response)
+      end
     end
 
     def new_statements_url(config, params)
@@ -91,8 +94,10 @@ module Konfipay
     #
     # Can raise various network errors.
     def statement_history(params = {})
-      response = authed_http.get(statement_history_url(@config, params))
-      raise_error_or_parse!(response)
+      with_auth_retry do
+        response = authed_http.get(statement_history_url(@config, params))
+        raise_error_or_parse!(response)
+      end
     end
 
     def statement_history_url(config, params)
@@ -108,8 +113,10 @@ module Konfipay
     def camt_file(r_id, mark_as_read = true) # rubocop:disable Style/OptionalBooleanParameter
       params = {}
       params['ack'] = 'false' unless mark_as_read
-      response = authed_http.get(camt_file_url(@config, r_id, params))
-      raise_error_or_parse!(response)
+      with_auth_retry do
+        response = authed_http.get(camt_file_url(@config, r_id, params))
+        raise_error_or_parse!(response)
+      end
     end
 
     def camt_file_url(config, r_id, params)
@@ -121,8 +128,10 @@ module Konfipay
     # Returns the same output as #new_statements, but with only one document.
     # Can raise various network errors.
     def acknowledge_camt_file(r_id)
-      response = authed_http.post(acknowledge_camt_file_url(@config, r_id))
-      raise_error_or_parse!(response)
+      with_auth_retry do
+        response = authed_http.post(acknowledge_camt_file_url(@config, r_id))
+        raise_error_or_parse!(response)
+      end
     end
 
     def acknowledge_camt_file_url(config, r_id)
@@ -144,6 +153,22 @@ module Konfipay
       http.auth("Bearer #{@bearer_token}")
     end
 
+    def with_auth_retry(retries = 1, &block)
+      logger&.info("API call with #{retries} retries...")
+      begin
+        yield
+      rescue Unauthorized => e
+        if retries <= 0
+          logger&.error('No retries left, raising error')
+          raise e
+        else
+          logger&.error("#{e.class.name} error on retry #{retries}, retrying...")
+          authenticate
+          with_auth_retry(retries - 1, &block)
+        end
+      end
+    end
+
     def query_params(params)
       if params.any?
         "?#{params.to_query}"
@@ -160,8 +185,12 @@ module Konfipay
       when 204
         # "The request was processed successfully, but no data is available."
         nil
-      # TODO: Create error classes for common errors
-      # TODO: Also handle 401 and 500
+      when 401
+        # 401 responses are text/plain, but without a body, some info is in the header:
+        # usually just '"Bearer error=\"invalid_token\", error_description=\"The signature key was not found\""'
+        message = response.headers['Www-Authenticate']
+        logger&.error("Got 401 response: #{message.inspect}")
+        raise Unauthorized, message
       when 400, 403
         # {"errorItems":[{"errorCode":"ERR-04-0009","errorMessage":"UnknownBankAccount",
         #  "timestamp":"2021-10-19T15:10:45.767"}]}

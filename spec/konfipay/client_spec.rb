@@ -36,6 +36,13 @@ RSpec.describe Konfipay::Client do
     { 'Content-Type' => 'text/xml; charset=UTF-8' }
   end
 
+  let(:response_is_auth_error) do
+    {
+      'Content-Type' => 'text/plain',
+      'Www-Authenticate' => 'You shall not pass.'
+    }
+  end
+
   def stub_login_token_api_call!
     stub_request(:post, 'https://portal.konfipay.de/api/v4/Auth/Login/Token')
       .with(
@@ -98,6 +105,21 @@ RSpec.describe Konfipay::Client do
       end
     end
 
+    context 'when konfipay returns 401 error' do
+      before do
+        stub_login_token_api_call!
+        stub_request(http_method, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 401,
+                     body: nil,
+                     headers: response_is_auth_error)
+      end
+
+      it 'raises Unauthorized error with message from header' do
+        expect { result }.to raise_error(Konfipay::Client::Unauthorized, 'You shall not pass.')
+      end
+    end
+
     context 'when konfipay returns 403 error' do
       before do
         stub_login_token_api_call!
@@ -148,18 +170,41 @@ RSpec.describe Konfipay::Client do
   end
 
   shared_examples_for 'documentItems response parsing' do
-    context 'when konfipay returns success' do
-      let(:expected_parsed_json) do
-        { 'documentItems' =>
-          [{ 'rId' => '5c19b66h-3d6e-4e8a-4548-622bd50a7af2',
-             'href' => 'api/v4.0/Document/Camt/5c19b66h-3d6e-4e8a-4548-622bd50a7af2',
-             'timestamp' => '2021-10-28T23:21:59+02:00',
-             'iban' => 'DE02300606010002474689',
-             'isNew' => true,
-             'format' => 'camt.053',
-             'fileName' => '2021-10-28_C53_DE02300606010002474689_EUR_365352.xml' }] }
+    let(:expected_parsed_json) do
+      { 'documentItems' =>
+        [{ 'rId' => '5c19b66h-3d6e-4e8a-4548-622bd50a7af2',
+           'href' => 'api/v4.0/Document/Camt/5c19b66h-3d6e-4e8a-4548-622bd50a7af2',
+           'timestamp' => '2021-10-28T23:21:59+02:00',
+           'iban' => 'DE02300606010002474689',
+           'isNew' => true,
+           'format' => 'camt.053',
+           'fileName' => '2021-10-28_C53_DE02300606010002474689_EUR_365352.xml' }] }
+    end
+
+    shared_examples_for 'success' do
+      it 'returns list of new documents' do
+        expect(result).to eq(expected_parsed_json)
+      end
+    end
+
+    context 'when konfipay returns first 401, then success' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:get, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 401,
+                     body: nil,
+                     headers: response_is_auth_error)
+          .then
+          .to_return(status: 200,
+                     body: expected_parsed_json.to_json,
+                     headers: response_is_json)
       end
 
+      it_behaves_like 'success'
+    end
+
+    context 'when konfipay returns success' do
       before do
         stub_login_token_api_call!
         stub_request(:get, stubbed_url)
@@ -169,11 +214,7 @@ RSpec.describe Konfipay::Client do
                      headers: response_is_json)
       end
 
-      context 'without arguments' do
-        it 'returns list of new documents' do
-          expect(result).to eq(expected_parsed_json)
-        end
-      end
+      it_behaves_like 'success'
     end
   end
 
@@ -204,6 +245,29 @@ RSpec.describe Konfipay::Client do
 
     it_behaves_like 'api error handling', :get
 
+    shared_examples_for 'success' do
+      it 'returns a parsed camt file' do
+        expect(result).to be_an_instance_of(CamtParser::Format053::Base)
+      end
+    end
+
+    context 'when konfipay first returns 401, then success' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:get, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 401,
+                     body: nil,
+                     headers: response_is_auth_error)
+          .then
+          .to_return(status: 200,
+                     body: camt_xml,
+                     headers: response_is_xml)
+      end
+
+      it_behaves_like 'success'
+    end
+
     context 'when konfipay returns success' do
       before do
         stub_login_token_api_call!
@@ -215,40 +279,58 @@ RSpec.describe Konfipay::Client do
       end
 
       context 'without arguments' do
-        it 'returns a parsed camt file' do
-          expect(result).to be_an_instance_of(CamtParser::Format053::Base)
-        end
+        it_behaves_like 'success'
       end
 
       context 'with mark_as_read = false' do
         let(:stubbed_url) { "https://portal.konfipay.de/api/v4/Document/Camt/#{r_id}?ack=false" }
         let(:result) { client.camt_file(r_id, false) }
 
-        it 'returns a parsed camt file' do
-          expect(result).to be_an_instance_of(CamtParser::Format053::Base)
-        end
+        it_behaves_like 'success'
       end
     end
   end
 
   describe 'acknowledge_camt_file' do
     let(:r_id) { 'a-b-c' }
+    let(:expected_parsed_json) do
+      { 'rId' => r_id,
+        'href' => "api/v4.0/Document/Camt/#{r_id}",
+        'timestamp' => '2021-10-28T23:21:59+02:00',
+        'iban' => 'DE02300606010002474689',
+        'isNew' => false,
+        'format' => 'camt.053',
+        'fileName' => '2021-10-28_C53_DE02300606010002474689_EUR_365352.xml' }
+    end
     let(:stubbed_url) { "https://portal.konfipay.de/api/v4/Document/Camt/#{r_id}/Acknowledge" }
     let(:result) { client.acknowledge_camt_file(r_id) }
 
     it_behaves_like 'api error handling', :post
 
-    context 'when konfipay returns success' do
-      let(:expected_parsed_json) do
-        { 'rId' => r_id,
-          'href' => "api/v4.0/Document/Camt/#{r_id}",
-          'timestamp' => '2021-10-28T23:21:59+02:00',
-          'iban' => 'DE02300606010002474689',
-          'isNew' => false,
-          'format' => 'camt.053',
-          'fileName' => '2021-10-28_C53_DE02300606010002474689_EUR_365352.xml' }
+    shared_examples_for 'success' do
+      it 'returns parsed response' do
+        expect(result).to eq(expected_parsed_json)
+      end
+    end
+
+    context 'when konfipay returns first 401, then success' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:post, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 401,
+                     body: nil,
+                     headers: response_is_auth_error)
+          .then
+          .to_return(status: 200,
+                     body: expected_parsed_json.to_json,
+                     headers: response_is_json)
       end
 
+      it_behaves_like 'success'
+    end
+
+    context 'when konfipay returns success' do
       before do
         stub_login_token_api_call!
         stub_request(:post, stubbed_url)
@@ -258,9 +340,7 @@ RSpec.describe Konfipay::Client do
                      headers: response_is_json)
       end
 
-      it 'returns parsed response' do
-        expect(result).to eq(expected_parsed_json)
-      end
+      it_behaves_like 'success'
     end
   end
 end

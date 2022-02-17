@@ -49,6 +49,9 @@ end
 
 ## Usage
 
+Note: API calls handle Authentication "under the hood" by requesting a token from the API if needed, and will reauthenticate once on subsequent API calls with the same client instance. If an operation takes long, it's possible that the token
+expires before the operation is finished. Retrying authentication once allows everything to finish.
+
 ### Operations
 
 1) Fetch statements
