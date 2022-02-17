@@ -201,9 +201,7 @@ RSpec.describe Konfipay::Client do
                      headers: response_is_json)
       end
 
-      context 'without arguments' do
-        it_behaves_like 'success'
-      end
+      it_behaves_like 'success'
     end
 
     context 'when konfipay returns success' do
@@ -216,9 +214,7 @@ RSpec.describe Konfipay::Client do
                      headers: response_is_json)
       end
 
-      context 'without arguments' do
-        it_behaves_like 'success'
-      end
+      it_behaves_like 'success'
     end
   end
 
