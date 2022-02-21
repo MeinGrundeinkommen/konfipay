@@ -50,7 +50,7 @@ module Konfipay
       #
       # In "history" mode, transactions between additionally needed "from" and "to" filter keys are returned,
       # they are not marked as read. "from" and "to" need to be strings in iso8601 format.
-      # 
+      #
       # Please note that from and to refer to the date of the camt53 file - this usually is provided a banking
       # day _after_ the contained transactions. I.e. if you want the transactions that were booked on
       # 2022-03-02 and 2022-03-03, filter by "from" => "2022-03-03" and "to" => "2022-03-04".
