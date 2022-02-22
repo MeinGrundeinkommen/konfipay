@@ -31,6 +31,14 @@ module Konfipay
       #
       # Or an empty array if there is nothing new or matching.
       #
+      # Transactions are retrieved based on camt53 files, i.e. the Konfipay API returns a file for
+      # each banking day (if there are transactions booked on that date), but this returns all
+      # contained transactions in a flat list - this also applies to collections of transactions
+      # (for example for batched transfers/debits). The list is ordered by oldest files first, and within
+      # the files by their appearance in the file. In other words, this returns transactions in
+      # reverse chronological order, which is more natural for processing transactions if you just
+      # iterate over the returned list.
+      #
       # "mode" argument supports "new" and "history" currently.
       #
       # In "new" mode, transactions are retrieved and marked as "read" after successful
@@ -42,6 +50,10 @@ module Konfipay
       #
       # In "history" mode, transactions between additionally needed "from" and "to" filter keys are returned,
       # they are not marked as read. "from" and "to" need to be strings in iso8601 format.
+      #
+      # Please note that from and to refer to the date of the camt53 file - this usually is provided a banking
+      # day _after_ the contained transactions. I.e. if you want the transactions that were booked on
+      # 2022-03-02 and 2022-03-03, filter by "from" => "2022-03-03" and "to" => "2022-03-04".
       #
       # Returns transaction from all configured accounts by default.
       # Filter by using {'iban' => 'an account iban'} as filters argument.
@@ -63,7 +75,10 @@ module Konfipay
         list = docs['documentItems']
         logger&.info "#{list.size} #{mode} statement docs found"
 
-        r_ids_fetched, result = *fetch_and_parse_documents(list)
+        # files come in newest-first, not very useful
+        sorted_list = list.sort_by { |doc| Date.parse(doc['timestamp']) }
+
+        r_ids_fetched, result = *fetch_and_parse_documents(sorted_list)
 
         yield result
 

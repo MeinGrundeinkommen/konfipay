@@ -17,26 +17,32 @@ RSpec.describe Konfipay::Operations::FetchStatements do
   let(:r_id2) { 'f-g-h' }
 
   let(:statements_parsed_json) do
-    { 'documentItems' =>
-      [{
-        'rId' => r_id1,
-        'href' => "api/v4.0/Document/Camt/#{r_id1}",
-        'timestamp' => '2022-01-05T23:21:59+02:00',
-        'iban' => iban,
-        'isNew' => true,
-        'format' => 'camt.053',
-        'fileName' => "2021-01-05_C53_#{iban}_EUR_365352.xml"
-      },
-
-       {
-         'rId' => r_id2,
-         'href' => "api/v4.0/Document/Camt/#{r_id2}",
-         'timestamp' => '2022-01-21T23:21:59+02:00',
-         'iban' => iban,
-         'isNew' => true,
-         'format' => 'camt.053',
-         'fileName' => "2022-01-21_C53_#{iban}_EUR_365352.xml"
-       }] }
+    {
+      'documentItems' =>
+      [
+        # This is the order in which the api returns docs - newest-first,
+        # which is not good for processing (bounces come before books) so
+        # we have to reverse this
+        {
+          'rId' => r_id2,
+          'href' => "api/v4.0/Document/Camt/#{r_id2}",
+          'timestamp' => '2022-01-21T23:21:59+02:00',
+          'iban' => iban,
+          'isNew' => true,
+          'format' => 'camt.053',
+          'fileName' => "2022-01-21_C53_#{iban}_EUR_365352.xml"
+        },
+        {
+          'rId' => r_id1,
+          'href' => "api/v4.0/Document/Camt/#{r_id1}",
+          'timestamp' => '2022-01-05T23:21:59+02:00',
+          'iban' => iban,
+          'isNew' => true,
+          'format' => 'camt.053',
+          'fileName' => "2021-01-05_C53_#{iban}_EUR_365352.xml"
+        }
+      ]
+    }
   end
 
   let(:parsed_camt_file1) do
