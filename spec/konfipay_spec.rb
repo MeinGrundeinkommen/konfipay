@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe Konfipay do
   it 'has a version number' do
-    expect(Konfipay::VERSION).not_to be nil
+    expect(Konfipay::VERSION).not_to be_nil
   end
 
   describe 'class methods' do
@@ -24,7 +24,7 @@ RSpec.describe Konfipay do
         allow(Konfipay::Jobs::FetchStatements).to receive(:perform_async)
       end
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
 
       it 'enqueues a job with passed-in arguments' do
         request_fetch
@@ -64,7 +64,7 @@ RSpec.describe Konfipay do
         allow(Konfipay::Jobs::FetchStatements).to receive(:perform_async)
       end
 
-      it { is_expected.to eq(true) }
+      it { is_expected.to be(true) }
 
       it 'enqueues a job with passed-in arguments' do
         request_fetch

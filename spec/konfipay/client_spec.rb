@@ -164,7 +164,7 @@ RSpec.describe Konfipay::Client do
       end
 
       it 'returns nil' do
-        expect(result).to eq(nil)
+        expect(result).to be_nil
       end
     end
   end
