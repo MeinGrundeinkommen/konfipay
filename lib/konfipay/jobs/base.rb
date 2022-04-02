@@ -4,7 +4,6 @@ module Konfipay
   module Jobs
     class Base
       include Sidekiq::Worker # TODO: This should be configurable
-      sidekiq_options queue: :heavy
 
       def initialize(config = nil)
         @config = (config || Konfipay.configuration)

@@ -66,7 +66,7 @@ To use this, make sure sidekiq is running, then kick off the fetching like this,
 
 # rails c
 Konfipay.new_statements(
-  "KonfipayCallbacks", "callback_for_new_statements", "optional iban to filter by"
+  "KonfipayCallbacks", "callback_for_new_statements", nil, "optional iban to filter by"
 )
 
 ```
@@ -76,12 +76,12 @@ or
 ```ruby
 
 Konfipay.statement_history(
-  "KonfipayCallbacks", "callback_for_history_statements", "optional iban to filter by", "2022-01-15", "2022-01-31"
+  "KonfipayCallbacks", "callback_for_history_statements", nil, "optional iban to filter by", "2022-01-15", "2022-01-31"
 )
 
 ```
 
-You will notice that these methods immediately return just "true". This is because all operations are actually executed asynchronously as Jobs in Sidekiq.
+You will notice that these methods immediately return just "true". This is because all operations are actually executed asynchronously as Jobs in Sidekiq (you can set the queue to be used for the job with the third argument, it defaults to :default).
 But where does the data end up, you ask?
 You need to set up a simple class with a class method where you will receive asynchronous updates for each operation:
 

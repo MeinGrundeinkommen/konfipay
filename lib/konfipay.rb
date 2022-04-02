@@ -22,16 +22,26 @@ require_relative 'konfipay/jobs/fetch_statements'
 require_relative 'konfipay/jobs/initialize_credit_transfer'
 require_relative 'konfipay/jobs/monitor_credit_transfer'
 
+# rubocop:disable Metrics/ParameterLists
+# rubocop:disable Style/OptionalBooleanParameter
 module Konfipay
   class << self
     # Fetches all "new" statements for all configured accounts since the last time successfully used.
+    # Use "queue" to run job in a specific sidekiq queue, default is :default
     # Use mark_as_read = false to keep retrieved data "unread", for testing.
     # Filter accounts by iban argument, if non-empty.
     # callback_class::callback_method will be called asynchronously with the resulting list of statements,
     # for the format see Konfipay::Operations::FetchStatements#fetch
     # This method itself only returns true.
-    def new_statements(callback_class, callback_method, iban = nil, mark_as_read = true) # rubocop:disable Style/OptionalBooleanParameter
-      Konfipay::Jobs::FetchStatements.perform_async(
+    def new_statements(
+      callback_class,
+      callback_method,
+      queue = nil,
+      iban = nil,
+      mark_as_read = true
+    )
+      queue ||= :default
+      Konfipay::Jobs::FetchStatements.set(queue: queue).perform_async(
         callback_class,
         callback_method,
         'new',
@@ -43,12 +53,21 @@ module Konfipay
 
     # Fetches "history" of statements for all configured accounts between the two given dates
     # (as strings in iso-8601 format).
+    # Use "queue" to run job in a specific sidekiq queue, default is :default
     # Filter accounts by iban argument, if non-empty.
     # callback_class::callback_method will be called asynchronously with the resulting list of statements,
     # for the format see Konfipay::Operations::FetchStatements#fetch
     # This method itself only returns true.
-    def statement_history(callback_class, callback_method, iban = nil, from = Date.today.iso8601, to = from)
-      Konfipay::Jobs::FetchStatements.perform_async(
+    def statement_history(
+      callback_class,
+      callback_method,
+      queue = nil,
+      iban = nil,
+      from = Date.today.iso8601,
+      to = from
+    )
+      queue ||= :default
+      Konfipay::Jobs::FetchStatements.set(queue: queue).perform_async(
         callback_class,
         callback_method,
         'history',
@@ -70,3 +89,5 @@ module Konfipay
     # def initialize_direct_debit(opts); end
   end
 end
+# rubocop:enable Metrics/ParameterLists
+# rubocop:enable Style/OptionalBooleanParameter
