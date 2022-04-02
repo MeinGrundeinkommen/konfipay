@@ -6,7 +6,6 @@ PATH
       camt_parser
       http
       json
-      nokogiri (>= 1.13.2)
       sidekiq
 
 GEM
