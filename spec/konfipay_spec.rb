@@ -136,7 +136,9 @@ RSpec.describe Konfipay do
 
       # TODO: check arguments are checked
     end
-    # xit 'initialize_credit_transfer'
+
+    it 'initialize_credit_transfer'
+    
     # xit 'initialize_direct_debit'
   end
 end
