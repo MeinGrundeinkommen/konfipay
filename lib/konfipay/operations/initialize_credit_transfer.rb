@@ -5,7 +5,8 @@ module Konfipay
     class InitializeCreditTransfer < Base
       # Starts a credit transfer (Überweisung) from one of our accounts to one or many recipients.
       # TODO: format
-      def submit(payment_data)
+      def submit(payment_data, transaction_id)
+        pp(transaction_id)
         pp(payment_data)
         # TODO: validate payment data again?
 
