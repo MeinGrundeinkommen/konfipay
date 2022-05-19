@@ -7,6 +7,8 @@ module Konfipay
   class Client
     class Error < StandardError; end
     class Unauthorized < Error; end
+    class BadRequest < Error; end
+    class Forbidden < Error; end
 
     def initialize(config = Konfipay.configuration)
       @config = config
@@ -138,6 +140,57 @@ module Konfipay
       "#{config.base_url}/api/v4/Document/Camt/#{r_id}/Acknowledge"
     end
 
+    # Send a payment initiation file to Konfipay,
+    # i.e. start a direct debit or credit transfer process.
+    #
+    # https://portal.konfipay.de/api-docs/index.html#tag/Payment-SEPA/paths/~1api~1v5~1Payment~1Sepa~1Pain/post
+    # 
+    # (Note that details on the various error/process states are somewhat hidden, some of the response schema
+    # list headers can be clicked to expand them)
+    # See those docs on which pain formats are supported.
+    # Returns the initial response as parsed JSON:
+    # {
+    #   "rId": "5d12c087-be1e-456c-a33f-4f8750fa7814",
+    #   "timestamp": "2022-05-17T17:02:19+02:00",
+    #   "type": "pain",
+    #   "paymentStatusItem": {
+    #     "status": "FIN_UPLOAD_SUCCEEDED",
+    #     "uploadTimestamp": "2022-05-17T18:14:32+02:00",
+    #     "orderID": "A1BC"
+    #   }
+    # }
+    #
+    # Note that the process can stop here (check the status) or require polling with
+    # TODO: this client method
+    # Can raise various network errors.
+    def submit_pain_file(xml)
+      params = {}
+      with_auth_retry do
+        response = authed_http.headers("Content-Type" => "application/xml").post(submit_pain_file_url(@config, params), body: xml)
+        raise_error_or_parse!(response)
+      end
+    end
+
+    def submit_pain_file_url(config, params)
+      "#{config.base_url}/api/v5/Payment/Sepa/Pain#{query_params(params)}"
+    end
+
+    # Get and parse information about a payment file (from #submit_pain_file) with given r_id from endpoint:
+    # https://portal.konfipay.de/api-docs/index.html#tag/Payment-SEPA/paths/~1api~1v5~1Payment~1Sepa~1Pain~1{rId}/get
+    # 
+    # Can raise various network errors.
+    def pain_file_info(r_id)
+      params = {}
+      with_auth_retry do
+        response = authed_http.get(pain_file_info_url(@config, r_id, params))
+        raise_error_or_parse!(response)
+      end
+    end
+
+    def pain_file_info_url(config, r_id, params)
+      "#{config.base_url}/api/v5/Payment/Sepa/Pain/#{r_id}/item#{query_params(params)}"
+    end
+
     def http
       http = HTTP.timeout(@config.timeout).headers(accept: 'application/json')
       # the api doesn't seem to support compression but it can't hurt to ask for it
@@ -180,7 +233,7 @@ module Konfipay
     def raise_error_or_parse!(response)
       status = response.status
       case status
-      when 200
+      when 200, 201
         parse(response)
       when 204
         # "The request was processed successfully, but no data is available."
@@ -195,7 +248,12 @@ module Konfipay
         # {"errorItems":[{"errorCode":"ERR-04-0009","errorMessage":"UnknownBankAccount",
         #  "timestamp":"2021-10-19T15:10:45.767"}]}
         errors = parse(response)['errorItems'].map { |e| e['errorMessage'] }.join(', ')
-        raise "#{status}, messages: #{errors}"
+        case status
+        when 400
+          raise BadRequest, errors
+        when 403
+          raise Forbidden, error
+        end
       when 404
         # {"Message":"Welcome to konfipay. There is no API-Endpoint defined for
         #  'https://portal.konfipay.de/api/v4/Document/Camtiban=aaaa'. Please take a

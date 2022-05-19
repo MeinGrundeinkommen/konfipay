@@ -111,19 +111,50 @@ module Konfipay
 
 # TODO: What are those weird group headers? Get rid of it and add gem info?
 
+# This always returns a hash with these fields:
+#
+# "final" => final,
+# "success" => success,
+# "data" => { "SEPA builder error" => e.inspect }
+#
+# TODO: Explain
+#
+# or it can raise a connection error exception.
+
       def submit(payment_data, transaction_id)
-        pp(transaction_id)
+ #       pp(transaction_id)
         pp(payment_data)
         # TODO: validate payment data again?
 
-        # client = Konfipay::Client.new
-        xml = Konfipay::PainBuilder.new(payment_data, transaction_id).credit_transfer_xml # here comes the pain
-        # upload to konfipay
-        # parse/check result
+        xml = nil
+        begin
+          xml = Konfipay::PainBuilder.new(payment_data, transaction_id).credit_transfer_xml # here comes the pain
+        rescue ArgumentError => e
+          return {
+            "final" => true,
+            "success" => false,
+            "data" => {
+              "SEPA builder error" => e.inspect
+            }
+          }
+        end
+        puts xml
+        client = Konfipay::Client.new
+        data = nil
+        begin
+          data = client.submit_pain_file(xml)
+        rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => x
+          return {
+            "final" => true,
+            "success" => false,
+            "data" => {
+              "error_class" => x.class.name,
+              "message" => x.message
+            }
+          }
+        end
 
-        {
-          'r_id' => 'aaaaaaaaaaaa'
-        }
+        parse_pain_status(data)
       end
     end
   end
