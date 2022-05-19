@@ -12,7 +12,19 @@ module Konfipay
         puts transaction_id
 
         client = Konfipay::Client.new
-        data = client.pain_file_info(r_id)
+        data = nil
+        begin
+          data = client.pain_file_info(r_id)
+        rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => x
+          return {
+            "final" => true,
+            "success" => false,
+            "data" => {
+              "error_class" => x.class.name,
+              "message" => x.message
+            }
+          }
+        end
         parse_pain_status(data)        
       end
     end

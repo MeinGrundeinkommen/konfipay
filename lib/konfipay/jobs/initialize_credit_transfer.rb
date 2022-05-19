@@ -7,10 +7,10 @@ module Konfipay
       sidekiq_options retry: 0
 
       def perform(callback_class, callback_method, payment_data, transaction_id)
-        result = Konfipay::Operations::InitializeCreditTransfer.new.submit(payment_data, transaction_id)
-        run_callback(callback_class, callback_method, result, transaction_id)
-        unless result["final"]
-          schedule_credit_monitor(callback_class, callback_method, result['r_id'], transaction_id)
+        data = Konfipay::Operations::InitializeCreditTransfer.new.submit(payment_data, transaction_id)
+        run_callback(callback_class, callback_method, data, transaction_id)
+        unless data["final"]
+          schedule_credit_monitor(callback_class, callback_method, data["data"]['rId'], transaction_id)
         end
       end
     end

@@ -271,7 +271,7 @@ module Konfipay
       case content_type.mime_type
       when 'application/json'
         parse_json(body)
-      when 'text/xml' # sigh, the schema is not part of the mimetype...
+      when 'text/xml', "application/xml" # sigh, the schema is not part of the mimetype...
         parse_xml(body)
       else
         raise "Unknown content_type #{content_type.inspect}!"
@@ -285,6 +285,32 @@ module Konfipay
     def parse_xml(string)
       if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02') # rubocop:disable Style/GuardClause
         CamtParser::String.parse(string)
+      # on some calls (400 on pain_file_info, konfipay returns an xml error response instead of json
+      # <ErrorItemContainer xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+      #   <ErrorItems>
+      #     <ErrorItem>
+      #       <ErrorCode>ERR-00-0000</ErrorCode>
+      #       <ErrorMessage>ErrorMessage1</ErrorMessage>
+      #       <ErrorDetails>ErrorDetails1</ErrorDetails>
+      #       <Timestamp>2022-05-17T17:02:19+02:00</Timestamp>
+      #     </ErrorItem>
+      #     <ErrorItem>
+      #       <ErrorCode>ERR-11-1111</ErrorCode>
+      #       <ErrorMessage>ErrorMessage2</ErrorMessage>
+      #       <ErrorDetails>ErrorDetails2</ErrorDetails>
+      #       <Timestamp>2022-05-17T17:02:19+02:00</Timestamp>
+      #     </ErrorItem>
+      #   </ErrorItems>
+      # </ErrorItemContainer>
+      #
+      # We'll turn it into a minimal hash so we can handle it like the json error response
+      elsif string.include?("ErrorItemContainer")
+        # TODO: THis is super clunky, is there no generic xml->hash parsing?
+        doc = Nokogiri::XML.parse(string)
+        {
+          "errorItems" => doc.xpath("/ErrorItemContainer/ErrorItems/ErrorItem").map { |i| { "errorMessage" => i.xpath("ErrorMessage").first.text } }
+        }
+
       else
         raise 'Response is XML, but no known XML Schema found! Sad.'
       end
