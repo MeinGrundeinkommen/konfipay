@@ -25,7 +25,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         # we have to reverse this
         {
           'rId' => r_id2,
-          'href' => "api/v4.0/Document/Camt/#{r_id2}",
+          'href' => "api/v5.0/Document/Camt/#{r_id2}",
           'timestamp' => '2022-01-21T23:21:59+02:00',
           'iban' => iban,
           'isNew' => true,
@@ -34,7 +34,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         },
         {
           'rId' => r_id1,
-          'href' => "api/v4.0/Document/Camt/#{r_id1}",
+          'href' => "api/v5.0/Document/Camt/#{r_id1}",
           'timestamp' => '2022-01-05T23:21:59+02:00',
           'iban' => iban,
           'isNew' => true,

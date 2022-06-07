@@ -44,7 +44,7 @@ RSpec.describe Konfipay::Client do
   end
 
   def stub_login_token_api_call!
-    stub_request(:post, 'https://portal.konfipay.de/api/v4/Auth/Login/Token')
+    stub_request(:post, 'https://portal.konfipay.de/api/v5/Auth/Login/Token')
       .with(
         body: {
           apiKey: api_key,
@@ -173,7 +173,7 @@ RSpec.describe Konfipay::Client do
     let(:expected_parsed_json) do
       { 'documentItems' =>
         [{ 'rId' => '5c19b66h-3d6e-4e8a-4548-622bd50a7af2',
-           'href' => 'api/v4.0/Document/Camt/5c19b66h-3d6e-4e8a-4548-622bd50a7af2',
+           'href' => 'api/v5.0/Document/Camt/5c19b66h-3d6e-4e8a-4548-622bd50a7af2',
            'timestamp' => '2021-10-28T23:21:59+02:00',
            'iban' => 'DE02300606010002474689',
            'isNew' => true,
@@ -219,7 +219,7 @@ RSpec.describe Konfipay::Client do
   end
 
   describe 'new_statements' do
-    let(:stubbed_url) { 'https://portal.konfipay.de/api/v4/Document/Camt' }
+    let(:stubbed_url) { 'https://portal.konfipay.de/api/v5/Document/Camt' }
     let(:result) { client.new_statements }
 
     it_behaves_like 'api error handling', :get
@@ -228,7 +228,7 @@ RSpec.describe Konfipay::Client do
   end
 
   describe 'statement_history' do
-    let(:stubbed_url) { 'https://portal.konfipay.de/api/v4/Document/Camt/History' }
+    let(:stubbed_url) { 'https://portal.konfipay.de/api/v5/Document/Camt/History' }
     let(:result) { client.statement_history }
 
     it_behaves_like 'api error handling', :get
@@ -238,7 +238,7 @@ RSpec.describe Konfipay::Client do
 
   describe 'camt_file' do
     let(:r_id) { 'a-b-c' }
-    let(:stubbed_url) { "https://portal.konfipay.de/api/v4/Document/Camt/#{r_id}" }
+    let(:stubbed_url) { "https://portal.konfipay.de/api/v5/Document/Camt/#{r_id}" }
     let(:result) { client.camt_file(r_id) }
 
     let(:camt_xml) { File.read('spec/examples/camt053/mixed_examples.xml') }
@@ -283,7 +283,7 @@ RSpec.describe Konfipay::Client do
       end
 
       context 'with mark_as_read = false' do
-        let(:stubbed_url) { "https://portal.konfipay.de/api/v4/Document/Camt/#{r_id}?ack=false" }
+        let(:stubbed_url) { "https://portal.konfipay.de/api/v5/Document/Camt/#{r_id}?ack=false" }
         let(:result) { client.camt_file(r_id, false) }
 
         it_behaves_like 'success'
@@ -295,14 +295,14 @@ RSpec.describe Konfipay::Client do
     let(:r_id) { 'a-b-c' }
     let(:expected_parsed_json) do
       { 'rId' => r_id,
-        'href' => "api/v4.0/Document/Camt/#{r_id}",
+        'href' => "api/v5.0/Document/Camt/#{r_id}",
         'timestamp' => '2021-10-28T23:21:59+02:00',
         'iban' => 'DE02300606010002474689',
         'isNew' => false,
         'format' => 'camt.053',
         'fileName' => '2021-10-28_C53_DE02300606010002474689_EUR_365352.xml' }
     end
-    let(:stubbed_url) { "https://portal.konfipay.de/api/v4/Document/Camt/#{r_id}/Acknowledge" }
+    let(:stubbed_url) { "https://portal.konfipay.de/api/v5/Document/Camt/#{r_id}/Acknowledge" }
     let(:result) { client.acknowledge_camt_file(r_id) }
 
     it_behaves_like 'api error handling', :post
