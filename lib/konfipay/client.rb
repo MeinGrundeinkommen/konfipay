@@ -19,7 +19,7 @@ module Konfipay
 
     # Get a bearer token to use in subsequent requests from the same client instance.
     # This will be called automatically by other methods on this class, no need to use it directly.
-    # Uses https://portal.konfipay.de/api-docs/index.html#tag/Auth/paths/~1api~1v4~1Auth~1Login~1Token/post
+    # Uses https://portal.konfipay.de/api-docs/index.html#tag/Auth/paths/~1api~1v5~1Auth~1Login~1Token/post
     def authenticate
       response = http.post(authentication_url(@config), authentication_params(@config))
       json = raise_error_or_parse!(response)
@@ -30,7 +30,7 @@ module Konfipay
     end
 
     def authentication_url(config)
-      "#{config.base_url}/api/v4/Auth/Login/Token"
+      "#{config.base_url}/api/v5/Auth/Login/Token"
     end
 
     def authentication_params(config)
@@ -46,7 +46,7 @@ module Konfipay
     end
 
     # Get "new" statements from Konfipay API from this endpoint:
-    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt/get
+    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v5~1Document~1Camt/get
     # Returns the parsed JSON as Ruby objects, or nil if there are no (new) documents:
     #
     # {"documentItems"=>
@@ -71,11 +71,11 @@ module Konfipay
     end
 
     def new_statements_url(config, params)
-      "#{config.base_url}/api/v4/Document/Camt#{query_params(params)}"
+      "#{config.base_url}/api/v5/Document/Camt#{query_params(params)}"
     end
 
     # Get "history" statements from Konfipay API from this endpoint:
-    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt~1History/get
+    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v5~1Document~1Camt~1History/get
     #
     # Same return format as #new_statements
     #
@@ -101,11 +101,11 @@ module Konfipay
     end
 
     def statement_history_url(config, params)
-      "#{config.base_url}/api/v4/Document/Camt/History#{query_params(params)}"
+      "#{config.base_url}/api/v5/Document/Camt/History#{query_params(params)}"
     end
 
     # Get and parse a single camt.053 document with given r_id from endpoint:
-    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt~1{rId}/get
+    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v5~1Document~1Camt~1{rId}/get
     # If mark_as_read = false, will not mark the document as read, i.e. keep as "new".
     # Returns an instance of CamtParser::Format053::Base :
     # https://github.com/viafintech/camt_parser/blob/master/lib/camt_parser/053/base.rb
@@ -120,11 +120,11 @@ module Konfipay
     end
 
     def camt_file_url(config, r_id, params)
-      "#{config.base_url}/api/v4/Document/Camt/#{r_id}#{query_params(params)}"
+      "#{config.base_url}/api/v5/Document/Camt/#{r_id}#{query_params(params)}"
     end
 
     # Acknowledge a camt file, i.e. mark it as "read".
-    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v4~1Document~1Camt~1{rId}~1Acknowledge/post
+    # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v5~1Document~1Camt~1{rId}~1Acknowledge/post
     # Returns the same output as #new_statements, but with only one document.
     # Can raise various network errors.
     def acknowledge_camt_file(r_id)
@@ -135,7 +135,7 @@ module Konfipay
     end
 
     def acknowledge_camt_file_url(config, r_id)
-      "#{config.base_url}/api/v4/Document/Camt/#{r_id}/Acknowledge"
+      "#{config.base_url}/api/v5/Document/Camt/#{r_id}/Acknowledge"
     end
 
     def http
