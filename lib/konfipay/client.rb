@@ -144,10 +144,10 @@ module Konfipay
     # i.e. start a direct debit or credit transfer process.
     #
     # https://portal.konfipay.de/api-docs/index.html#tag/Payment-SEPA/paths/~1api~1v5~1Payment~1Sepa~1Pain/post
-    # 
-    # (Note that details on the various error/process states are somewhat hidden, some of the response schema
+    # (Note on the docs: Details on the various error/process states are somewhat hidden, some of the response schema
     # list headers can be clicked to expand them)
     # See those docs on which pain formats are supported.
+    #
     # Returns the initial response as parsed JSON:
     # {
     #   "rId": "5d12c087-be1e-456c-a33f-4f8750fa7814",
@@ -160,8 +160,8 @@ module Konfipay
     #   }
     # }
     #
-    # Note that the process can stop here (check the status) or require polling with
-    # TODO: this client method
+    # Note that the process can stop here (check the status) or require polling with #pain_file_info
+    #
     # Can raise various network errors.
     def submit_pain_file(xml)
       params = {}
@@ -177,6 +177,20 @@ module Konfipay
 
     # Get and parse information about a payment file (from #submit_pain_file) with given r_id from endpoint:
     # https://portal.konfipay.de/api-docs/index.html#tag/Payment-SEPA/paths/~1api~1v5~1Payment~1Sepa~1Pain~1{rId}/get
+    #
+    # {
+    #   "rId": "5d12c087-be1e-456c-a33f-4f8750fa7814",
+    #   "timestamp": "2022-06-07T21:34:15+02:00",
+    #   "type": "pain",
+    #   "paymentStatusItem": {
+    #     "status": "FIN_CONFIRMED",
+    #     "uploadTimestamp": "2022-06-07T22:46:28+02:00",
+    #     "orderID": "A1BC",
+    #     "reasonCode": "TS01",
+    #     "reason": "The transfer of the file was successful",
+    #   "additionalInformation": "Additional information 1"
+    #   }
+    # }
     # 
     # Can raise various network errors.
     def pain_file_info(r_id)
@@ -271,7 +285,7 @@ module Konfipay
       case content_type.mime_type
       when 'application/json'
         parse_json(body)
-      when 'text/xml', "application/xml" # sigh, the schema is not part of the mimetype...
+      when 'text/xml', "application/xml"
         parse_xml(body)
       else
         raise "Unknown content_type #{content_type.inspect}!"
@@ -285,7 +299,7 @@ module Konfipay
     def parse_xml(string)
       if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02') # rubocop:disable Style/GuardClause
         CamtParser::String.parse(string)
-      # on some calls (400 on pain_file_info, konfipay returns an xml error response instead of json
+      # on some calls (400 on pain_file_info), konfipay returns an xml error response instead of json
       # <ErrorItemContainer xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
       #   <ErrorItems>
       #     <ErrorItem>
@@ -304,11 +318,16 @@ module Konfipay
       # </ErrorItemContainer>
       #
       # We'll turn it into a minimal hash so we can handle it like the json error response
+      # Konfipay has been notified of the issue but let's keep this anyway to be prepared for xml errors just in case
       elsif string.include?("ErrorItemContainer")
         # TODO: THis is super clunky, is there no generic xml->hash parsing?
         doc = Nokogiri::XML.parse(string)
         {
-          "errorItems" => doc.xpath("/ErrorItemContainer/ErrorItems/ErrorItem").map { |i| { "errorMessage" => i.xpath("ErrorMessage").first.text } }
+          "errorItems" => doc.xpath("/ErrorItemContainer/ErrorItems/ErrorItem").map do |i|
+            {
+              "errorMessage" => i.xpath("ErrorMessage").first.text
+            }
+          end
         }
 
       else
