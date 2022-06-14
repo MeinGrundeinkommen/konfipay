@@ -1,16 +1,19 @@
 PATH
   remote: .
   specs:
-    konfipay (1.4.2)
+    konfipay (1.5.0)
       activesupport
       camt_parser
       http
       json
+      sepa_king
       sidekiq
 
 GEM
   remote: https://rubygems.org/
   specs:
+    activemodel (7.0.3)
+      activesupport (= 7.0.3)
     activesupport (7.0.3)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
@@ -45,6 +48,7 @@ GEM
     http-form_data (2.3.0)
     i18n (1.10.0)
       concurrent-ruby (~> 1.0)
+    iban-tools (1.1.0)
     json (2.6.2)
     llhttp-ffi (0.4.0)
       ffi-compiler (~> 1.0)
@@ -93,12 +97,16 @@ GEM
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.18.0)
       parser (>= 3.1.1.0)
-    rubocop-performance (1.14.1)
+    rubocop-performance (1.14.2)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
     rubocop-rspec (2.11.1)
       rubocop (~> 1.19)
     ruby-progressbar (1.11.0)
+    sepa_king (0.13.0)
+      activemodel (>= 4.2)
+      iban-tools
+      nokogiri
     sidekiq (6.5.0)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)

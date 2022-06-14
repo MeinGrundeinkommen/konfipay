@@ -11,7 +11,7 @@ RSpec.describe Konfipay::Configuration do
       [:base_url, 'https://portal.konfipay.de'],
       [:api_client_name, 'Konfipay Ruby Client'],
       [:api_client_version, Konfipay::VERSION],
-      [:credit_monitoring_interval, 36_000]
+      [:credit_monitoring_interval, 600]
     ].each do |setting, value|
       it "defaults #{setting.inspect} to #{value.inspect}" do
         expect(Konfipay.configuration.send(setting)).to eq(value)

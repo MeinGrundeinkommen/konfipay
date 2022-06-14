@@ -3,7 +3,7 @@
 require 'active_support'
 require 'active_support/core_ext'
 require 'http'
-# require 'sepa_king'
+require 'sepa_king'
 require 'camt_parser'
 require 'sidekiq'
 
@@ -11,6 +11,7 @@ require_relative 'konfipay/version'
 require_relative 'konfipay/configuration'
 require_relative 'konfipay/client'
 require_relative 'konfipay/camt_digester'
+require_relative 'konfipay/pain_builder'
 require_relative 'konfipay/operations'
 require_relative 'konfipay/operations/base'
 require_relative 'konfipay/operations/credit_transfer'
@@ -78,13 +79,27 @@ module Konfipay
     end
 
     # TODO: Implement when needed
+    # # TODO: Document what transaction_id is for (and how rails global id is useful)
     # # TODO: Document payment_data format
     # # TODO: Document format of info passed to callback
     # # TODO: IMplement some sort of validator class and use in all these kickoff-methods?
-    # def initialize_credit_transfer(callback_class, callback_method, payment_data = {})
-    #   # TODO: validate input, check that class and method are implemented
-    #   Konfipay::Jobs::InitializeCreditTransfer.perform_async(callback_class, callback_method, payment_data)
-    # end
+    def initialize_credit_transfer(
+      callback_class,
+      callback_method,
+      queue = nil,
+      payment_data,
+      transaction_id
+    )
+      # TODO: validate input, check that class and method are implemented
+      queue ||= :default # TODO: This should be in configuration and not repeated here
+      Konfipay::Jobs::InitializeCreditTransfer.set(queue: queue).perform_async(
+        callback_class,
+        callback_method,
+        payment_data,
+        transaction_id
+      )
+      true
+    end
 
     # def initialize_direct_debit(opts); end
   end
