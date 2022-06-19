@@ -58,6 +58,7 @@ module Konfipay
           requested_date: Date.parse(creditor_data["execute_on"]),
           # OPTIONAL: Enables or disables batch booking, in German "Sammelbuchung / Einzelbuchung"
           # True or False
+          # See also https://www.sepaforcorporates.com/sepa-payments/why-sepa-batch-booking-is-important/
           batch_booking: true,
           # OPTIONAL: Urgent Payment
           # One of these strings:
