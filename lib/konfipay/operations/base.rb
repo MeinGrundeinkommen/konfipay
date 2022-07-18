@@ -27,20 +27,21 @@ module Konfipay
         # FIN_CONFIRMED - The financial institution has confirmed the execution of the orders contained in the file. This status is final.
         # FIN_REJECTED - The financial institution was not able to complete all EBICS processing steps. The file will not be processed. Details are stated in the elements reasonCode, reason, and additionalInformation. This status is final.
 
-        pp data
-
         status = data["paymentStatusItem"]["status"]
 
         final, success = *case status
         when "KON_REJECTED", "FIN_UPLOAD_FAILED"
           [true, false]
-        when "KON_ACCEPTED_AND_QUEUED", "FIN_UPLOAD_SUCCEEDED", "FIN_VEU_FORWARDED", "FIN_ACCEPTED"
+        when "KON_ACCEPTED_AND_QUEUED", "FIN_UPLOAD_SUCCEEDED", "FIN_VEU_FORWARDED"
           [false, true]
         when "FIN_UPLOAD_UNCLEAR"
           [false, false]
         when "FIN_VEU_CANCELED", "FIN_REJECTED"
           [true, false]
-        when "FIN_PARTIALLY_ACCEPTED", "FIN_CONFIRMED"
+        # Note that the two "_ACCEPTED" states are not as "final" as the FIN_CONFIRMED state according to the Konfipay docs.
+        # However, we can't currently get the FIN_CONFIRMED state - it's unclear if this is normal or due to configuration issues
+        # at the bank or at Konfipay. But in testing, these have always been final "enough" and the transactions got executed.
+        when "FIN_PARTIALLY_ACCEPTED", "FIN_ACCEPTED", "FIN_CONFIRMED"
           [true, true]
         else
           raise "Unknown payment status #{status.inspect} ?!"
