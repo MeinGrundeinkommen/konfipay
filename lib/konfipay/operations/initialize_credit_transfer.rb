@@ -3,7 +3,6 @@
 module Konfipay
   module Operations
     class InitializeCreditTransfer < Base
-
       # Starts a credit transfer (Überweisung) from one of our accounts to one or many recipients.
       # For the payment_data format, see
       # Konfipay::initialize_credit_transfer
@@ -20,7 +19,7 @@ module Konfipay
       #     {"status"=>"FIN_UPLOAD_SUCCEEDED",
       #      "uploadTimestamp"=>"2022-06-08T16:20:53+02:00",
       #      "orderID"=>"N9D4"}}}
-      # 
+      #
       # or it can raise a connection error exception.
       #
       # "final" means the process has finished, successfully or not.
@@ -38,12 +37,12 @@ module Konfipay
         begin
           xml = Konfipay::PainBuilder.new(payment_data, transaction_id).credit_transfer_xml # here comes the pain
         rescue ArgumentError => e
-          logger&.info "credit transfer failed to start, invalid payment_data"
+          logger&.info 'credit transfer failed to start, invalid payment_data'
           return {
-            "final" => true,
-            "success" => false,
-            "data" => {
-              "SEPA builder error" => e.inspect
+            'final' => true,
+            'success' => false,
+            'data' => {
+              'SEPA builder error' => e.inspect
             }
           }
         end
@@ -51,14 +50,14 @@ module Konfipay
         data = nil
         begin
           data = client.submit_pain_file(xml)
-        rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => x
-          logger&.info "credit transfer failed to start"
+        rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => e
+          logger&.info 'credit transfer failed to start'
           return {
-            "final" => true,
-            "success" => false,
-            "data" => {
-              "error_class" => x.class.name,
-              "message" => x.message
+            'final' => true,
+            'success' => false,
+            'data' => {
+              'error_class' => e.class.name,
+              'message' => e.message
             }
           }
         end

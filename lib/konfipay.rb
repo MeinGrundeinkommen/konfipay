@@ -25,6 +25,7 @@ require_relative 'konfipay/jobs/monitor_credit_transfer'
 
 # rubocop:disable Metrics/ParameterLists
 # rubocop:disable Style/OptionalBooleanParameter
+# rubocop:disable Style/OptionalArguments
 module Konfipay
   class << self
     # Fetches all "new" statements for all configured accounts since the last time successfully used.
@@ -138,3 +139,4 @@ module Konfipay
 end
 # rubocop:enable Metrics/ParameterLists
 # rubocop:enable Style/OptionalBooleanParameter
+# rubocop:enable Style/OptionalArguments

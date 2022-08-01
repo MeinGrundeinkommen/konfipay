@@ -166,7 +166,8 @@ module Konfipay
     def submit_pain_file(xml)
       params = {}
       with_auth_retry do
-        response = authed_http.headers("Content-Type" => "application/xml").post(submit_pain_file_url(@config, params), body: xml)
+        response = authed_http.headers('Content-Type' => 'application/xml').post(submit_pain_file_url(@config, params),
+                                                                                 body: xml)
         raise_error_or_parse!(response)
       end
     end
@@ -191,7 +192,7 @@ module Konfipay
     #   "additionalInformation": "Additional information 1"
     #   }
     # }
-    # 
+    #
     # Can raise various network errors.
     def pain_file_info(r_id)
       params = {}
@@ -285,7 +286,7 @@ module Konfipay
       case content_type.mime_type
       when 'application/json'
         parse_json(body)
-      when 'text/xml', "application/xml"
+      when 'text/xml', 'application/xml'
         parse_xml(body)
       else
         raise "Unknown content_type #{content_type.inspect}!"
@@ -297,7 +298,7 @@ module Konfipay
     end
 
     def parse_xml(string)
-      if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02') # rubocop:disable Style/GuardClause
+      if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02')
         CamtParser::String.parse(string)
       # on some calls (400 on pain_file_info), konfipay returns an xml error response instead of json
       # <ErrorItemContainer xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
@@ -319,13 +320,13 @@ module Konfipay
       #
       # We'll turn it into a minimal hash so we can handle it like the json error response
       # Konfipay has been notified of the issue but let's keep this anyway to be prepared for xml errors just in case
-      elsif string.include?("ErrorItemContainer")
+      elsif string.include?('ErrorItemContainer')
         # TODO: This is super clunky, is there no generic xml->hash parsing?
         doc = Nokogiri::XML.parse(string)
         {
-          "errorItems" => doc.xpath("/ErrorItemContainer/ErrorItems/ErrorItem").map do |i|
+          'errorItems' => doc.xpath('/ErrorItemContainer/ErrorItems/ErrorItem').map do |i|
             {
-              "errorMessage" => i.xpath("ErrorMessage").first.text
+              'errorMessage' => i.xpath('ErrorMessage').first.text
             }
           end
         }

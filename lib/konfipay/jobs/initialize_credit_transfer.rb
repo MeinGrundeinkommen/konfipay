@@ -9,9 +9,9 @@ module Konfipay
       def perform(callback_class, callback_method, payment_data, transaction_id)
         data = Konfipay::Operations::InitializeCreditTransfer.new.submit(payment_data, transaction_id)
         run_callback(callback_class, callback_method, data, transaction_id)
-        unless data["final"]
-          schedule_credit_monitor(callback_class, callback_method, data["data"]['rId'], transaction_id)
-        end
+        return if data['final']
+
+        schedule_credit_monitor(callback_class, callback_method, data['data']['rId'], transaction_id)
       end
     end
   end

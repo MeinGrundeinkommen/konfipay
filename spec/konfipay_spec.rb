@@ -138,7 +138,7 @@ RSpec.describe Konfipay do
     end
 
     it 'initialize_credit_transfer'
-    
+
     # xit 'initialize_direct_debit'
   end
 end
