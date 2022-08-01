@@ -16,13 +16,15 @@ RSpec.describe Konfipay::Client do
     described_class.new(config)
   end
 
+  let(:request_user_agent) { "http.rb/#{HTTP::VERSION}" }
+
   let(:request_headers) do
     {
       'Accept' => 'application/json',
       'Authorization' => "Bearer #{access_token}",
       'Connection' => 'close',
       'Host' => 'portal.konfipay.de',
-      'User-Agent' => 'http.rb/5.0.4'
+      'User-Agent' => request_user_agent
     }
   end
 
@@ -58,7 +60,7 @@ RSpec.describe Konfipay::Client do
           'Connection' => 'close',
           'Content-Type' => 'application/json; charset=UTF-8',
           'Host' => 'portal.konfipay.de',
-          'User-Agent' => 'http.rb/5.0.4'
+          'User-Agent' => request_user_agent
         }
       )
       .to_return(status: 200,
@@ -101,7 +103,7 @@ RSpec.describe Konfipay::Client do
       end
 
       it 'raises error message with details from api response' do
-        expect { result }.to raise_error('400 Bad Request, messages: ErrorMessage1, ErrorMessage2')
+        expect { result }.to raise_error(Konfipay::Client::BadRequest, 'ErrorMessage1, ErrorMessage2')
       end
     end
 
@@ -131,7 +133,7 @@ RSpec.describe Konfipay::Client do
       end
 
       it 'raises error message with details from api response' do
-        expect { result }.to raise_error('403 Forbidden, messages: ErrorMessage1, ErrorMessage2')
+        expect { result }.to raise_error(Konfipay::Client::Forbidden, 'ErrorMessage1, ErrorMessage2')
       end
     end
 

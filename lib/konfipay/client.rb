@@ -267,7 +267,7 @@ module Konfipay
         when 400
           raise BadRequest, errors
         when 403
-          raise Forbidden, error
+          raise Forbidden, errors
         end
       when 404
         # {"Message":"Welcome to konfipay. There is no API-Endpoint defined for
