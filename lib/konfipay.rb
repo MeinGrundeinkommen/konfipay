@@ -78,11 +78,43 @@ module Konfipay
       true
     end
 
-    # TODO: Implement when needed
-    # # TODO: Document what transaction_id is for (and how rails global id is useful)
-    # # TODO: Document payment_data format
-    # # TODO: Document format of info passed to callback
-    # # TODO: IMplement some sort of validator class and use in all these kickoff-methods?
+    # Start a new credit transfer, i.e. send money.
+    #
+    # payment_data format (all in json-compatible values, i.e. strings, numbers) is:
+    # {"debtor"=>
+    #   {"name"=>"Your company",
+    #    "iban"=>"DE02120300000000202051",
+    #    "bic"=>nil},
+    #  "creditors"=>
+    #   [{"name" => "Brittani Ziemann",
+    #     "iban" => "DE02300209000106531065",
+    #     "bic" => nil,
+    #     "amount_in_cents" => 100000,
+    #     "currency" => "EUR",
+    #     "remittance_information" => "Here is the money, Lebowsky.",
+    #     "end_to_end_reference" => "XYZ-0005-01",
+    #     "execute_on" => "2022-09-01"},
+    #    ...
+    #   ]
+    # }
+    # bics and end_to_end_reference are optional.
+    # The transaction_id should be unique and alphanumerical, it is used for the
+    # "Message Identification" field to identify the whole transfer process.
+    # The end_to_end_reference identifies the single transaction and is visible to the creditor.
+    #
+    # Use "queue" to run job in a specific sidekiq queue, default is :default
+    #
+    # callback_class::callback_method will be called asynchronously with info about the state of the transfer,
+    # for the format see Konfipay::Operations::InitializeCreditTransfer#submit
+    #
+    # This method itself only returns true.
+    #
+    # Note that the callback method very likely will be called multiple times. An internal job
+    # is repeatedly enqueued in Sidekiq to keep monitoring the process of the transfer,
+    # until a "final" state is reached (successfully or with an error). See configuration for
+    # the interval in which checks are made.
+    #
+    # # TODO: Implement some sort of validator class and use in all these kickoff-methods?
     def initialize_credit_transfer(
       callback_class,
       callback_method,

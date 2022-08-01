@@ -320,7 +320,7 @@ module Konfipay
       # We'll turn it into a minimal hash so we can handle it like the json error response
       # Konfipay has been notified of the issue but let's keep this anyway to be prepared for xml errors just in case
       elsif string.include?("ErrorItemContainer")
-        # TODO: THis is super clunky, is there no generic xml->hash parsing?
+        # TODO: This is super clunky, is there no generic xml->hash parsing?
         doc = Nokogiri::XML.parse(string)
         {
           "errorItems" => doc.xpath("/ErrorItemContainer/ErrorItems/ErrorItem").map do |i|

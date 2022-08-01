@@ -3,133 +3,42 @@
 module Konfipay
   module Operations
     class InitializeCreditTransfer < Base
+
       # Starts a credit transfer (Überweisung) from one of our accounts to one or many recipients.
-
-# x = {"debtor"=>{"name"=>"Mein Grundeinkommen e.V.", "iban"=>"DE49430609671165313801", "bic"=>nil},
-#  "creditors"=>
-#   [{"name"=>"Carrol Wiza",
-#     "iban"=>"AT483200000012345864",
-#     "bic"=>nil,
-#     "amount_in_cents"=>100000,
-#     "currency"=>"EUR",
-#     "remittance_information"=>"Dein BGE in diesem Monat Viel Freude von Mein Grundeinkommen",
-#     "end_to_end_reference"=>"BGE-0012-02",
-#     "execute_on"=>"2022-10-03"},
-#    {"name"=>"Josue Bruen",
-#     "iban"=>"AT483200000012345864",
-#     "bic"=>nil,
-#     "amount_in_cents"=>100000,
-#     "currency"=>"EUR",
-#     "remittance_information"=>"Kinder-BGE in diesem Monat Viel Freude von Mein Grundeinkommen",
-#     "end_to_end_reference"=>"BGE-0013-02",
-#     "execute_on"=>"2022-10-03"}]}
-# Konfipay::Operations::InitializeCreditTransfer.new.submit(x, "bla")
-
-      # "gid://mge/TransferCollection/2"
-
-
-# <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.003.03" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.003.03 pain.001.003.03.xsd">
-#   <CstmrCdtTrfInitn>
-#     <GrpHdr>
-#       <MsgId>SEPA-KING/320e3abca9a206ddf315b7</MsgId>
-#       <CreDtTm>2022-05-17T17:59:15+02:00</CreDtTm>
-#       <NbOfTxs>2</NbOfTxs>
-#       <CtrlSum>2000.00</CtrlSum>
-#       <InitgPty>
-#         <Nm>Mein Grundeinkommen e.V.</Nm>
-#       </InitgPty>
-#     </GrpHdr>
-#     <PmtInf>
-#       <PmtInfId>SEPA-KING/320e3abca9a206ddf315b7/1</PmtInfId>
-#       <PmtMtd>TRF</PmtMtd>
-#       <BtchBookg>true</BtchBookg>
-#       <NbOfTxs>2</NbOfTxs>
-#       <CtrlSum>2000.00</CtrlSum>
-#       <PmtTpInf>
-#         <SvcLvl>
-#           <Cd>SEPA</Cd>
-#         </SvcLvl>
-#       </PmtTpInf>
-#       <ReqdExctnDt>2022-10-03</ReqdExctnDt>
-#       <Dbtr>
-#         <Nm>Mein Grundeinkommen e.V.</Nm>
-#       </Dbtr>
-#       <DbtrAcct>
-#         <Id>
-#           <IBAN>DE49430609671165313801</IBAN>
-#         </Id>
-#       </DbtrAcct>
-#       <DbtrAgt>
-#         <FinInstnId>
-#           <Othr>
-#             <Id>NOTPROVIDED</Id>
-#           </Othr>
-#         </FinInstnId>
-#       </DbtrAgt>
-#       <ChrgBr>SLEV</ChrgBr>
-#       <CdtTrfTxInf>
-#         <PmtId>
-#           <EndToEndId>BGE-0012-02</EndToEndId>
-#         </PmtId>
-#         <Amt>
-#           <InstdAmt Ccy="EUR">1000.00</InstdAmt>
-#         </Amt>
-#         <Cdtr>
-#           <Nm>Carrol Wiza</Nm>
-#         </Cdtr>
-#         <CdtrAcct>
-#           <Id>
-#             <IBAN>AT483200000012345864</IBAN>
-#           </Id>
-#         </CdtrAcct>
-#         <RmtInf>
-#           <Ustrd>Dein BGE in diesem Monat Viel Freude von Mein Grundeinkommen</Ustrd>
-#         </RmtInf>
-#       </CdtTrfTxInf>
-#       <CdtTrfTxInf>
-#         <PmtId>
-#           <EndToEndId>BGE-0013-02</EndToEndId>
-#         </PmtId>
-#         <Amt>
-#           <InstdAmt Ccy="EUR">1000.00</InstdAmt>
-#         </Amt>
-#         <Cdtr>
-#           <Nm>Josue Bruen</Nm>
-#         </Cdtr>
-#         <CdtrAcct>
-#           <Id>
-#             <IBAN>AT483200000012345864</IBAN>
-#           </Id>
-#         </CdtrAcct>
-#         <RmtInf>
-#           <Ustrd>Kinder-BGE in diesem Monat Viel Freude von Mein Grundeinkommen</Ustrd>
-#         </RmtInf>
-#       </CdtTrfTxInf>
-#     </PmtInf>
-#   </CstmrCdtTrfInitn>
-# </Document>
-
-# TODO: What are those weird group headers? Get rid of it and add gem info?
-
-# This always returns a hash with these fields:
-#
-# "final" => final,
-# "success" => success,
-# "data" => { "SEPA builder error" => e.inspect }
-#
-# TODO: Explain
-#
-# or it can raise a connection error exception.
-
+      # For the payment_data format, see
+      # Konfipay::initialize_credit_transfer
+      #
+      # Format of data returned is:
+      #
+      # {"final"=>false,
+      #  "success"=>true,
+      #  "data"=>
+      #   {"rId"=>"ef2abc7e-62b8-4603-8994-61a716e9fa81",
+      #    "timestamp"=>"2022-06-08T16:20:52+02:00",
+      #    "type"=>"pain",
+      #    "paymentStatusItem"=>
+      #     {"status"=>"FIN_UPLOAD_SUCCEEDED",
+      #      "uploadTimestamp"=>"2022-06-08T16:20:53+02:00",
+      #      "orderID"=>"N9D4"}}}
+      # 
+      # or it can raise a connection error exception.
+      #
+      # "final" means the process has finished, successfully or not.
+      # "success" is when the money is on the way - note that it's not always possible to completely
+      # know if the transactions are "done", this gem assumes that success is reached when the bank
+      # has acknowledged the receipt of the payment info without error.
+      # See Konfipay::Operations::Base#parse_pain_status for details, and also which "status" strings can
+      # be returned by the Konfipay API.
+      # "data" is verbatim what the Konfipay API returned for the initial process start.
+      # Note that rId is needed to identify this transfer process on all subsequent (manual) API calls.
       def submit(payment_data, transaction_id)
- #       pp(transaction_id)
-        pp(payment_data)
+        logger&.info "starting credit transfer for #{transaction_id.inspect}"
         # TODO: validate payment data again?
-
         xml = nil
         begin
           xml = Konfipay::PainBuilder.new(payment_data, transaction_id).credit_transfer_xml # here comes the pain
         rescue ArgumentError => e
+          logger&.info "credit transfer failed to start, invalid payment_data"
           return {
             "final" => true,
             "success" => false,
@@ -138,12 +47,12 @@ module Konfipay
             }
           }
         end
-        puts xml
         client = Konfipay::Client.new
         data = nil
         begin
           data = client.submit_pain_file(xml)
         rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => x
+          logger&.info "credit transfer failed to start"
           return {
             "final" => true,
             "success" => false,
@@ -153,8 +62,9 @@ module Konfipay
             }
           }
         end
-
-        parse_pain_status(data)
+        result = parse_pain_status(data)
+        logger&.info "credit transfer for #{transaction_id.inspect} started"
+        result
       end
     end
   end

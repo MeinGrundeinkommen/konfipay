@@ -13,7 +13,6 @@ module Konfipay
       @transaction_id = transaction_id
     end
 
-    # TODO: Set msgid in grphdr? Use transaction id?
     def credit_transfer_builder
       # Comments here are from sepa_king docs: https://github.com/salesking/sepa_king
       builder = SEPA::CreditTransfer.new(
