@@ -99,6 +99,27 @@ RSpec.describe Konfipay::Client do
       }
     end
 
+    let(:generic_xml_error_body) do
+      <<-XML
+      <ErrorItemContainer xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+        <ErrorItems>
+          <ErrorItem>
+            <ErrorCode>ERR-00-0000</ErrorCode>
+            <ErrorMessage>ErrorMessage1</ErrorMessage>
+            <ErrorDetails>ErrorDetails1</ErrorDetails>
+            <Timestamp>2022-05-17T17:02:19+02:00</Timestamp>
+          </ErrorItem>
+          <ErrorItem>
+            <ErrorCode>ERR-11-1111</ErrorCode>
+            <ErrorMessage>ErrorMessage2</ErrorMessage>
+            <ErrorDetails>ErrorDetails2</ErrorDetails>
+            <Timestamp>2022-05-17T17:02:19+02:00</Timestamp>
+          </ErrorItem>
+        </ErrorItems>
+      </ErrorItemContainer>
+      XML
+    end
+
     context 'when konfipay returns 400 error' do
       before do
         stub_login_token_api_call!
@@ -107,6 +128,21 @@ RSpec.describe Konfipay::Client do
           .to_return(status: 400,
                      body: generic_error_body.to_json,
                      headers: content_type_json)
+      end
+
+      it 'raises error message with details from api response' do
+        expect { result }.to raise_error(Konfipay::Client::BadRequest, 'ErrorMessage1, ErrorMessage2')
+      end
+    end
+
+    context 'when konfipay returns 400 error with xml instead of json as the error content type' do
+      before do
+        stub_login_token_api_call!
+        stub_request(http_method, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 400,
+                     body: generic_xml_error_body,
+                     headers: content_type_xml)
       end
 
       it 'raises error message with details from api response' do
