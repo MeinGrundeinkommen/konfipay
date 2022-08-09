@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.003.03" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.003.03 pain.001.003.03.xsd">
+  <CstmrCdtTrfInitn>
+    <GrpHdr>
+      <MsgId>Transaction-ID-123-xyz</MsgId>
+      <CreDtTm>2022-08-09T16:38:56+02:00</CreDtTm>
+      <NbOfTxs>3</NbOfTxs>
+      <CtrlSum>3000.00</CtrlSum>
+      <InitgPty>
+        <Nm>Unsere Organisation</Nm>
+      </InitgPty>
+    </GrpHdr>
+    <PmtInf>
+      <PmtInfId>Transaction-ID-123-xyz/1</PmtInfId>
+      <PmtMtd>TRF</PmtMtd>
+      <BtchBookg>true</BtchBookg>
+      <NbOfTxs>3</NbOfTxs>
+      <CtrlSum>3000.00</CtrlSum>
+      <PmtTpInf>
+        <SvcLvl>
+          <Cd>SEPA</Cd>
+        </SvcLvl>
+      </PmtTpInf>
+      <ReqdExctnDt>2022-09-01</ReqdExctnDt>
+      <Dbtr>
+        <Nm>Unsere Organisation</Nm>
+      </Dbtr>
+      <DbtrAcct>
+        <Id>
+          <IBAN>DE62650700240021982400</IBAN>
+        </Id>
+      </DbtrAcct>
+      <DbtrAgt>
+        <FinInstnId>
+          <Othr>
+            <Id>NOTPROVIDED</Id>
+          </Othr>
+        </FinInstnId>
+      </DbtrAgt>
+      <ChrgBr>SLEV</ChrgBr>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>XXX-0008-01</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">1000.00</InstdAmt>
+        </Amt>
+        <Cdtr>
+          <Nm>Daniela Bartell</Nm>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>DE36733900000000121738</IBAN>
+          </Id>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>Ihre Auszahlung, viel Freude!</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>XXX-0011-03</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">1000.00</InstdAmt>
+        </Amt>
+        <Cdtr>
+          <Nm>Iluminada Pfeffer</Nm>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>DE87290400900104040100</IBAN>
+          </Id>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>Ihre Auszahlung, viel Freude!</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>XXX-0012-03</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">1000.00</InstdAmt>
+        </Amt>
+        <Cdtr>
+          <Nm>Alexa Medhurst</Nm>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>DE36733900000000121738</IBAN>
+          </Id>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>Ihre Auszahlung, viel Freude!</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>

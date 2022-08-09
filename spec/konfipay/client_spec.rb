@@ -28,13 +28,20 @@ RSpec.describe Konfipay::Client do
     }
   end
 
+  # i.e. an API request that sends XML needs the correct content type header
+  let(:xml_request_headers) do
+    request_headers.merge({
+                            'Content-Type' => 'application/xml'
+                          })
+  end
+
   let(:access_token) { 'xyz123' }
 
-  let(:response_is_json) do
+  let(:content_type_json) do
     { 'Content-Type' => 'application/json; charset=UTF-8' }
   end
 
-  let(:response_is_xml) do
+  let(:content_type_xml) do
     { 'Content-Type' => 'text/xml; charset=UTF-8' }
   end
 
@@ -69,7 +76,7 @@ RSpec.describe Konfipay::Client do
                    expiresIn: 1800,
                    tokenType: 'bearer'
                  }.to_json,
-                 headers: response_is_json)
+                 headers: content_type_json)
   end
 
   shared_examples 'api error handling' do |http_method|
@@ -99,7 +106,7 @@ RSpec.describe Konfipay::Client do
           .with(headers: request_headers)
           .to_return(status: 400,
                      body: generic_error_body.to_json,
-                     headers: response_is_json)
+                     headers: content_type_json)
       end
 
       it 'raises error message with details from api response' do
@@ -129,7 +136,7 @@ RSpec.describe Konfipay::Client do
           .with(headers: request_headers)
           .to_return(status: 403,
                      body: generic_error_body.to_json,
-                     headers: response_is_json)
+                     headers: content_type_json)
       end
 
       it 'raises error message with details from api response' do
@@ -147,7 +154,7 @@ RSpec.describe Konfipay::Client do
                        Message: 'Welcome to konfipay. Blub blub',
                        ApiDocumentationLink: 'https://portal.konfipay.de/Info/Api_Doc'
                      }.to_json,
-                     headers: response_is_json)
+                     headers: content_type_json)
       end
 
       it 'raises error message with details from api response' do
@@ -200,7 +207,7 @@ RSpec.describe Konfipay::Client do
           .then
           .to_return(status: 200,
                      body: expected_parsed_json.to_json,
-                     headers: response_is_json)
+                     headers: content_type_json)
       end
 
       it_behaves_like 'success'
@@ -213,7 +220,7 @@ RSpec.describe Konfipay::Client do
           .with(headers: request_headers)
           .to_return(status: 200,
                      body: expected_parsed_json.to_json,
-                     headers: response_is_json)
+                     headers: content_type_json)
       end
 
       it_behaves_like 'success'
@@ -264,7 +271,7 @@ RSpec.describe Konfipay::Client do
           .then
           .to_return(status: 200,
                      body: camt_xml,
-                     headers: response_is_xml)
+                     headers: content_type_xml)
       end
 
       it_behaves_like 'success'
@@ -277,7 +284,7 @@ RSpec.describe Konfipay::Client do
           .with(headers: request_headers)
           .to_return(status: 200,
                      body: camt_xml,
-                     headers: response_is_xml)
+                     headers: content_type_xml)
       end
 
       context 'without arguments' do
@@ -326,7 +333,7 @@ RSpec.describe Konfipay::Client do
           .then
           .to_return(status: 200,
                      body: expected_parsed_json.to_json,
-                     headers: response_is_json)
+                     headers: content_type_json)
       end
 
       it_behaves_like 'success'
@@ -339,7 +346,61 @@ RSpec.describe Konfipay::Client do
           .with(headers: request_headers)
           .to_return(status: 200,
                      body: expected_parsed_json.to_json,
-                     headers: response_is_json)
+                     headers: content_type_json)
+      end
+
+      it_behaves_like 'success'
+    end
+  end
+
+  describe 'submit_pain_file' do
+    let(:stubbed_url) { 'https://portal.konfipay.de/api/v5/Payment/Sepa/Pain' }
+    let(:pain_xml) { File.read('spec/examples/pain.001.003.03/credit_transfer.xml') }
+    let(:expected_parsed_json) do
+      {
+        'rId' => '491c7a47-6aec-47b2-b3ef-488d2ca7f4d4',
+        'timestamp' => '2022-08-09T16:53:37+02:00',
+        'type' => 'pain',
+        'paymentStatusItem' => { 'status' => 'FIN_UPLOAD_SUCCEEDED',
+                                 'uploadTimestamp' => '2022-08-09T16:53:43+02:00',
+                                 'orderID' => 'N9G8' }
+      }
+    end
+    let(:result) { client.submit_pain_file(pain_xml) }
+
+    it_behaves_like 'api error handling', :post
+
+    shared_examples_for 'success' do
+      it 'returns parsed response' do
+        expect(result).to eq(expected_parsed_json)
+      end
+    end
+
+    context 'when konfipay returns success' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:post, stubbed_url)
+          .with(headers: xml_request_headers)
+          .to_return(status: 200,
+                     body: expected_parsed_json.to_json,
+                     headers: content_type_json)
+      end
+
+      it_behaves_like 'success'
+    end
+
+    context 'when konfipay returns first 401, then success' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:post, stubbed_url)
+          .with(headers: xml_request_headers)
+          .to_return(status: 401,
+                     body: nil,
+                     headers: response_is_auth_error)
+          .then
+          .to_return(status: 200,
+                     body: expected_parsed_json.to_json,
+                     headers: content_type_json)
       end
 
       it_behaves_like 'success'

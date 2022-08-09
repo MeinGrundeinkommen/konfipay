@@ -166,8 +166,9 @@ module Konfipay
     def submit_pain_file(xml)
       params = {}
       with_auth_retry do
-        response = authed_http.headers('Content-Type' => 'application/xml').post(submit_pain_file_url(@config, params),
-                                                                                 body: xml)
+        response = authed_http
+                   .headers('Content-Type' => 'application/xml')
+                   .post(submit_pain_file_url(@config, params), body: xml)
         raise_error_or_parse!(response)
       end
     end
