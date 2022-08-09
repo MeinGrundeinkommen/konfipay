@@ -189,8 +189,9 @@ module Konfipay
     #     "uploadTimestamp": "2022-06-07T22:46:28+02:00",
     #     "orderID": "A1BC",
     #     "reasonCode": "TS01",
-    #     "reason": "The transfer of the file was successful",
-    #   "additionalInformation": "Additional information 1"
+    #   },
+    #   "reason": "The transfer of the file was successful",
+    #   "additionalInformation": "Additional information (big block of paper-printable info about the process)"
     #   }
     # }
     #

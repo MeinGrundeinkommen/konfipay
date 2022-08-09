@@ -406,4 +406,63 @@ RSpec.describe Konfipay::Client do
       it_behaves_like 'success'
     end
   end
+
+  describe 'pain_file_info' do
+    let(:r_id) { 'a-b-c' }
+    let(:expected_parsed_json) do
+      {
+        'rId' => r_id,
+        'timestamp' => '2022-08-09T17 =>10 =>19+02 =>00',
+        'type' => 'pain',
+        'paymentStatusItem' => {
+          'status' => 'FIN_ACCEPTED',
+          'uploadTimestamp' => '2022-08-09T17 =>10 =>21+02 =>00',
+          'orderID' => 'N9GB',
+          'reasonCode' => 'DS07',
+          'reason' => 'Alle den Auftrag betreffenden Aktionen konnten durch den Bankrechner durchgeführt werden',
+          'additionalInformation' => '(big block of paper-printable info about the process)'
+        }
+      }
+    end
+    let(:stubbed_url) { "https://portal.konfipay.de/api/v5/Payment/Sepa/Pain/#{r_id}/item" }
+    let(:result) { client.pain_file_info(r_id) }
+
+    it_behaves_like 'api error handling', :get
+
+    shared_examples_for 'success' do
+      it 'returns parsed response' do
+        expect(result).to eq(expected_parsed_json)
+      end
+    end
+
+    context 'when konfipay returns first 401, then success' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:get, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 401,
+                     body: nil,
+                     headers: response_is_auth_error)
+          .then
+          .to_return(status: 200,
+                     body: expected_parsed_json.to_json,
+                     headers: content_type_json)
+      end
+
+      it_behaves_like 'success'
+    end
+
+    context 'when konfipay returns success' do
+      before do
+        stub_login_token_api_call!
+        stub_request(:get, stubbed_url)
+          .with(headers: request_headers)
+          .to_return(status: 200,
+                     body: expected_parsed_json.to_json,
+                     headers: content_type_json)
+      end
+
+      it_behaves_like 'success'
+    end
+  end
 end
