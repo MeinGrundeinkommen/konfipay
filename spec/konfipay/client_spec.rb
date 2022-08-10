@@ -448,11 +448,11 @@ RSpec.describe Konfipay::Client do
     let(:expected_parsed_json) do
       {
         'rId' => r_id,
-        'timestamp' => '2022-08-09T17 =>10 =>19+02 =>00',
+        'timestamp' => '2022-08-09T17:10:19+02:00',
         'type' => 'pain',
         'paymentStatusItem' => {
           'status' => 'FIN_ACCEPTED',
-          'uploadTimestamp' => '2022-08-09T17 =>10 =>21+02 =>00',
+          'uploadTimestamp' => '2022-08-09T17:10:21+02:00',
           'orderID' => 'N9GB',
           'reasonCode' => 'DS07',
           'reason' => 'Alle den Auftrag betreffenden Aktionen konnten durch den Bankrechner durchgeführt werden',
