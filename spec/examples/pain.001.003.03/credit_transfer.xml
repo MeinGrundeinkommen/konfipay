@@ -54,12 +54,12 @@
           </Id>
         </CdtrAcct>
         <RmtInf>
-          <Ustrd>Ihre Auszahlung, viel Freude!</Ustrd>
+          <Ustrd>Ihre Auszahlung, viel Freude</Ustrd>
         </RmtInf>
       </CdtTrfTxInf>
       <CdtTrfTxInf>
         <PmtId>
-          <EndToEndId>XXX-0011-03</EndToEndId>
+          <EndToEndId>XXX-0011-02</EndToEndId>
         </PmtId>
         <Amt>
           <InstdAmt Ccy="EUR">1000.00</InstdAmt>
@@ -73,7 +73,7 @@
           </Id>
         </CdtrAcct>
         <RmtInf>
-          <Ustrd>Ihre Auszahlung, viel Freude!</Ustrd>
+          <Ustrd>Ihre Auszahlung, viel Freude</Ustrd>
         </RmtInf>
       </CdtTrfTxInf>
       <CdtTrfTxInf>
@@ -92,7 +92,7 @@
           </Id>
         </CdtrAcct>
         <RmtInf>
-          <Ustrd>Ihre Auszahlung, viel Freude!</Ustrd>
+          <Ustrd>Ihre Auszahlung, viel Freude</Ustrd>
         </RmtInf>
       </CdtTrfTxInf>
     </PmtInf>
