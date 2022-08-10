@@ -11,10 +11,9 @@ module Konfipay
       def fetch(r_id)
         logger&.info "credit transfer fetch operation started for r_id #{r_id.inspect}"
 
-        client = Konfipay::Client.new
         data = nil
         begin
-          data = client.pain_file_info(r_id)
+          data = @client.pain_file_info(r_id)
         rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => e
           logger&.info 'credit transfer fetch operation finished with error'
           return {

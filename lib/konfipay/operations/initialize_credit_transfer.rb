@@ -46,10 +46,9 @@ module Konfipay
             }
           }
         end
-        client = Konfipay::Client.new
         data = nil
         begin
-          data = client.submit_pain_file(xml)
+          data = @client.submit_pain_file(xml)
         rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => e
           logger&.info 'credit transfer failed to start'
           return {
