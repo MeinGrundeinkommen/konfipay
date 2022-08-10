@@ -417,7 +417,7 @@ RSpec.describe Konfipay::Client do
         stub_login_token_api_call!
         stub_request(:post, stubbed_url)
           .with(headers: xml_request_headers)
-          .to_return(status: 200,
+          .to_return(status: 201,
                      body: expected_parsed_json.to_json,
                      headers: content_type_json)
       end
@@ -434,7 +434,7 @@ RSpec.describe Konfipay::Client do
                      body: nil,
                      headers: response_is_auth_error)
           .then
-          .to_return(status: 200,
+          .to_return(status: 201,
                      body: expected_parsed_json.to_json,
                      headers: content_type_json)
       end
