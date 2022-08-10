@@ -67,7 +67,7 @@ RSpec.describe Konfipay::Operations::InitializeCreditTransfer do
 
     around do |example|
       Time.use_zone('US/Eastern') do
-        travel_to(Time.parse('2022-08-09T16:38:56')) do
+        travel_to(Time.zone.parse('2022-08-09T16:38:56')) do
           example.run
         end
       end

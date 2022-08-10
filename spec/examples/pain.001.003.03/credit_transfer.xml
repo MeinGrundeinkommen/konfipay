@@ -3,7 +3,7 @@
   <CstmrCdtTrfInitn>
     <GrpHdr>
       <MsgId>Transaction-ID-123-xyz</MsgId>
-      <CreDtTm>2022-08-09T10:38:56-04:00</CreDtTm>
+      <CreDtTm>2022-08-09T16:38:56-04:00</CreDtTm>
       <NbOfTxs>3</NbOfTxs>
       <CtrlSum>3000.00</CtrlSum>
       <InitgPty>
