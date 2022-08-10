@@ -27,6 +27,8 @@ module Konfipay
       )
 
       builder.message_identification = transaction_id
+      # Override default (Time.now.iso8601) to use proper time zone
+      builder.creation_date_time = Time.current.iso8601
 
       payment_data['creditors'].each do |creditor_data|
         builder.add_transaction(
