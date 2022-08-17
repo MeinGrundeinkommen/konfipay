@@ -7,6 +7,8 @@ module Konfipay
   class Client
     class Error < StandardError; end
     class Unauthorized < Error; end
+    class BadRequest < Error; end
+    class Forbidden < Error; end
 
     def initialize(config = Konfipay.configuration)
       @config = config
@@ -138,6 +140,74 @@ module Konfipay
       "#{config.base_url}/api/v5/Document/Camt/#{r_id}/Acknowledge"
     end
 
+    # Send a payment initiation file to Konfipay,
+    # i.e. start a direct debit or credit transfer process.
+    #
+    # https://portal.konfipay.de/api-docs/index.html#tag/Payment-SEPA/paths/~1api~1v5~1Payment~1Sepa~1Pain/post
+    # (Note on the docs: Details on the various error/process states are somewhat hidden, some of the response schema
+    # list headers can be clicked to expand them)
+    # See those docs on which pain formats are supported.
+    #
+    # Returns the initial response as parsed JSON:
+    # {
+    #   "rId": "5d12c087-be1e-456c-a33f-4f8750fa7814",
+    #   "timestamp": "2022-05-17T17:02:19+02:00",
+    #   "type": "pain",
+    #   "paymentStatusItem": {
+    #     "status": "FIN_UPLOAD_SUCCEEDED",
+    #     "uploadTimestamp": "2022-05-17T18:14:32+02:00",
+    #     "orderID": "A1BC"
+    #   }
+    # }
+    #
+    # Note that the process can stop here (check the status) or require polling with #pain_file_info
+    #
+    # Can raise various network errors.
+    def submit_pain_file(xml)
+      params = {}
+      with_auth_retry do
+        response = authed_http
+                   .headers('Content-Type' => 'application/xml')
+                   .post(submit_pain_file_url(@config, params), body: xml)
+        raise_error_or_parse!(response)
+      end
+    end
+
+    def submit_pain_file_url(config, params)
+      "#{config.base_url}/api/v5/Payment/Sepa/Pain#{query_params(params)}"
+    end
+
+    # Get and parse information about a payment file (from #submit_pain_file) with given r_id from endpoint:
+    # https://portal.konfipay.de/api-docs/index.html#tag/Payment-SEPA/paths/~1api~1v5~1Payment~1Sepa~1Pain~1{rId}/get
+    #
+    # {
+    #   "rId": "5d12c087-be1e-456c-a33f-4f8750fa7814",
+    #   "timestamp": "2022-06-07T21:34:15+02:00",
+    #   "type": "pain",
+    #   "paymentStatusItem": {
+    #     "status": "FIN_CONFIRMED",
+    #     "uploadTimestamp": "2022-06-07T22:46:28+02:00",
+    #     "orderID": "A1BC",
+    #     "reasonCode": "TS01",
+    #   },
+    #   "reason": "The transfer of the file was successful",
+    #   "additionalInformation": "Additional information (big block of paper-printable info about the process)"
+    #   }
+    # }
+    #
+    # Can raise various network errors.
+    def pain_file_info(r_id)
+      params = {}
+      with_auth_retry do
+        response = authed_http.get(pain_file_info_url(@config, r_id, params))
+        raise_error_or_parse!(response)
+      end
+    end
+
+    def pain_file_info_url(config, r_id, params)
+      "#{config.base_url}/api/v5/Payment/Sepa/Pain/#{r_id}/item#{query_params(params)}"
+    end
+
     def http
       http = HTTP.timeout(@config.timeout).headers(accept: 'application/json')
       # the api doesn't seem to support compression but it can't hurt to ask for it
@@ -180,7 +250,7 @@ module Konfipay
     def raise_error_or_parse!(response)
       status = response.status
       case status
-      when 200
+      when 200, 201
         parse(response)
       when 204
         # "The request was processed successfully, but no data is available."
@@ -195,7 +265,12 @@ module Konfipay
         # {"errorItems":[{"errorCode":"ERR-04-0009","errorMessage":"UnknownBankAccount",
         #  "timestamp":"2021-10-19T15:10:45.767"}]}
         errors = parse(response)['errorItems'].map { |e| e['errorMessage'] }.join(', ')
-        raise "#{status}, messages: #{errors}"
+        case status
+        when 400
+          raise BadRequest, errors
+        when 403
+          raise Forbidden, errors
+        end
       when 404
         # {"Message":"Welcome to konfipay. There is no API-Endpoint defined for
         #  'https://portal.konfipay.de/api/v4/Document/Camtiban=aaaa'. Please take a
@@ -213,7 +288,7 @@ module Konfipay
       case content_type.mime_type
       when 'application/json'
         parse_json(body)
-      when 'text/xml' # sigh, the schema is not part of the mimetype...
+      when 'text/xml', 'application/xml'
         parse_xml(body)
       else
         raise "Unknown content_type #{content_type.inspect}!"
@@ -225,8 +300,39 @@ module Konfipay
     end
 
     def parse_xml(string)
-      if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02') # rubocop:disable Style/GuardClause
+      if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02')
         CamtParser::String.parse(string)
+      # on some calls (400 on pain_file_info), konfipay returns an xml error response instead of json
+      # <ErrorItemContainer xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+      #   <ErrorItems>
+      #     <ErrorItem>
+      #       <ErrorCode>ERR-00-0000</ErrorCode>
+      #       <ErrorMessage>ErrorMessage1</ErrorMessage>
+      #       <ErrorDetails>ErrorDetails1</ErrorDetails>
+      #       <Timestamp>2022-05-17T17:02:19+02:00</Timestamp>
+      #     </ErrorItem>
+      #     <ErrorItem>
+      #       <ErrorCode>ERR-11-1111</ErrorCode>
+      #       <ErrorMessage>ErrorMessage2</ErrorMessage>
+      #       <ErrorDetails>ErrorDetails2</ErrorDetails>
+      #       <Timestamp>2022-05-17T17:02:19+02:00</Timestamp>
+      #     </ErrorItem>
+      #   </ErrorItems>
+      # </ErrorItemContainer>
+      #
+      # We'll turn it into a minimal hash so we can handle it like the json error response
+      # Konfipay has been notified of the issue but let's keep this anyway to be prepared for xml errors just in case
+      elsif string.include?('ErrorItemContainer')
+        # TODO: This is super clunky, is there no generic xml->hash parsing?
+        doc = Nokogiri::XML.parse(string)
+        {
+          'errorItems' => doc.xpath('/ErrorItemContainer/ErrorItems/ErrorItem').map do |i|
+            {
+              'errorMessage' => i.xpath('ErrorMessage').first.text
+            }
+          end
+        }
+
       else
         raise 'Response is XML, but no known XML Schema found! Sad.'
       end

@@ -13,17 +13,18 @@ module Konfipay
         @config&.logger
       end
 
-      def run_callback(callback_class, callback_method, data)
-        callback_class.constantize.send(callback_method, data)
+      def run_callback(callback_class, callback_method, data, transaction_id = nil)
+        callback_class.constantize.send(callback_method, data, transaction_id)
       end
 
-      def schedule_credit_monitor(callback_class, callback_method, r_id)
-        logger&.info "Scheduling job to check for credit transfer #{r_id}"
+      def schedule_credit_monitor(callback_class, callback_method, r_id, transaction_id)
+        logger&.info "Scheduling job to check for credit transfer #{r_id} / #{transaction_id}"
         Konfipay::Jobs::MonitorCreditTransfer.perform_in(
           @config.credit_monitoring_interval,
-          r_id,
           callback_class,
-          callback_method
+          callback_method,
+          r_id,
+          transaction_id
         )
       end
     end

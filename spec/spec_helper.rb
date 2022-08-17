@@ -6,6 +6,8 @@ require 'simplecov'
 SimpleCov.start
 require 'konfipay'
 require 'webmock/rspec'
+require 'active_support/testing/time_helpers'
+
 require 'support/example_callback_class'
 
 RSpec.configure do |config|
@@ -18,6 +20,8 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.include ActiveSupport::Testing::TimeHelpers
 
   config.after do
     Konfipay.reset_configuration!

@@ -18,7 +18,7 @@ module Konfipay
       @base_url = BASE_URL
       @api_client_name = 'Konfipay Ruby Client'
       @api_client_version = Konfipay::VERSION
-      @credit_monitoring_interval = 10 * 60 * 60
+      @credit_monitoring_interval = 10 * 60
     end
 
     def check!

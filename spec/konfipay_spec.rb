@@ -12,6 +12,8 @@ RSpec.describe Konfipay do
     let(:callback_method) { 'example_callback_class_method' }
     let(:queue) { nil }
     let(:iban) { 'DE02120300000000202051' }
+    let(:payment_data) { { 'bla' => 'blub' } }
+    let(:transaction_id) { '12345' }
     let(:sidekiq_options_dummy) { Class.new }
 
     describe 'new_statements' do
@@ -136,7 +138,52 @@ RSpec.describe Konfipay do
 
       # TODO: check arguments are checked
     end
-    # xit 'initialize_credit_transfer'
-    # xit 'initialize_direct_debit'
+
+    describe 'initialize_credit_transfer' do
+      subject { start_transfer }
+
+      let(:start_transfer) do
+        described_class.initialize_credit_transfer(callback_class, callback_method, queue, payment_data, transaction_id)
+      end
+
+      before do
+        allow(sidekiq_options_dummy).to receive(:perform_async)
+        allow(Konfipay::Jobs::InitializeCreditTransfer).to receive(:set).and_return(sidekiq_options_dummy)
+      end
+
+      it { is_expected.to be(true) }
+
+      context 'with passed-in arguments' do
+        let(:queue) { :fast }
+
+        it 'enqueues a job' do
+          start_transfer
+          expect(sidekiq_options_dummy).to have_received(:perform_async).with(
+            callback_class,
+            callback_method,
+            payment_data,
+            transaction_id
+          )
+        end
+
+        it 'uses the named queue' do
+          start_transfer
+          expect(Konfipay::Jobs::InitializeCreditTransfer).to have_received(:set).with(queue: queue)
+        end
+      end
+
+      context 'with default arguments' do
+        let(:start_transfer) do
+          described_class.initialize_credit_transfer(callback_class, callback_method, nil, payment_data, transaction_id)
+        end
+
+        it 'uses the default queue' do
+          start_transfer
+          expect(Konfipay::Jobs::InitializeCreditTransfer).to have_received(:set).with(queue: :default)
+        end
+      end
+
+      # TODO: check arguments are checked
+    end
   end
 end
