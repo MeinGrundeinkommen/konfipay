@@ -2,12 +2,13 @@
 
 require 'spec_helper'
 
-RSpec.describe Konfipay::Jobs::InitializeCreditTransfer do
+RSpec.describe Konfipay::Jobs::InitializeTransfer do
   describe 'perform' do
     let(:do_it) do
       described_class.new.perform(
         'ExampleCallbackClass',
         'example_callback_fetch_statements',
+        'credit_transfer',
         payment_data,
         transaction_id
       )
@@ -27,16 +28,17 @@ RSpec.describe Konfipay::Jobs::InitializeCreditTransfer do
         }
       }
     end
-    let(:operation) { Konfipay::Operations::InitializeCreditTransfer.new }
+    let(:operation) { Konfipay::Operations::InitializeTransfer.new }
 
     before do
-      allow(Konfipay::Operations::InitializeCreditTransfer).to receive(:new).and_return(operation)
+      allow(Konfipay::Operations::InitializeTransfer).to receive(:new).and_return(operation)
       allow(operation).to receive(:submit).with(
+        'credit_transfer',
         payment_data,
         transaction_id
       ).and_return(data)
       allow(ExampleCallbackClass).to receive(:example_callback_fetch_statements)
-      allow(Konfipay::Jobs::MonitorCreditTransfer).to receive(:perform_in)
+      allow(Konfipay::Jobs::MonitorTransfer).to receive(:perform_in)
     end
 
     it 'calls the operation' do
@@ -54,7 +56,7 @@ RSpec.describe Konfipay::Jobs::InitializeCreditTransfer do
 
       it 'does not schedule a monitoring job' do
         do_it
-        expect(Konfipay::Jobs::MonitorCreditTransfer).not_to have_received(:perform_in)
+        expect(Konfipay::Jobs::MonitorTransfer).not_to have_received(:perform_in)
       end
     end
 
@@ -63,7 +65,7 @@ RSpec.describe Konfipay::Jobs::InitializeCreditTransfer do
 
       it 'schedules a monitoring job' do
         do_it
-        expect(Konfipay::Jobs::MonitorCreditTransfer).to have_received(:perform_in).with(
+        expect(Konfipay::Jobs::MonitorTransfer).to have_received(:perform_in).with(
           600,
           'ExampleCallbackClass',
           'example_callback_fetch_statements',

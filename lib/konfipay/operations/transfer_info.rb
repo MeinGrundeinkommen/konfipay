@@ -2,20 +2,20 @@
 
 module Konfipay
   module Operations
-    class CreditTransfer < Base
-      # Returns info about this credit transfer's status.
+    class TransferInfo < Base
+      # Returns info about this transfer (credit or debit) status.
       # Return format is the same as for
-      # Konfipay::Operations::InitializeCreditTransfer#submit
+      # Konfipay::Operations::InitializeTransfer#submit
       #
       # The r_id was returned after the first successful #submit call.
       def fetch(r_id)
-        logger&.info "credit transfer fetch operation started for r_id #{r_id.inspect}"
+        logger&.info "Fetching info for r_id #{r_id.inspect}"
 
         data = nil
         begin
           data = @client.pain_file_info(r_id)
         rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => e
-          logger&.info 'credit transfer fetch operation finished with error'
+          logger&.info "Transfer info fetch for r_id #{r_id.inspect} finished with error"
           return {
             'final' => true,
             'success' => false,
@@ -26,7 +26,7 @@ module Konfipay
           }
         end
         result = parse_pain_status(data)
-        logger&.info 'credit transfer fetch operation finished'
+        logger&.info "Transfer info fetch for r_id #{r_id.inspect} finished"
         result
       end
     end

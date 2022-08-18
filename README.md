@@ -91,7 +91,7 @@ You need to set up a simple class with a class method where you will receive asy
 # lib/konfipay_callbacks.rb # for example, a model works too, this class just needs to be loaded in the sidekiq process
 class KonfipayCallbacks
 
-  def self.callback_for_new_statements(statements)
+  def self.callback_for_new_statements(statements, _transaction_id) # the second argument is unused at the moment, stay tuned
     pp statements
   end
 end
