@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Konfipay::Jobs::MonitorCreditTransfer do
+RSpec.describe Konfipay::Jobs::MonitorTransfer do
   describe 'perform' do
     let(:do_it) do
       described_class.new.perform(
@@ -26,10 +26,10 @@ RSpec.describe Konfipay::Jobs::MonitorCreditTransfer do
         }
       }
     end
-    let(:operation) { Konfipay::Operations::CreditTransfer.new }
+    let(:operation) { Konfipay::Operations::TransferInfo.new }
 
     before do
-      allow(Konfipay::Operations::CreditTransfer).to receive(:new).and_return(operation)
+      allow(Konfipay::Operations::TransferInfo).to receive(:new).and_return(operation)
       allow(operation).to receive(:fetch).with(r_id).and_return(data)
       allow(ExampleCallbackClass).to receive(:example_callback_fetch_statements)
       allow(described_class).to receive(:perform_in)

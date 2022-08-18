@@ -14,14 +14,14 @@ require_relative 'konfipay/camt_digester'
 require_relative 'konfipay/pain_builder'
 require_relative 'konfipay/operations'
 require_relative 'konfipay/operations/base'
-require_relative 'konfipay/operations/credit_transfer'
+require_relative 'konfipay/operations/transfer_info'
 require_relative 'konfipay/operations/fetch_statements'
-require_relative 'konfipay/operations/initialize_credit_transfer'
+require_relative 'konfipay/operations/initialize_transfer'
 require_relative 'konfipay/jobs'
 require_relative 'konfipay/jobs/base'
 require_relative 'konfipay/jobs/fetch_statements'
-require_relative 'konfipay/jobs/initialize_credit_transfer'
-require_relative 'konfipay/jobs/monitor_credit_transfer'
+require_relative 'konfipay/jobs/initialize_transfer'
+require_relative 'konfipay/jobs/monitor_transfer'
 
 # rubocop:disable Metrics/ParameterLists
 # rubocop:disable Style/OptionalBooleanParameter
@@ -125,9 +125,10 @@ module Konfipay
     )
       # TODO: validate input, check that class and method are implemented
       queue ||= :default # TODO: This should be in configuration and not repeated here
-      Konfipay::Jobs::InitializeCreditTransfer.set(queue: queue).perform_async(
+      Konfipay::Jobs::InitializeTransfer.set(queue: queue).perform_async(
         callback_class,
         callback_method,
+        'credit_transfer',
         payment_data,
         transaction_id
       )

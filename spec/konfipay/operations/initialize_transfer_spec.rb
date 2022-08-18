@@ -5,7 +5,7 @@ require 'spec_helper'
 # rubocop:disable RSpec/MessageSpies
 # rubocop:disable RSpec/StubbedMock
 # rubocop:disable RSpec/MultipleExpectations
-RSpec.describe Konfipay::Operations::InitializeCreditTransfer do
+RSpec.describe Konfipay::Operations::InitializeTransfer do
   let(:config) { Konfipay.configuration }
   let(:client) do
     Konfipay::Client.new(config)
@@ -62,7 +62,7 @@ RSpec.describe Konfipay::Operations::InitializeCreditTransfer do
 
   describe 'submit' do
     let(:submit_it) do
-      operation.submit(payment_data, transaction_id)
+      operation.submit('credit_transfer', payment_data, transaction_id)
     end
 
     around do |example|

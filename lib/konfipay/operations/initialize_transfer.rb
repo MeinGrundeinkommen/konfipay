@@ -2,8 +2,11 @@
 
 module Konfipay
   module Operations
-    class InitializeCreditTransfer < Base
-      # Starts a credit transfer (Überweisung) from one of our accounts to one or many recipients.
+    class InitializeTransfer < Base
+      # Starts a credit transfer (Überweisung) from one of our accounts to one or many recipients,
+      # (or upcoming: A direct debit).
+      # The "mode" argument has to be "credit_transfer" for now.
+      #
       # For the payment_data format, see
       # Konfipay::initialize_credit_transfer
       #
@@ -30,14 +33,22 @@ module Konfipay
       # be returned by the Konfipay API.
       # "data" is verbatim what the Konfipay API returned for the initial process start.
       # Note that rId is needed to identify this transfer process on all subsequent (manual) API calls.
-      def submit(payment_data, transaction_id)
-        logger&.info "starting credit transfer for #{transaction_id.inspect}"
+      def submit(mode, payment_data, transaction_id)
+        raise ArgumentError, "Unknown mode #{mode.inspect}" unless ['credit_transfer'].include?(mode)
+
+        logger&.info "starting #{mode.inspect} transfer for #{transaction_id.inspect}"
         # TODO: validate payment data again?
         xml = nil
         begin
-          xml = Konfipay::PainBuilder.new(payment_data, transaction_id).credit_transfer_xml # here comes the pain
+          builder = Konfipay::PainBuilder.new(payment_data, transaction_id)
+          xml = case mode
+                when 'credit_transfer'
+                  builder.credit_transfer_xml
+                else
+                  raise ArgumentError, "Unknown mode #{mode.inspect}"
+                end
         rescue ArgumentError => e
-          logger&.info 'credit transfer failed to start, invalid payment_data'
+          logger&.info "#{mode.inspect} failed to start, invalid payment_data"
           return {
             'final' => true,
             'success' => false,
@@ -48,9 +59,9 @@ module Konfipay
         end
         data = nil
         begin
-          data = @client.submit_pain_file(xml)
+          data = @client.submit_pain_file(xml) # here comes the pain
         rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => e
-          logger&.info 'credit transfer failed to start'
+          logger&.info "#{mode.inspect} failed to start"
           return {
             'final' => true,
             'success' => false,
@@ -61,7 +72,7 @@ module Konfipay
           }
         end
         result = parse_pain_status(data)
-        logger&.info "credit transfer for #{transaction_id.inspect} started"
+        logger&.info "#{mode.inspect} for #{transaction_id.inspect} started"
         result
       end
     end

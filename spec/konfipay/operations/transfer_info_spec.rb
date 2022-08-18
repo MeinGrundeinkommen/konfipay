@@ -5,7 +5,7 @@ require 'spec_helper'
 # rubocop:disable RSpec/MessageSpies
 # rubocop:disable RSpec/StubbedMock
 # rubocop:disable RSpec/MultipleExpectations
-RSpec.describe Konfipay::Operations::CreditTransfer do
+RSpec.describe Konfipay::Operations::TransferInfo do
   let(:config) { Konfipay.configuration }
   let(:client) do
     Konfipay::Client.new(config)

@@ -148,7 +148,7 @@ RSpec.describe Konfipay do
 
       before do
         allow(sidekiq_options_dummy).to receive(:perform_async)
-        allow(Konfipay::Jobs::InitializeCreditTransfer).to receive(:set).and_return(sidekiq_options_dummy)
+        allow(Konfipay::Jobs::InitializeTransfer).to receive(:set).and_return(sidekiq_options_dummy)
       end
 
       it { is_expected.to be(true) }
@@ -161,6 +161,7 @@ RSpec.describe Konfipay do
           expect(sidekiq_options_dummy).to have_received(:perform_async).with(
             callback_class,
             callback_method,
+            'credit_transfer',
             payment_data,
             transaction_id
           )
@@ -168,7 +169,7 @@ RSpec.describe Konfipay do
 
         it 'uses the named queue' do
           start_transfer
-          expect(Konfipay::Jobs::InitializeCreditTransfer).to have_received(:set).with(queue: queue)
+          expect(Konfipay::Jobs::InitializeTransfer).to have_received(:set).with(queue: queue)
         end
       end
 
@@ -179,7 +180,7 @@ RSpec.describe Konfipay do
 
         it 'uses the default queue' do
           start_transfer
-          expect(Konfipay::Jobs::InitializeCreditTransfer).to have_received(:set).with(queue: :default)
+          expect(Konfipay::Jobs::InitializeTransfer).to have_received(:set).with(queue: :default)
         end
       end
 
