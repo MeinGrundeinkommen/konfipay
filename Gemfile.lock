@@ -70,7 +70,7 @@ GEM
     rack (2.2.4)
     rainbow (3.1.1)
     rake (13.0.6)
-    redis (4.7.1)
+    redis (4.8.0)
     regexp_parser (2.5.0)
     rexml (3.2.5)
     rspec (3.11.0)
@@ -108,7 +108,7 @@ GEM
       activemodel (>= 4.2)
       iban-tools
       nokogiri
-    sidekiq (6.5.4)
+    sidekiq (6.5.5)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.5.0)
