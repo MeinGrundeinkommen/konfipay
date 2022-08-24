@@ -14,7 +14,8 @@ module Konfipay
                   :credit_monitoring_interval
 
     def initialize
-      @timeout = 180
+      @timeout = (10 * 60) # uploading large PAIN files can simply take a long time
+      # TODO: Make a short timeout for GETs and a large one for the other http verbs?
       @base_url = BASE_URL
       @api_client_name = 'Konfipay Ruby Client'
       @api_client_version = Konfipay::VERSION
