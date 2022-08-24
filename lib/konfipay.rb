@@ -135,8 +135,6 @@ module Konfipay
       true
     end
 
-    # TODO: Are these needed? creditor_identifier
-
     # Start a new direct debit, i.e. "pull in" money from debtors with a debit mandate.
     #
     # Note that the workflow for this is the same as for ::initialize_credit_transfer,
@@ -157,10 +155,17 @@ module Konfipay
     #     "currency" => "EUR",
     #     "remittance_information" => "Here is the money, Lebowsky.",
     #     "end_to_end_reference" => "XYZ-0005-01",
-    #     "execute_on" => "2022-09-01"},
+    #     "execute_on" => "2022-09-01",
+    #     "mandate_id" => 'K-02-2011-12345',
+    #     "mandate_date_of_signature" => "2022-03-14",
+    #     "local_instrument" => 'CORE',
+    #     "sequence_type" => "RCUR"
+    #     },
     #    ...
     #   ]
     # }
+    #
+    # See Konfipay::PainBuilder for details on the values.
     #
     # # TODO: Implement some sort of validator class and use in all these kickoff-methods?
     def initialize_direct_debit(
@@ -172,9 +177,10 @@ module Konfipay
     )
       # TODO: validate input, check that class and method are implemented
       queue ||= :default # TODO: This should be in configuration and not repeated here
-      Konfipay::Jobs::InitializeDirectDebit.set(queue: queue).perform_async(
+      Konfipay::Jobs::InitializeTransfer.set(queue: queue).perform_async(
         callback_class,
         callback_method,
+        "direct_debit",
         payment_data,
         transaction_id
       )
