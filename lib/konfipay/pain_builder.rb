@@ -149,7 +149,7 @@ module Konfipay
       builder
     end
 
-    def direct_debit_xml(format = 'pain.008.003.02')
+    def direct_debit_xml(format = 'pain.008.001.02')
       direct_debit_builder.to_xml(format)
     end
   end
