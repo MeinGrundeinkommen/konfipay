@@ -17,7 +17,7 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
     { 'debtor' =>
       { 'name' => 'Unsere Organisation',
         'iban' => 'DE62650700240021982400',
-        'bic' => nil },
+        'bic' => 'DEUTDEDB650' },
       'creditors' =>
       [
         { 'name' => 'Daniela Bartell',
