@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    konfipay (1.5.1)
+    konfipay (1.5.2)
       activesupport
       camt_parser
       http
@@ -101,7 +101,7 @@ GEM
     rubocop-performance (1.15.0)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
-    rubocop-rspec (2.13.1)
+    rubocop-rspec (2.13.2)
       rubocop (~> 1.33)
     ruby-progressbar (1.11.0)
     sepa_king (0.13.0)
