@@ -70,7 +70,7 @@ module Konfipay
       builder
     end
 
-    def credit_transfer_xml(format = 'pain.001.003.03')
+    def credit_transfer_xml(format = 'pain.001.001.03')
       credit_transfer_builder.to_xml(format)
     end
   end
