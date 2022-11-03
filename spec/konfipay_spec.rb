@@ -186,5 +186,53 @@ RSpec.describe Konfipay do
 
       # TODO: check arguments are checked
     end
+
+    describe 'initialize_direct_debit' do
+      subject { start_debit }
+
+      let(:start_debit) do
+        described_class.initialize_direct_debit(callback_class, callback_method, queue, payment_data, transaction_id)
+      end
+
+      before do
+        allow(sidekiq_options_dummy).to receive(:perform_async)
+        allow(Konfipay::Jobs::InitializeTransfer).to receive(:set).and_return(sidekiq_options_dummy)
+      end
+
+      it { is_expected.to be(true) }
+
+      context 'with passed-in arguments' do
+        let(:queue) { :fast }
+
+        it 'enqueues a job' do
+          start_debit
+          expect(sidekiq_options_dummy).to have_received(:perform_async).with(
+            callback_class,
+            callback_method,
+            'direct_debit',
+            payment_data,
+            transaction_id
+          )
+        end
+
+        it 'uses the named queue' do
+          start_debit
+          expect(Konfipay::Jobs::InitializeTransfer).to have_received(:set).with(queue: queue)
+        end
+      end
+
+      context 'with default arguments' do
+        let(:start_debit) do
+          described_class.initialize_direct_debit(callback_class, callback_method, nil, payment_data, transaction_id)
+        end
+
+        it 'uses the default queue' do
+          start_debit
+          expect(Konfipay::Jobs::InitializeTransfer).to have_received(:set).with(queue: :default)
+        end
+      end
+
+      # TODO: check arguments are checked
+    end
   end
 end

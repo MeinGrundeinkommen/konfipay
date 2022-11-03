@@ -88,7 +88,7 @@ module Konfipay
         iban: payment_data['creditor']['iban'],
         # Creditor Identifier, in German: Gläubiger-Identifikationsnummer
         # String, max. 35 chars
-        creditor_identifier: payment_data['creditor']['creditor_identifier'],
+        creditor_identifier: payment_data['creditor']['creditor_identifier']
       )
 
       builder.message_identification = transaction_id

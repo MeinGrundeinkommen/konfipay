@@ -180,7 +180,7 @@ module Konfipay
       Konfipay::Jobs::InitializeTransfer.set(queue: queue).perform_async(
         callback_class,
         callback_method,
-        "direct_debit",
+        'direct_debit',
         payment_data,
         transaction_id
       )

@@ -36,7 +36,7 @@ module Konfipay
       # "data" is verbatim what the Konfipay API returned for the initial process start.
       # Note that rId is needed to identify this transfer process on all subsequent (manual) API calls.
       def submit(mode, payment_data, transaction_id)
-        raise ArgumentError, "Unknown mode #{mode.inspect}" unless ['credit_transfer', "direct_debit"].include?(mode)
+        raise ArgumentError, "Unknown mode #{mode.inspect}" unless %w[credit_transfer direct_debit].include?(mode)
 
         logger&.info "starting #{mode.inspect} transfer for #{transaction_id.inspect}"
         # TODO: validate payment data again?
