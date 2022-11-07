@@ -46,7 +46,7 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
           'execute_on' => '2022-09-01' }
       ] }
   end
-  let(:expected_generated_xml) { File.read('spec/examples/pain.001.003.03/credit_transfer.xml') }
+  let(:expected_generated_xml) { File.read('spec/examples/pain.001.001.03/credit_transfer.xml') }
   let(:parsed_data_from_api) do
     {
       'rId' => 'ef2abc7e-62b8-4603-8994-61a716e9fa81',
