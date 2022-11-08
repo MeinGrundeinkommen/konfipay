@@ -147,7 +147,7 @@ module Konfipay
     #    "iban"=>"DE02120300000000202051",
     #    "creditor_identifier" => 'DE98ZZZ09999999999',
     #    "bic"=>nil},
-    #  "debtors"=>
+    #  "debitors"=>
     #   [{"name" => "Brittani Ziemann",
     #     "iban" => "DE02300209000106531065",
     #     "bic" => nil,

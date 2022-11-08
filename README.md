@@ -56,7 +56,9 @@ expires before the operation is finished. Retrying authentication once allows ev
 
 1) Fetch statements
 
-This gem currently supports only one "operation", but in two "modes":
+Read account statements.
+
+This operation comes in two "modes":
 1a) "new" statements, which is fetching any recent financial statements from the account(s) configured in the Konfipay Portal. I.e. get a list of each incoming or outgoing transaction.
 1b) "history" of statements, i.e. get a list of financial statements in a given timeframe.
 
@@ -104,6 +106,36 @@ KonfipayCallbacks::callback_for_new_statements will then be called in Sidekiq wi
 See each operation's method for details on parameters and callback arguments.
 Please note that callbacks can be called multiple times, depending on the operation.
 Also note that parameters need to be JSON-compatible - use strings as hash keys, no symbols, and no complex datatypes! Similarly, all returned data, while being Ruby objects, are also all JSON-compatible (for example, dates are formatted as ISO-8601 strings, no symbols, etc.).
+
+
+
+2) Initializing Transfers
+
+Send or receive money from or to one or more recipients.
+
+This operation comes in two "modes":
+1a) credit transfer - send out money
+1b) direct debit - pull in money
+
+The difference is just which method is called, and the payment data needed. The general workflow is also the same as for reading account info. Note that these operations will very likely call the callback method multiple times, depending on how fast Konfipay and your bank process the transfer(s). You can influence this also in Konfipay itself, there are settings to control how often it will check for EBICS protocol updates from your bank.
+
+Also, the workflow for processing credit transfers and direct debits in Konfipay is exactly the same (in fact, the same api calls are used, these two methods just generate different SEPA files), so it makes sense to use the same callback method for both of these to receive information about the processing progress.
+
+```ruby
+
+# rails c
+Konfipay.initialize_credit_transfer(
+  "KonfipayCallbacks", "callback_for_initialize_credit_transfer", nil, { ... payment data ... }, "transaction id xyz123"
+)
+
+Konfipay.initialize_direct_debit(
+  "KonfipayCallbacks", "callback_for_initialize_direct_debit", nil, { ... payment data ... }, "transaction id xyz123"
+)
+```
+
+See the method's descriptions on details about the payment data format.
+
+
 
 For developing features or hacking on this gem, note that all business logic is implemented in the "Operation" classes, which
 you can use directly without the Sidekiq jobs:
