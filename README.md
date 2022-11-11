@@ -3,8 +3,9 @@
 Hello :) This is a gem to access the Konfipay API more easily from Ruby.
 
 If you don't know what Konfipay is, this is probably not for you ;) Check it out here: https://portal.konfipay.de/
+Note that some knowledge of concepts/workflows from EBICS and SEPA will be necessary since Konfipay does not entirely abstract those, and so neither can this gem.
 
-This gem tries to abstract away some of the underlying complexities of how financial data is handled, and provide a nicer interface for Ruby applications (most likely Rails apps that handle SEPA debit/credit payments or need to access bank account data).
+This gem tries however to ease some of the underlying complexities of how financial data is handled (mostly the XML parsing/generation), and provide a nicer interface for Ruby applications (most likely Rails apps that handle SEPA debit/credit payments or need to access bank account data).
 
 You will need a user account with Konfipay.
 
@@ -111,13 +112,17 @@ Also note that parameters need to be JSON-compatible - use strings as hash keys,
 
 2) Initializing Transfers
 
-Send or receive money from or to one or more recipients.
+Send money to or receive money from one or more recipients.
 
 This operation comes in two "modes":
-1a) credit transfer - send out money
-1b) direct debit - pull in money
+2a) credit transfer - send out money
+2b) direct debit - pull in money
 
 The difference is just which method is called, and the payment data needed. The general workflow is also the same as for reading account info. Note that these operations will very likely call the callback method multiple times, depending on how fast Konfipay and your bank process the transfer(s). You can influence this also in Konfipay itself, there are settings to control how often it will check for EBICS protocol updates from your bank.
+
+See Konfipay::Operations::InitializeTransfer#submit on the details of what the callback will receive.
+
+Typically, the callback will be run once almost immediately, when the initial underlying API call is done. Unless there is an error at this step, it is typical that the callback is run for several times (once every x minutes, configurable via the `credit_monitoring_interval`), for up to hours or days depending on how EBICS is configured. Typically VEU (https://wiki.windata.de/index.php?title=Verteilte_elektronische_Unterschrift_(VEU)) is needed, so this is the main "blocker" as people usually don't immediately sign.
 
 Also, the workflow for processing credit transfers and direct debits in Konfipay is exactly the same (in fact, the same api calls are used, these two methods just generate different SEPA files), so it makes sense to use the same callback method for both of these to receive information about the processing progress.
 
