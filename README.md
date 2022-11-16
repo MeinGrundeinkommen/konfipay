@@ -122,7 +122,7 @@ The difference is just which method is called, and the payment data needed. The 
 
 See Konfipay::Operations::InitializeTransfer#submit on the details of what the callback will receive.
 
-Typically, the callback will be run once almost immediately, when the initial underlying API call is done. Unless there is an error at this step, it is typical that the callback is run for several times (once every x minutes, configurable via the `credit_monitoring_interval`), for up to hours or days depending on how EBICS is configured. Typically VEU (https://wiki.windata.de/index.php?title=Verteilte_elektronische_Unterschrift_(VEU)) is needed, so this is the main "blocker" as people usually don't immediately sign.
+Typically, the callback will be run once almost immediately, when the initial underlying API call is done. Unless there is an error at this step, it is typical that the callback is run for several times (once every x minutes, configurable via the `transfer_monitoring_interval`), for up to hours or days depending on how EBICS is configured. Typically VEU (https://wiki.windata.de/index.php?title=Verteilte_elektronische_Unterschrift_(VEU)) is needed, so this is the main "blocker" as people usually don't immediately sign.
 
 Also, the workflow for processing credit transfers and direct debits in Konfipay is exactly the same (in fact, the same api calls are used, these two methods just generate different SEPA files), so it makes sense to use the same callback method for both of these to receive information about the processing progress.
 

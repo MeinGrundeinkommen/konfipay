@@ -20,7 +20,7 @@ module Konfipay
       def schedule_monitor(callback_class, callback_method, r_id, transaction_id)
         logger&.info "Scheduling job to monitor #{r_id} / #{transaction_id}"
         Konfipay::Jobs::MonitorTransfer.perform_in(
-          @config.credit_monitoring_interval,
+          @config.transfer_monitoring_interval,
           callback_class,
           callback_method,
           r_id,

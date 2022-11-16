@@ -11,7 +11,7 @@ module Konfipay
                   :api_client_name, # sent to konfipay with each http request as a papertrail
                   :api_client_version, # ditto
                   # in seconds, 10 minutes by default - how often to check for updates on a payment process
-                  :credit_monitoring_interval
+                  :transfer_monitoring_interval
 
     def initialize
       @timeout = (10 * 60) # uploading large PAIN files can simply take a long time
@@ -19,7 +19,7 @@ module Konfipay
       @base_url = BASE_URL
       @api_client_name = 'Konfipay Ruby Client'
       @api_client_version = Konfipay::VERSION
-      @credit_monitoring_interval = 10 * 60
+      @transfer_monitoring_interval = 10 * 60
     end
 
     def check!
@@ -29,7 +29,7 @@ module Konfipay
       end
       raise ArgumentError, "#{logger.inspect} is not a working logger!" if !logger.nil? && !logger.respond_to?(:info)
 
-      %i[timeout credit_monitoring_interval].each do |number_in_seconds|
+      %i[timeout transfer_monitoring_interval].each do |number_in_seconds|
         value = send(number_in_seconds)
         raise ArgumentError, "#{value.inspect} has to be a positive integer" if value.to_i <= 0
       end
