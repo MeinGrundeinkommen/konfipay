@@ -4,11 +4,13 @@ module Konfipay
   module Operations
     class InitializeTransfer < Base
       # Starts a credit transfer (Überweisung) from one of our accounts to one or many recipients,
-      # (or upcoming: A direct debit).
-      # The "mode" argument has to be "credit_transfer" for now.
+      # or a direct debit to "pull" money from debitors that have granted a debit mandate.
+      # The "mode" argument has to be "credit_transfer" or "direct_debit"
       #
       # For the payment_data format, see
       # Konfipay::initialize_credit_transfer
+      # and
+      # Konfipay::initialize_direct_debit
       #
       # Format of data returned is:
       #
@@ -34,7 +36,7 @@ module Konfipay
       # "data" is verbatim what the Konfipay API returned for the initial process start.
       # Note that rId is needed to identify this transfer process on all subsequent (manual) API calls.
       def submit(mode, payment_data, transaction_id)
-        raise ArgumentError, "Unknown mode #{mode.inspect}" unless ['credit_transfer'].include?(mode)
+        raise ArgumentError, "Unknown mode #{mode.inspect}" unless %w[credit_transfer direct_debit].include?(mode)
 
         logger&.info "starting #{mode.inspect} transfer for #{transaction_id.inspect}"
         # TODO: validate payment data again?
@@ -44,6 +46,8 @@ module Konfipay
           xml = case mode
                 when 'credit_transfer'
                   builder.credit_transfer_xml
+                when 'direct_debit'
+                  builder.direct_debit_xml
                 else
                   raise ArgumentError, "Unknown mode #{mode.inspect}"
                 end

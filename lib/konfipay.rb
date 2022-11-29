@@ -105,13 +105,13 @@ module Konfipay
     #
     # Use "queue" to run job in a specific sidekiq queue, default is :default
     #
-    # callback_class::callback_method will be called asynchronously with info about the state of the transfer,
+    # callback_class::callback_method will be called asynchronously with info about the state of the operation,
     # for the format see Konfipay::Operations::InitializeCreditTransfer#submit
     #
     # This method itself only returns true.
     #
     # Note that the callback method very likely will be called multiple times. An internal job
-    # is repeatedly enqueued in Sidekiq to keep monitoring the process of the transfer,
+    # is repeatedly enqueued in Sidekiq to keep monitoring the process of the operation,
     # until a "final" state is reached (successfully or with an error). See configuration for
     # the interval in which checks are made.
     #
@@ -135,7 +135,57 @@ module Konfipay
       true
     end
 
-    # def initialize_direct_debit(opts); end
+    # Start a new direct debit, i.e. "pull in" money from debtors with a debit mandate.
+    #
+    # Note that the workflow for this is the same as for ::initialize_credit_transfer,
+    # this only creates and submits a different SEPA XML file to the Konfipay API,
+    # which needs slightly different payment data.
+    #
+    # payment_data format (all in json-compatible values, i.e. strings, numbers) is:
+    # {"creditor"=>
+    #   {"name"=>"Your company",
+    #    "iban"=>"DE02120300000000202051",
+    #    "creditor_identifier" => 'DE98ZZZ09999999999',
+    #    "bic"=>nil},
+    #  "debitors"=>
+    #   [{"name" => "Brittani Ziemann",
+    #     "iban" => "DE02300209000106531065",
+    #     "bic" => nil,
+    #     "amount_in_cents" => 100000,
+    #     "currency" => "EUR",
+    #     "remittance_information" => "Here is the money, Lebowsky.",
+    #     "end_to_end_reference" => "XYZ-0005-01",
+    #     "execute_on" => "2022-09-01",
+    #     "mandate_id" => 'K-02-2011-12345',
+    #     "mandate_date_of_signature" => "2022-03-14",
+    #     "local_instrument" => 'CORE',
+    #     "sequence_type" => "RCUR"
+    #     },
+    #    ...
+    #   ]
+    # }
+    #
+    # See Konfipay::PainBuilder for details on the values.
+    #
+    # # TODO: Implement some sort of validator class and use in all these kickoff-methods?
+    def initialize_direct_debit(
+      callback_class,
+      callback_method,
+      queue = nil,
+      payment_data,
+      transaction_id
+    )
+      # TODO: validate input, check that class and method are implemented
+      queue ||= :default # TODO: This should be in configuration and not repeated here
+      Konfipay::Jobs::InitializeTransfer.set(queue: queue).perform_async(
+        callback_class,
+        callback_method,
+        'direct_debit',
+        payment_data,
+        transaction_id
+      )
+      true
+    end
   end
 end
 # rubocop:enable Metrics/ParameterLists

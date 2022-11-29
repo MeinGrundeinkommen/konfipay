@@ -7,11 +7,11 @@ RSpec.describe Konfipay::Configuration do
     [
       [:api_key, nil],
       [:logger, nil],
-      [:timeout, 180],
+      [:timeout, 600],
       [:base_url, 'https://portal.konfipay.de'],
       [:api_client_name, 'Konfipay Ruby Client'],
       [:api_client_version, Konfipay::VERSION],
-      [:credit_monitoring_interval, 600]
+      [:transfer_monitoring_interval, 600]
     ].each do |setting, value|
       it "defaults #{setting.inspect} to #{value.inspect}" do
         expect(Konfipay.configuration.send(setting)).to eq(value)
@@ -27,7 +27,7 @@ RSpec.describe Konfipay::Configuration do
       [:base_url, 'https://zombo.com'],
       [:api_client_name, 'die singende Herrentorte'],
       [:api_client_version, '12.11.10'],
-      [:credit_monitoring_interval, 111_111]
+      [:transfer_monitoring_interval, 111_111]
     ].each do |setting, value|
       it "sets #{setting.inspect} to #{value.inspect}" do
         Konfipay.configure do |config|
@@ -81,7 +81,7 @@ RSpec.describe Konfipay::Configuration do
       end
     end
 
-    %i[timeout credit_monitoring_interval].each do |number_in_seconds|
+    %i[timeout transfer_monitoring_interval].each do |number_in_seconds|
       describe number_in_seconds.to_s do
         let(:setting) { number_in_seconds }
 

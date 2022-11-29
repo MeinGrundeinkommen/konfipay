@@ -391,7 +391,7 @@ RSpec.describe Konfipay::Client do
 
   describe 'submit_pain_file' do
     let(:stubbed_url) { 'https://portal.konfipay.de/api/v5/Payment/Sepa/Pain' }
-    let(:pain_xml) { File.read('spec/examples/pain.001.003.03/credit_transfer.xml') }
+    let(:pain_xml) { File.read('spec/examples/pain.001.001.03/credit_transfer.xml') }
     let(:expected_parsed_json) do
       {
         'rId' => '491c7a47-6aec-47b2-b3ef-488d2ca7f4d4',

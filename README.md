@@ -3,8 +3,9 @@
 Hello :) This is a gem to access the Konfipay API more easily from Ruby.
 
 If you don't know what Konfipay is, this is probably not for you ;) Check it out here: https://portal.konfipay.de/
+Note that some knowledge of concepts/workflows from EBICS and SEPA will be necessary since Konfipay does not entirely abstract those, and so neither can this gem.
 
-This gem tries to abstract away some of the underlying complexities of how financial data is handled, and provide a nicer interface for Ruby applications (most likely Rails apps that handle SEPA debit/credit payments or need to access bank account data).
+This gem tries however to ease some of the underlying complexities of how financial data is handled (mostly the XML parsing/generation), and provide a nicer interface for Ruby applications (most likely Rails apps that handle SEPA debit/credit payments or need to access bank account data).
 
 You will need a user account with Konfipay.
 
@@ -56,7 +57,9 @@ expires before the operation is finished. Retrying authentication once allows ev
 
 1) Fetch statements
 
-This gem currently supports only one "operation", but in two "modes":
+Read account statements.
+
+This operation comes in two "modes":
 1a) "new" statements, which is fetching any recent financial statements from the account(s) configured in the Konfipay Portal. I.e. get a list of each incoming or outgoing transaction.
 1b) "history" of statements, i.e. get a list of financial statements in a given timeframe.
 
@@ -104,6 +107,40 @@ KonfipayCallbacks::callback_for_new_statements will then be called in Sidekiq wi
 See each operation's method for details on parameters and callback arguments.
 Please note that callbacks can be called multiple times, depending on the operation.
 Also note that parameters need to be JSON-compatible - use strings as hash keys, no symbols, and no complex datatypes! Similarly, all returned data, while being Ruby objects, are also all JSON-compatible (for example, dates are formatted as ISO-8601 strings, no symbols, etc.).
+
+
+
+2) Initializing Transfers
+
+Send money to or receive money from one or more recipients.
+
+This operation comes in two "modes":
+2a) credit transfer - send out money
+2b) direct debit - pull in money
+
+The difference is just which method is called, and the payment data needed. The general workflow is also the same as for reading account info. Note that these operations will very likely call the callback method multiple times, depending on how fast Konfipay and your bank process the transfer(s). You can influence this also in Konfipay itself, there are settings to control how often it will check for EBICS protocol updates from your bank.
+
+See Konfipay::Operations::InitializeTransfer#submit on the details of what the callback will receive.
+
+Typically, the callback will be run once almost immediately, when the initial underlying API call is done. Unless there is an error at this step, it is typical that the callback is run for several times (once every x minutes, configurable via the `transfer_monitoring_interval`), for up to hours or days depending on how EBICS is configured. Typically VEU (https://wiki.windata.de/index.php?title=Verteilte_elektronische_Unterschrift_(VEU)) is needed, so this is the main "blocker" as people usually don't immediately sign.
+
+Also, the workflow for processing credit transfers and direct debits in Konfipay is exactly the same (in fact, the same api calls are used, these two methods just generate different SEPA files), so it makes sense to use the same callback method for both of these to receive information about the processing progress.
+
+```ruby
+
+# rails c
+Konfipay.initialize_credit_transfer(
+  "KonfipayCallbacks", "callback_for_initialize_credit_transfer", nil, { ... payment data ... }, "transaction id xyz123"
+)
+
+Konfipay.initialize_direct_debit(
+  "KonfipayCallbacks", "callback_for_initialize_direct_debit", nil, { ... payment data ... }, "transaction id xyz123"
+)
+```
+
+See the method's descriptions on details about the payment data format.
+
+
 
 For developing features or hacking on this gem, note that all business logic is implemented in the "Operation" classes, which
 you can use directly without the Sidekiq jobs:
