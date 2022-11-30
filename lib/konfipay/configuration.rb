@@ -5,6 +5,7 @@ module Konfipay
 
   class Configuration
     attr_accessor :api_key, # API key used to access Konfipay API. Can be configured in Konfipay Portal.
+                  :other_api_key,
                   :logger, # Optional logger object - has to respond to debug, info, etc.
                   :timeout, # for http requests to API, 30s by default
                   :base_url,
@@ -40,8 +41,8 @@ module Konfipay
     attr_writer :configuration
   end
 
-  def self.configuration
-    @configuration ||= Configuration.new
+  def self.configuration(*args)
+    @configuration ||= Configuration.new(*args)
   end
 
   def self.reset_configuration!

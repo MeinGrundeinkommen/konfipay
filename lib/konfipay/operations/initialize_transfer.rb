@@ -35,7 +35,7 @@ module Konfipay
       # be returned by the Konfipay API.
       # "data" is verbatim what the Konfipay API returned for the initial process start.
       # Note that rId is needed to identify this transfer process on all subsequent (manual) API calls.
-      def submit(mode, payment_data, transaction_id)
+      def submit(mode, payment_data, transaction_id, use_other_api_key)
         raise ArgumentError, "Unknown mode #{mode.inspect}" unless %w[credit_transfer direct_debit].include?(mode)
 
         logger&.info "starting #{mode.inspect} transfer for #{transaction_id.inspect}"
@@ -62,6 +62,12 @@ module Konfipay
           }
         end
         data = nil
+        if use_other_api_key
+          logger&.info 'using other api key'
+          @config.api_key = @config.other_api_key
+        else
+          logger&.info 'using normal api key'
+        end
         begin
           data = @client.submit_pain_file(xml) # here comes the pain
         rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => e

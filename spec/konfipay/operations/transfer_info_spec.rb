@@ -30,7 +30,7 @@ RSpec.describe Konfipay::Operations::TransferInfo do
 
   describe 'fetch' do
     let(:fetch_it) do
-      operation.fetch(r_id)
+      operation.fetch(r_id, false)
     end
 
     it 'returns parsed data with success and final states' do

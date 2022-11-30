@@ -95,7 +95,7 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
   context 'with a credit transfer' do
     it_behaves_like 'a pain submitter' do
       let(:submit_it) do
-        operation.submit('credit_transfer', payment_data, transaction_id)
+        operation.submit('credit_transfer', payment_data, transaction_id, false)
       end
       let(:payment_data) do
         { 'debtor' =>
@@ -137,7 +137,7 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
   context 'with a direct debit' do
     it_behaves_like 'a pain submitter' do
       let(:submit_it) do
-        operation.submit('direct_debit', payment_data, transaction_id)
+        operation.submit('direct_debit', payment_data, transaction_id, false)
       end
       let(:payment_data) do
         { 'creditor' =>

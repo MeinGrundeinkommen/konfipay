@@ -17,14 +17,15 @@ module Konfipay
         callback_class.constantize.send(callback_method, data, transaction_id)
       end
 
-      def schedule_monitor(callback_class, callback_method, r_id, transaction_id)
+      def schedule_monitor(callback_class, callback_method, r_id, transaction_id, use_other_api_key)
         logger&.info "Scheduling job to monitor #{r_id} / #{transaction_id}"
         Konfipay::Jobs::MonitorTransfer.perform_in(
           @config.transfer_monitoring_interval,
           callback_class,
           callback_method,
           r_id,
-          transaction_id
+          transaction_id,
+          use_other_api_key
         )
       end
     end

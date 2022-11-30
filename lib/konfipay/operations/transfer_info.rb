@@ -8,8 +8,15 @@ module Konfipay
       # Konfipay::Operations::InitializeTransfer#submit
       #
       # The r_id was returned after the first successful #submit call.
-      def fetch(r_id)
+      def fetch(r_id, use_other_api_key)
         logger&.info "Fetching info for r_id #{r_id.inspect}"
+
+        if use_other_api_key
+          logger&.info 'using other api key'
+          @config.api_key = @config.other_api_key
+        else
+          logger&.info 'using normal api key'
+        end
 
         data = nil
         begin

@@ -9,7 +9,8 @@ RSpec.describe Konfipay::Jobs::MonitorTransfer do
         'ExampleCallbackClass',
         'example_callback_fetch_statements',
         r_id,
-        transaction_id
+        transaction_id,
+        false
       )
     end
 
@@ -30,7 +31,7 @@ RSpec.describe Konfipay::Jobs::MonitorTransfer do
 
     before do
       allow(Konfipay::Operations::TransferInfo).to receive(:new).and_return(operation)
-      allow(operation).to receive(:fetch).with(r_id).and_return(data)
+      allow(operation).to receive(:fetch).with(r_id, false).and_return(data)
       allow(ExampleCallbackClass).to receive(:example_callback_fetch_statements)
       allow(described_class).to receive(:perform_in)
     end
@@ -64,7 +65,8 @@ RSpec.describe Konfipay::Jobs::MonitorTransfer do
           'ExampleCallbackClass',
           'example_callback_fetch_statements',
           r_id,
-          transaction_id
+          transaction_id,
+          false
         )
       end
     end

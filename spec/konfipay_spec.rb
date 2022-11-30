@@ -143,7 +143,8 @@ RSpec.describe Konfipay do
       subject { start_transfer }
 
       let(:start_transfer) do
-        described_class.initialize_credit_transfer(callback_class, callback_method, queue, payment_data, transaction_id)
+        described_class.initialize_credit_transfer(callback_class, callback_method, queue, payment_data,
+                                                   transaction_id, false)
       end
 
       before do
@@ -163,7 +164,8 @@ RSpec.describe Konfipay do
             callback_method,
             'credit_transfer',
             payment_data,
-            transaction_id
+            transaction_id,
+            false
           )
         end
 
@@ -175,7 +177,8 @@ RSpec.describe Konfipay do
 
       context 'with default arguments' do
         let(:start_transfer) do
-          described_class.initialize_credit_transfer(callback_class, callback_method, nil, payment_data, transaction_id)
+          described_class.initialize_credit_transfer(callback_class, callback_method, nil, payment_data,
+                                                     transaction_id, false)
         end
 
         it 'uses the default queue' do
@@ -211,7 +214,8 @@ RSpec.describe Konfipay do
             callback_method,
             'direct_debit',
             payment_data,
-            transaction_id
+            transaction_id,
+            false
           )
         end
 

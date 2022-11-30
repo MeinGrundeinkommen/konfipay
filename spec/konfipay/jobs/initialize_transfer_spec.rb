@@ -10,7 +10,8 @@ RSpec.describe Konfipay::Jobs::InitializeTransfer do
         'example_callback_fetch_statements',
         'credit_transfer',
         payment_data,
-        transaction_id
+        transaction_id,
+        false
       )
     end
 
@@ -35,7 +36,8 @@ RSpec.describe Konfipay::Jobs::InitializeTransfer do
       allow(operation).to receive(:submit).with(
         'credit_transfer',
         payment_data,
-        transaction_id
+        transaction_id,
+        false
       ).and_return(data)
       allow(ExampleCallbackClass).to receive(:example_callback_fetch_statements)
       allow(Konfipay::Jobs::MonitorTransfer).to receive(:perform_in)
@@ -70,7 +72,8 @@ RSpec.describe Konfipay::Jobs::InitializeTransfer do
           'ExampleCallbackClass',
           'example_callback_fetch_statements',
           r_id,
-          transaction_id
+          transaction_id,
+          false
         )
       end
     end

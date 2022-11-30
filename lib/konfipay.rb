@@ -121,7 +121,8 @@ module Konfipay
       callback_method,
       queue = nil,
       payment_data,
-      transaction_id
+      transaction_id,
+      use_other_api_key
     )
       # TODO: validate input, check that class and method are implemented
       queue ||= :default # TODO: This should be in configuration and not repeated here
@@ -130,7 +131,8 @@ module Konfipay
         callback_method,
         'credit_transfer',
         payment_data,
-        transaction_id
+        transaction_id,
+        use_other_api_key
       )
       true
     end
@@ -182,7 +184,8 @@ module Konfipay
         callback_method,
         'direct_debit',
         payment_data,
-        transaction_id
+        transaction_id,
+        false
       )
       true
     end
