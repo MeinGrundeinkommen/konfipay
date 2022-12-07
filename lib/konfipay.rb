@@ -9,6 +9,7 @@ require 'sidekiq'
 
 require_relative 'konfipay/version'
 require_relative 'konfipay/configuration'
+require_relative 'konfipay/options'
 require_relative 'konfipay/client'
 require_relative 'konfipay/camt_digester'
 require_relative 'konfipay/pain_builder'
@@ -23,9 +24,6 @@ require_relative 'konfipay/jobs/fetch_statements'
 require_relative 'konfipay/jobs/initialize_transfer'
 require_relative 'konfipay/jobs/monitor_transfer'
 
-# rubocop:disable Metrics/ParameterLists
-# rubocop:disable Style/OptionalBooleanParameter
-# rubocop:disable Style/OptionalArguments
 module Konfipay
   class << self
     # Fetches all "new" statements for all configured accounts since the last time successfully used.
@@ -35,23 +33,32 @@ module Konfipay
     # callback_class::callback_method will be called asynchronously with the resulting list of statements,
     # for the format see Konfipay::Operations::FetchStatements#fetch
     # This method itself only returns true.
-    def new_statements(
-      callback_class,
-      callback_method,
-      queue = nil,
-      iban = nil,
-      mark_as_read = true
-    )
-      queue ||= :default
-      Konfipay::Jobs::FetchStatements.set(queue: queue).perform_async(
-        callback_class,
-        callback_method,
-        'new',
-        { 'iban' => iban },
-        { 'mark_as_read' => mark_as_read }
-      )
-      true
+    def new_statements(options = {})
+      # prepared_options = OptionsParser.new(options)
+      # prepared_options.validate!
+      # Konfipay::Jobs::FetchStatements.set(
+      #   queue: prepared_options.job.queue
+      # ).perform_async(prepared_options.to_hash)
+      # true
     end
+
+
+    #   callback_class,
+    #   callback_method,
+    #   queue = nil,
+    #   iban = nil,
+    #   mark_as_read = true
+    # )
+    #   queue ||= :default
+    #   Konfipay::Jobs::FetchStatements.set(queue: queue).perform_async(
+    #     callback_class,
+    #     callback_method,
+    #     'new',
+    #     { 'iban' => iban },
+    #     { 'mark_as_read' => mark_as_read }
+    #   )
+    #   true
+    # end
 
     # Fetches "history" of statements for all configured accounts between the two given dates
     # (as strings in iso-8601 format).
@@ -60,23 +67,35 @@ module Konfipay
     # callback_class::callback_method will be called asynchronously with the resulting list of statements,
     # for the format see Konfipay::Operations::FetchStatements#fetch
     # This method itself only returns true.
-    def statement_history(
-      callback_class,
-      callback_method,
-      queue = nil,
-      iban = nil,
-      from = Date.today.iso8601,
-      to = from
-    )
-      queue ||= :default
-      Konfipay::Jobs::FetchStatements.set(queue: queue).perform_async(
-        callback_class,
-        callback_method,
-        'history',
-        { 'iban' => iban, 'from' => from, 'to' => to },
-        {}
-      )
+    def statement_history(config = Konfipay.configuration)
+      options = Konfipay::Options.new(config)
+      options.operation.filters.from = Date.today.iso8601
+      options.operation.filters.to = Date.today.iso8601
+      yield options
+      options.validate!
+      options.operation.mode = "history"
+
+      Konfipay::Jobs::FetchStatements.set(
+        queue: options.job.queue
+      ).perform_async(options.to_hash)
       true
+
+    #   callback_class,
+    #   callback_method,
+    #   queue = nil,
+    #   iban = nil,
+    #   from = Date.today.iso8601,
+    #   to = from
+    # )
+    #   queue ||= :default
+    #   Konfipay::Jobs::FetchStatements.set(queue: queue).perform_async(
+    #     callback_class,
+    #     callback_method,
+    #     'history',
+    #     { 'iban' => iban, 'from' => from, 'to' => to },
+    #     {}
+    #   )
+    #   true
     end
 
     # Start a new credit transfer, i.e. send money.

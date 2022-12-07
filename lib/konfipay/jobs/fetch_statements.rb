@@ -3,9 +3,18 @@
 module Konfipay
   module Jobs
     class FetchStatements < Konfipay::Jobs::Base
-      def perform(callback_class, callback_method, mode, filters = {}, options = {})
-        Konfipay::Operations::FetchStatements.new.fetch(mode, filters, options) do |data|
-          run_callback(callback_class, callback_method, data)
+      def perform(options_hash)
+        options = Konfipay::Options.from_hash(options_hash, @config)
+        Konfipay::Operations::FetchStatements.new.fetch(
+          options.operation.mode,
+          options.operation.filters.to_hash,
+          options.operation.options.to_hash
+        ) do |data|
+          run_callback(
+            options.callback.class_name,
+            options.callback.method_name,
+            data
+          )
         end
       end
     end
