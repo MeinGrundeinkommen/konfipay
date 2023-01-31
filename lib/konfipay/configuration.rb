@@ -5,6 +5,7 @@ module Konfipay
 
   class Configuration
     attr_accessor :api_key, # API key used to access Konfipay API. Can be configured in Konfipay Portal.
+                  :normal_api_key,
                   :other_api_key,
                   :logger, # Optional logger object - has to respond to debug, info, etc.
                   :timeout, # for http requests to API, 30s by default
@@ -18,6 +19,7 @@ module Konfipay
       @timeout = (10 * 60) # uploading large PAIN files can simply take a long time
       # TODO: Make a short timeout for GETs and a large one for the other http verbs?
       @base_url = BASE_URL
+      @normal_api_key = @api_key
       @api_client_name = 'Konfipay Ruby Client'
       @api_client_version = Konfipay::VERSION
       @transfer_monitoring_interval = 10 * 60

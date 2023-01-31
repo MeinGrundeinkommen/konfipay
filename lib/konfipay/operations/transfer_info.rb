@@ -12,17 +12,18 @@ module Konfipay
         logger&.info "Fetching info for r_id #{r_id.inspect}"
 
         if use_other_api_key
-          logger&.info 'using other api key'
+          logger&.warn 'using other api key'
           @config.api_key = @config.other_api_key
         else
-          logger&.info 'using normal api key'
+          logger&.warn 'using normal api key'
+          @config.api_key = @config.normal_api_key
         end
 
         data = nil
         begin
           data = @client.pain_file_info(r_id)
         rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => e
-          logger&.info "Transfer info fetch for r_id #{r_id.inspect} finished with error"
+          logger&.error "Transfer info fetch for r_id #{r_id.inspect} finished with error"
           return {
             'final' => true,
             'success' => false,
