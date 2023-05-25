@@ -7,8 +7,9 @@ module Konfipay
       sidekiq_options retry: 0
 
       # rubocop:disable Metrics/ParameterLists
-      def perform(callback_class, callback_method, mode, payment_data, transaction_id, config_options = {})
+      def perform(callback_class, callback_method, mode, payment_data_key, transaction_id, config_options = {})
         @config = config_from_options(config_options)
+        payment_data = retrieve_payment_data_from_redis(payment_data_key)
         data = Konfipay::Operations::InitializeTransfer.new(@config).submit(mode, payment_data, transaction_id)
         run_callback(callback_class, callback_method, data, transaction_id)
         return if data['final']

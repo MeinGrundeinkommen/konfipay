@@ -28,6 +28,14 @@ module Konfipay
           config_options
         )
       end
+
+      def retrieve_payment_data_from_redis(key)
+        json = Sidekiq.redis_pool.with do |conn|
+          conn.call("GETDEL", key)
+        end
+        raise "Could not get payment data from redis at #{key.inspect}!" if json.nil?
+        JSON.parse(json)
+      end
     end
   end
 end
