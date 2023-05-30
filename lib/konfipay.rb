@@ -203,7 +203,7 @@ module Konfipay
       json = JSON.generate(payment_data)
       key = "konfipay/data/#{transaction_id}"
       Sidekiq.redis_pool.with do |conn|
-        conn.call("SET", key, json, ex: 2.weeks.to_i)
+        conn.call('SET', key, json, ex: 2.weeks.to_i)
       end
       key
     end
