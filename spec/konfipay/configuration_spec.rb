@@ -3,9 +3,15 @@
 require 'spec_helper'
 
 RSpec.describe Konfipay::Configuration do
-  context 'with default config' do
+  after do
+    described_class.initializer_block = nil
+  end
+
+  context 'with gem defaults' do
+    let(:config) { Konfipay.configuration(api_key: '<key>') }
+
     [
-      [:api_key, nil],
+      [:api_key, '<key>'],
       [:logger, nil],
       [:timeout, 600],
       [:base_url, 'https://portal.konfipay.de'],
@@ -14,12 +20,12 @@ RSpec.describe Konfipay::Configuration do
       [:transfer_monitoring_interval, 600]
     ].each do |setting, value|
       it "defaults #{setting.inspect} to #{value.inspect}" do
-        expect(Konfipay.configuration.send(setting)).to eq(value)
+        expect(config.send(setting)).to eq(value)
       end
     end
   end
 
-  context 'with setting changed' do
+  context 'with initializer block provided' do
     [
       [:api_key, 'aaaaaaaaaaaaaaaa'],
       [:logger, Logger.new($stdout)],
@@ -39,12 +45,32 @@ RSpec.describe Konfipay::Configuration do
     end
   end
 
+  context 'with options provided' do
+    [
+      [:api_key, 'maybe better not do this'],
+      [:logger, Logger.new($stdout)],
+      [:timeout, 123],
+      [:base_url, 'https://very.de'],
+      [:api_client_name, 'I was born in a water moon'],
+      [:api_client_version, 'hunderttausend'],
+      [:transfer_monitoring_interval, 1]
+    ].each do |setting, value|
+      it "sets #{setting.inspect} to #{value.inspect}" do
+        Konfipay.configure do |config|
+          config.api_key = 'has to be set by default'
+        end
+        expect(Konfipay.configuration(**{ setting => value }).send(setting)).to eq(value)
+      end
+    end
+  end
+
   describe 'validating settings' do
     let(:configure) do
       Konfipay.configure do |config|
         config.api_key = 'has to be set by default'
         config.send("#{setting}=", value)
       end
+      Konfipay.configuration
     end
 
     shared_examples 'raising an ArgumentError' do

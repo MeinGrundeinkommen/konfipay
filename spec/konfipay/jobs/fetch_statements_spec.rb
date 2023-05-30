@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Konfipay::Jobs::FetchStatements do
   describe 'perform' do
     let(:do_it) do
-      described_class.new.perform(
+      described_class.new(config).perform(
         'ExampleCallbackClass',
         'example_callback_fetch_statements',
         'new',
@@ -15,7 +15,8 @@ RSpec.describe Konfipay::Jobs::FetchStatements do
     end
 
     let(:data) { 'le_data' }
-    let(:operation) { Konfipay::Operations::FetchStatements.new }
+    let(:config) { Konfipay.configuration(api_key: '<key>') }
+    let(:operation) { Konfipay::Operations::FetchStatements.new(config) }
 
     before do
       allow(Konfipay::Operations::FetchStatements).to receive(:new).and_return(operation)

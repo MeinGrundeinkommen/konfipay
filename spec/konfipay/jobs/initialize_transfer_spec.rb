@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Konfipay::Jobs::InitializeTransfer do
   describe 'perform' do
     let(:do_it) do
-      described_class.new.perform(
+      described_class.new(config).perform(
         'ExampleCallbackClass',
         'example_callback_fetch_statements',
         'credit_transfer',
@@ -28,7 +28,8 @@ RSpec.describe Konfipay::Jobs::InitializeTransfer do
         }
       }
     end
-    let(:operation) { Konfipay::Operations::InitializeTransfer.new }
+    let(:config) { Konfipay.configuration(api_key: '<key>') }
+    let(:operation) { Konfipay::Operations::InitializeTransfer.new(config) }
 
     before do
       allow(Konfipay::Operations::InitializeTransfer).to receive(:new).and_return(operation)
