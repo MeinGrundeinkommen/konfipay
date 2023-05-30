@@ -28,6 +28,7 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
     end
 
     describe 'submit' do
+      # rubocop:disable RSpec/Rails/TravelAround
       around do |example|
         Time.use_zone('US/Eastern') do
           travel_to(Time.zone.parse('2022-08-09T16:38:56')) do
@@ -35,6 +36,7 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
           end
         end
       end
+      # rubocop:enable RSpec/Rails/TravelAround
 
       it 'generates and submits pain xml, then returns parsed initial status' do
         expect(client).to receive(:submit_pain_file).with(expected_generated_xml).and_return(parsed_data_from_api)
