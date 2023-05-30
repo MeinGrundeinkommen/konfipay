@@ -24,31 +24,31 @@ require_relative 'konfipay/jobs/initialize_transfer'
 require_relative 'konfipay/jobs/monitor_transfer'
 
 # rubocop:disable Metrics/ParameterLists
-# rubocop:disable Style/OptionalBooleanParameter
-# rubocop:disable Style/OptionalArguments
 module Konfipay
   class << self
     # Fetches all "new" statements for all configured accounts since the last time successfully used.
     # Use "queue" to run job in a specific sidekiq queue, default is :default
-    # Use mark_as_read = false to keep retrieved data "unread", for testing.
+    # Use mark_as_read: false to keep retrieved data "unread", for testing.
     # Filter accounts by iban argument, if non-empty.
     # callback_class::callback_method will be called asynchronously with the resulting list of statements,
     # for the format see Konfipay::Operations::FetchStatements#fetch
+    # api_key_name switches between multiple api_keys, if configured
     # This method itself only returns true.
     def new_statements(
-      callback_class,
-      callback_method,
-      queue = nil,
-      iban = nil,
-      mark_as_read = true
+      callback_class:,
+      callback_method:,
+      queue: :default,
+      iban: nil,
+      mark_as_read: true,
+      api_key_name: nil
     )
-      queue ||= :default
       Konfipay::Jobs::FetchStatements.set(queue: queue).perform_async(
         callback_class,
         callback_method,
         'new',
         { 'iban' => iban },
-        { 'mark_as_read' => mark_as_read }
+        { 'mark_as_read' => mark_as_read },
+        { "api_key_name" => api_key_name }
       )
       true
     end
@@ -59,22 +59,24 @@ module Konfipay
     # Filter accounts by iban argument, if non-empty.
     # callback_class::callback_method will be called asynchronously with the resulting list of statements,
     # for the format see Konfipay::Operations::FetchStatements#fetch
+    # api_key_name switches between multiple api_keys, if configured
     # This method itself only returns true.
     def statement_history(
-      callback_class,
-      callback_method,
-      queue = nil,
-      iban = nil,
-      from = Date.today.iso8601,
-      to = from
+      callback_class:,
+      callback_method:,
+      queue: :default,
+      iban: nil,
+      from: Date.today.iso8601,
+      to: from,
+      api_key_name: nil
     )
-      queue ||= :default
       Konfipay::Jobs::FetchStatements.set(queue: queue).perform_async(
         callback_class,
         callback_method,
         'history',
         { 'iban' => iban, 'from' => from, 'to' => to },
-        {}
+        {},
+        { "api_key_name" => api_key_name }
       )
       true
     end

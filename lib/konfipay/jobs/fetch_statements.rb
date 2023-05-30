@@ -3,7 +3,8 @@
 module Konfipay
   module Jobs
     class FetchStatements < Konfipay::Jobs::Base
-      def perform(callback_class, callback_method, mode, filters = {}, options = {})
+      def perform(callback_class, callback_method, mode, filters = {}, options = {}, config_options = {})
+        @config = Konfipay.configuration(api_key_name: config_options["api_key_name"])
         Konfipay::Operations::FetchStatements.new(@config).fetch(mode, filters, options) do |data|
           run_callback(callback_class, callback_method, data)
         end

@@ -5,10 +5,6 @@ module Konfipay
     class Base
       include Sidekiq::Worker # TODO: This should be configurable
 
-      def initialize(config = nil)
-        @config = (config || Konfipay.configuration)
-      end
-
       def logger
         @config&.logger
       end
