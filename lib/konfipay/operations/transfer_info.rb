@@ -15,7 +15,7 @@ module Konfipay
         begin
           data = @client.pain_file_info(r_id)
         rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => e
-          logger&.info "Transfer info fetch for r_id #{r_id.inspect} finished with error"
+          logger&.error "Transfer info fetch for r_id #{r_id.inspect} finished with error"
           return {
             'final' => true,
             'success' => false,

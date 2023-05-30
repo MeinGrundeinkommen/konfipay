@@ -52,7 +52,7 @@ module Konfipay
                   raise ArgumentError, "Unknown mode #{mode.inspect}"
                 end
         rescue ArgumentError => e
-          logger&.info "#{mode.inspect} failed to start, invalid payment_data"
+          logger&.error "#{mode.inspect} failed to start, invalid payment_data"
           return {
             'final' => true,
             'success' => false,
@@ -65,7 +65,7 @@ module Konfipay
         begin
           data = @client.submit_pain_file(xml) # here comes the pain
         rescue Konfipay::Client::Unauthorized, Konfipay::Client::BadRequest => e
-          logger&.info "#{mode.inspect} failed to start"
+          logger&.error "#{mode.inspect} failed to start"
           return {
             'final' => true,
             'success' => false,
