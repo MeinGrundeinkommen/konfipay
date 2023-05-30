@@ -5,6 +5,7 @@ require 'spec_helper'
 # rubocop:disable RSpec/MessageSpies
 # rubocop:disable RSpec/StubbedMock
 # rubocop:disable RSpec/MultipleExpectations
+# rubocop:disable RSpec/IndexedLet
 RSpec.describe Konfipay::Operations::FetchStatements do
   let(:config) { Konfipay.configuration }
   let(:client) do
@@ -362,3 +363,4 @@ end
 # rubocop:enable RSpec/MessageSpies
 # rubocop:enable RSpec/StubbedMock
 # rubocop:enable RSpec/MultipleExpectations
+# rubocop:enable RSpec/IndexedLet
