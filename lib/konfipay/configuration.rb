@@ -8,8 +8,9 @@ module Konfipay
     API_CLIENT_VERSION_DEFAULT = Konfipay::VERSION
     TRANSFER_MONITORING_INTERVAL_DEFAULT = (10 * 60)
 
-    attr_accessor :api_key, # API key used to access Konfipay API. Can be configured in Konfipay Portal.
-                  :api_keys, # Define multiple api keys to be used on demand, see README
+    attr_writer   :api_key, # API key used to access Konfipay API. Can be configured in Konfipay Portal.
+                  :api_key_name # Select a specific api key if muliple are configured, see README
+    attr_accessor :api_keys, # Define multiple api keys to be used on demand, see README
                   :logger, # Optional logger object - has to respond to debug, info, etc.
                   :timeout, # for http requests to API, in seconds
                   :base_url,
@@ -22,7 +23,7 @@ module Konfipay
     end
 
     def check!
-      %i[api_key base_url api_client_name api_client_version].each do |string|
+      %i[base_url api_client_name api_client_version].each do |string|
         value = send(string)
         raise ArgumentError, "#{value.inspect} is not a valid #{string}!" if value.nil? || value.empty?
       end
@@ -36,8 +37,21 @@ module Konfipay
         end
       end
 
-      # TODO: Check api keys is a hash with values and one is default
-      # TODO: Check either api keys or one key
+      raise ArgumentError, 'Configure api_key OR api_keys but not both!' if @api_key.present? && @api_keys.present?
+
+      if @api_keys.present?
+        raise ArgumentError, "api_keys can't be empty!" if @api_keys.empty?
+        raise ArgumentError, "A 'default' key has to be set in api_keys!" unless @api_keys['default'].present?
+
+        if @api_keys.keys.size < 2
+          raise ArgumentError,
+                "A second key besides the 'default' key has to be set in api_keys. \
+                If you only use one, just use the normal api_key configuration"
+        end
+        raise ArgumentError, 'Use only strings as keys in api_keys!' if @api_keys.keys.any?(Symbol)
+      elsif @api_key.blank?
+        raise ArgumentError, "#{@api_key.inspect} is not a valid api_key!"
+      end
 
       self
     end
@@ -66,8 +80,10 @@ module Konfipay
       @api_client_name = api_client_name if api_client_name
       @api_client_version = api_client_version if api_client_version
       @transfer_monitoring_interval = transfer_monitoring_interval if transfer_monitoring_interval
-      if api_key_name
-        # TODO: Check it's one of the defined keys or raise
+      if api_key_name.present?
+        raise ArgumentError, "Can't use 'api_key_name' when api_keys are not configured" if @api_keys.blank?
+        raise ArgumentError, "#{api_key_name.inspect} is not configured in api_keys!" unless @api_keys[api_key_name]
+
         @api_key_name = api_key_name
       end
       self
@@ -76,12 +92,12 @@ module Konfipay
 
     def api_key
       if @api_keys.present?
-        if key = @api_keys[@api_key_name]
+        if (key = @api_keys[@api_key_name])
           @logger&.info "Using #{@api_key_name.inspect} api_key"
           key
         else
-          @logger&.info "Using default api_key"
-          @api_keys["default"]
+          @logger&.info 'Using default api_key'
+          @api_keys['default']
         end
       else
         @api_key

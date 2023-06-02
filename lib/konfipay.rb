@@ -25,11 +25,13 @@ require_relative 'konfipay/jobs/monitor_transfer'
 
 # rubocop:disable Metrics/ParameterLists
 module Konfipay
+  DEFAULT_QUEUE_NAME = :default
+
   class << self
     # Fetches all "new" statements for all configured accounts since the last time successfully used.
-    # Use "queue" to run job in a specific sidekiq queue, default is :default
+    # Use queue: :xyz to run job in a specific sidekiq queue, default is :default
     # Use mark_as_read: false to keep retrieved data "unread", for testing.
-    # Filter accounts by iban argument, if non-empty.
+    # Filter accounts by iban argument.
     # callback_class::callback_method will be called asynchronously with the resulting list of statements,
     # for the format see Konfipay::Operations::FetchStatements#fetch
     # api_key_name switches between multiple api_keys, if configured
@@ -37,7 +39,7 @@ module Konfipay
     def new_statements(
       callback_class:,
       callback_method:,
-      queue: :default,
+      queue: DEFAULT_QUEUE_NAME,
       iban: nil,
       mark_as_read: true,
       api_key_name: nil
@@ -48,14 +50,14 @@ module Konfipay
         'new',
         { 'iban' => iban },
         { 'mark_as_read' => mark_as_read },
-        { "api_key_name" => api_key_name }
+        extract_config_options(api_key_name: api_key_name)
       )
       true
     end
 
     # Fetches "history" of statements for all configured accounts between the two given dates
     # (as strings in iso-8601 format).
-    # Use "queue" to run job in a specific sidekiq queue, default is :default
+    # Use queue: :xyz to run job in a specific sidekiq queue, default is :default
     # Filter accounts by iban argument, if non-empty.
     # callback_class::callback_method will be called asynchronously with the resulting list of statements,
     # for the format see Konfipay::Operations::FetchStatements#fetch
@@ -64,7 +66,7 @@ module Konfipay
     def statement_history(
       callback_class:,
       callback_method:,
-      queue: :default,
+      queue: DEFAULT_QUEUE_NAME,
       iban: nil,
       from: Date.today.iso8601,
       to: from,
@@ -76,14 +78,14 @@ module Konfipay
         'history',
         { 'iban' => iban, 'from' => from, 'to' => to },
         {},
-        { "api_key_name" => api_key_name }
+        extract_config_options(api_key_name: api_key_name)
       )
       true
     end
 
     # Start a new credit transfer, i.e. send money.
     #
-    # payment_data format (all in json-compatible values, i.e. strings, numbers) is:
+    # payment_data format (all in json-compatible values, i.e. strings, numbers - no symbols) is:
     # {"debtor"=>
     #   {"name"=>"Your company",
     #    "iban"=>"DE02120300000000202051",
@@ -105,10 +107,12 @@ module Konfipay
     # "Message Identification" field to identify the whole transfer process.
     # The end_to_end_reference identifies the single transaction and is visible to the creditor.
     #
-    # Use "queue" to run job in a specific sidekiq queue, default is :default
+    # Use queue: :xyz to run job in a specific sidekiq queue, default is :default
     #
     # callback_class::callback_method will be called asynchronously with info about the state of the operation,
     # for the format see Konfipay::Operations::InitializeCreditTransfer#submit
+    #
+    # api_key_name switches between multiple api_keys, if configured
     #
     # This method itself only returns true.
     #
@@ -119,20 +123,19 @@ module Konfipay
     #
     # # TODO: Implement some sort of validator class and use in all these kickoff-methods?
     def initialize_credit_transfer(
-      callback_class,
-      callback_method,
-      queue = nil,
-      payment_data,
-      transaction_id
+      callback_class:,
+      callback_method:,
+      payment_data:, transaction_id:, queue: DEFAULT_QUEUE_NAME,
+      api_key_name: nil
     )
       # TODO: validate input, check that class and method are implemented
-      queue ||= :default # TODO: This should be in configuration and not repeated here
       Konfipay::Jobs::InitializeTransfer.set(queue: queue).perform_async(
         callback_class,
         callback_method,
         'credit_transfer',
         payment_data,
-        transaction_id
+        transaction_id,
+        extract_config_options(api_key_name: api_key_name)
       )
       true
     end
@@ -171,25 +174,31 @@ module Konfipay
     #
     # # TODO: Implement some sort of validator class and use in all these kickoff-methods?
     def initialize_direct_debit(
-      callback_class,
-      callback_method,
-      queue = nil,
-      payment_data,
-      transaction_id
+      callback_class:,
+      callback_method:,
+      payment_data:,
+      transaction_id:,
+      queue: DEFAULT_QUEUE_NAME,
+      api_key_name: nil
     )
       # TODO: validate input, check that class and method are implemented
-      queue ||= :default # TODO: This should be in configuration and not repeated here
       Konfipay::Jobs::InitializeTransfer.set(queue: queue).perform_async(
         callback_class,
         callback_method,
         'direct_debit',
         payment_data,
-        transaction_id
+        transaction_id,
+        extract_config_options(api_key_name: api_key_name)
       )
       true
+    end
+
+    def extract_config_options(api_key_name: nil)
+      opts = {}
+      # Make sure to be json-compatible and only pass on keys with values
+      opts['api_key_name'] = api_key_name if api_key_name
+      opts
     end
   end
 end
 # rubocop:enable Metrics/ParameterLists
-# rubocop:enable Style/OptionalBooleanParameter
-# rubocop:enable Style/OptionalArguments

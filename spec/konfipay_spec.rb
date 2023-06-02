@@ -20,7 +20,13 @@ RSpec.describe Konfipay do
       subject { request_fetch }
 
       let(:request_fetch) do
-        described_class.new_statements(callback_class, callback_method, queue, iban, mark_as_read)
+        described_class.new_statements(
+          callback_class: callback_class,
+          callback_method: callback_method,
+          queue: queue,
+          iban: iban,
+          mark_as_read: mark_as_read
+        )
       end
 
       let(:mark_as_read) { false }
