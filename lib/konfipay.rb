@@ -44,6 +44,9 @@ module Konfipay
       mark_as_read: true,
       api_key_name: nil
     )
+      # TODO: We could move all validation and transformation into the Configuration class,
+      # then use that here to make a dummy instance and return errors early, before the job goes into
+      # Sidekiq. The same instance could serialize and deserialize to and from json-safe Sidekiq args
       Konfipay::Jobs::FetchStatements.set(queue: queue).perform_async(
         callback_class,
         callback_method,
@@ -121,14 +124,12 @@ module Konfipay
     # until a "final" state is reached (successfully or with an error). See configuration for
     # the interval in which checks are made.
     #
-    # # TODO: Implement some sort of validator class and use in all these kickoff-methods?
     def initialize_credit_transfer(
       callback_class:,
       callback_method:,
       payment_data:, transaction_id:, queue: DEFAULT_QUEUE_NAME,
       api_key_name: nil
     )
-      # TODO: validate input, check that class and method are implemented
       Konfipay::Jobs::InitializeTransfer.set(queue: queue).perform_async(
         callback_class,
         callback_method,
@@ -172,7 +173,6 @@ module Konfipay
     #
     # See Konfipay::PainBuilder for details on the values.
     #
-    # # TODO: Implement some sort of validator class and use in all these kickoff-methods?
     def initialize_direct_debit(
       callback_class:,
       callback_method:,
@@ -181,7 +181,6 @@ module Konfipay
       queue: DEFAULT_QUEUE_NAME,
       api_key_name: nil
     )
-      # TODO: validate input, check that class and method are implemented
       Konfipay::Jobs::InitializeTransfer.set(queue: queue).perform_async(
         callback_class,
         callback_method,

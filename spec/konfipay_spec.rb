@@ -14,6 +14,7 @@ RSpec.describe Konfipay do
     let(:iban) { 'DE02120300000000202051' }
     let(:payment_data) { { 'bla' => 'blub' } }
     let(:transaction_id) { '12345' }
+    let(:api_key_name) { 'the_prettier_key' }
     let(:sidekiq_options_dummy) { Class.new }
 
     describe 'new_statements' do
@@ -25,7 +26,8 @@ RSpec.describe Konfipay do
           callback_method: callback_method,
           queue: queue,
           iban: iban,
-          mark_as_read: mark_as_read
+          mark_as_read: mark_as_read,
+          api_key_name: api_key_name
         )
       end
 
@@ -38,7 +40,7 @@ RSpec.describe Konfipay do
 
       it { is_expected.to be(true) }
 
-      context 'with passed-in arguments' do
+      context 'with full arguments' do
         let(:queue) { :fast }
 
         it 'enqueues a job' do
@@ -48,7 +50,8 @@ RSpec.describe Konfipay do
             callback_method,
             'new',
             { 'iban' => iban },
-            { 'mark_as_read' => mark_as_read }
+            { 'mark_as_read' => mark_as_read },
+            { 'api_key_name' => api_key_name }
           )
         end
 
@@ -58,9 +61,12 @@ RSpec.describe Konfipay do
         end
       end
 
-      context 'with default arguments' do
+      context 'with minimal arguments' do
         let(:request_fetch) do
-          described_class.new_statements(callback_class, callback_method)
+          described_class.new_statements(
+            callback_class: callback_class,
+            callback_method: callback_method
+          )
         end
 
         it 'enqueues a job' do
@@ -70,7 +76,8 @@ RSpec.describe Konfipay do
             callback_method,
             'new',
             { 'iban' => nil },
-            { 'mark_as_read' => true }
+            { 'mark_as_read' => true },
+            {}
           )
         end
 
@@ -87,7 +94,15 @@ RSpec.describe Konfipay do
       subject { request_fetch }
 
       let(:request_fetch) do
-        described_class.statement_history(callback_class, callback_method, queue, iban, from, to)
+        described_class.statement_history(
+          callback_class: callback_class,
+          callback_method: callback_method,
+          queue: queue,
+          iban: iban,
+          from: from,
+          to: to,
+          api_key_name: api_key_name
+        )
       end
 
       let(:from) { (Date.today - 100).iso8601 }
@@ -100,7 +115,7 @@ RSpec.describe Konfipay do
 
       it { is_expected.to be(true) }
 
-      context 'with passed-in arguments' do
+      context 'with full arguments' do
         let(:queue) { :fast }
 
         it 'enqueues a job' do
@@ -110,7 +125,8 @@ RSpec.describe Konfipay do
             callback_method,
             'history',
             { 'from' => from, 'iban' => iban, 'to' => to },
-            {}
+            {},
+            { 'api_key_name' => api_key_name }
           )
         end
 
@@ -120,9 +136,12 @@ RSpec.describe Konfipay do
         end
       end
 
-      context 'with default arguments' do
+      context 'with minimal arguments' do
         let(:request_fetch) do
-          described_class.statement_history(callback_class, callback_method)
+          described_class.statement_history(
+            callback_class: callback_class,
+            callback_method: callback_method
+          )
         end
 
         it 'enqueues a job' do
@@ -132,6 +151,7 @@ RSpec.describe Konfipay do
             callback_method,
             'history',
             { 'from' => Date.today.iso8601, 'iban' => nil, 'to' => Date.today.iso8601 },
+            {},
             {}
           )
         end
@@ -149,7 +169,14 @@ RSpec.describe Konfipay do
       subject { start_transfer }
 
       let(:start_transfer) do
-        described_class.initialize_credit_transfer(callback_class, callback_method, queue, payment_data, transaction_id)
+        described_class.initialize_credit_transfer(
+          callback_class: callback_class,
+          callback_method: callback_method,
+          queue: queue,
+          payment_data: payment_data,
+          transaction_id: transaction_id,
+          api_key_name: api_key_name
+        )
       end
 
       before do
@@ -159,7 +186,7 @@ RSpec.describe Konfipay do
 
       it { is_expected.to be(true) }
 
-      context 'with passed-in arguments' do
+      context 'with full arguments' do
         let(:queue) { :fast }
 
         it 'enqueues a job' do
@@ -169,7 +196,8 @@ RSpec.describe Konfipay do
             callback_method,
             'credit_transfer',
             payment_data,
-            transaction_id
+            transaction_id,
+            { 'api_key_name' => api_key_name }
           )
         end
 
@@ -179,9 +207,14 @@ RSpec.describe Konfipay do
         end
       end
 
-      context 'with default arguments' do
+      context 'with minimal arguments' do
         let(:start_transfer) do
-          described_class.initialize_credit_transfer(callback_class, callback_method, nil, payment_data, transaction_id)
+          described_class.initialize_credit_transfer(
+            callback_class: callback_class,
+            callback_method: callback_method,
+            payment_data: payment_data,
+            transaction_id: transaction_id
+          )
         end
 
         it 'uses the default queue' do
@@ -197,7 +230,14 @@ RSpec.describe Konfipay do
       subject { start_debit }
 
       let(:start_debit) do
-        described_class.initialize_direct_debit(callback_class, callback_method, queue, payment_data, transaction_id)
+        described_class.initialize_direct_debit(
+          callback_class: callback_class,
+          callback_method: callback_method,
+          queue: queue,
+          payment_data: payment_data,
+          transaction_id: transaction_id,
+          api_key_name: api_key_name
+        )
       end
 
       before do
@@ -207,7 +247,7 @@ RSpec.describe Konfipay do
 
       it { is_expected.to be(true) }
 
-      context 'with passed-in arguments' do
+      context 'with full arguments' do
         let(:queue) { :fast }
 
         it 'enqueues a job' do
@@ -217,7 +257,8 @@ RSpec.describe Konfipay do
             callback_method,
             'direct_debit',
             payment_data,
-            transaction_id
+            transaction_id,
+            { 'api_key_name' => api_key_name }
           )
         end
 
@@ -227,9 +268,14 @@ RSpec.describe Konfipay do
         end
       end
 
-      context 'with default arguments' do
+      context 'with minimal arguments' do
         let(:start_debit) do
-          described_class.initialize_direct_debit(callback_class, callback_method, nil, payment_data, transaction_id)
+          described_class.initialize_direct_debit(
+            callback_class: callback_class,
+            callback_method: callback_method,
+            payment_data: payment_data,
+            transaction_id: transaction_id
+          )
         end
 
         it 'uses the default queue' do
