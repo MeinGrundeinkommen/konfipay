@@ -22,8 +22,4 @@ RSpec.configure do |config|
   end
 
   config.include ActiveSupport::Testing::TimeHelpers
-
-  config.after do
-    Konfipay.reset_configuration!
-  end
 end

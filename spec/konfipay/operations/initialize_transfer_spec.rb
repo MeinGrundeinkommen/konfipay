@@ -7,7 +7,7 @@ require 'spec_helper'
 # rubocop:disable RSpec/MultipleExpectations
 RSpec.describe Konfipay::Operations::InitializeTransfer do
   shared_examples_for 'a pain submitter' do
-    let(:config) { Konfipay.configuration }
+    let(:config) { Konfipay.configuration(api_key: '<key>') }
     let(:client) do
       Konfipay::Client.new(config)
     end

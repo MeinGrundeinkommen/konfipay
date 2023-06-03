@@ -7,7 +7,7 @@ module Konfipay
       sidekiq_options retry: 0
 
       def perform(callback_class, callback_method, mode, payment_data, transaction_id)
-        data = Konfipay::Operations::InitializeTransfer.new.submit(mode, payment_data, transaction_id)
+        data = Konfipay::Operations::InitializeTransfer.new(@config).submit(mode, payment_data, transaction_id)
         run_callback(callback_class, callback_method, data, transaction_id)
         return if data['final']
 

@@ -7,7 +7,7 @@ require 'spec_helper'
 # rubocop:disable RSpec/MultipleExpectations
 # rubocop:disable RSpec/IndexedLet
 RSpec.describe Konfipay::Operations::FetchStatements do
-  let(:config) { Konfipay.configuration }
+  let(:config) { Konfipay.configuration(api_key: '<key>') }
   let(:client) do
     Konfipay::Client.new(config)
   end

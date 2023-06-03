@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Konfipay::Jobs::MonitorTransfer do
   describe 'perform' do
     let(:do_it) do
-      described_class.new.perform(
+      described_class.new(config).perform(
         'ExampleCallbackClass',
         'example_callback_fetch_statements',
         r_id,
@@ -26,7 +26,8 @@ RSpec.describe Konfipay::Jobs::MonitorTransfer do
         }
       }
     end
-    let(:operation) { Konfipay::Operations::TransferInfo.new }
+    let(:config) { Konfipay.configuration(api_key: '<key>') }
+    let(:operation) { Konfipay::Operations::TransferInfo.new(config) }
 
     before do
       allow(Konfipay::Operations::TransferInfo).to receive(:new).and_return(operation)

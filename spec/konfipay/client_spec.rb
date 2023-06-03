@@ -10,6 +10,7 @@ RSpec.describe Konfipay::Client do
       # Uncomment this for debug output from http gem during specs
       # c.logger = Logger.new($stdout)
     end
+    Konfipay.configuration
   end
 
   let(:client) do
