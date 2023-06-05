@@ -16,6 +16,15 @@ RSpec.describe Konfipay do
     let(:transaction_id) { '12345' }
     let(:api_key_name) { 'the_prettier_key' }
     let(:sidekiq_options_dummy) { Class.new }
+    let(:redis_key) { 'konfipay/data/12345' }
+    let(:redis_params) { ['SET', redis_key, '{"bla":"blub"}', { ex: 1_209_600 }] }
+
+    shared_examples_for 'a redis serializer' do
+      it 'puts the serialized payment_data into Redis' do
+        subject
+        expect(sidekiq_redis_connection_dummy).to have_received(:call).with(*redis_params)
+      end
+    end
 
     describe 'new_statements' do
       subject { request_fetch }
@@ -180,6 +189,7 @@ RSpec.describe Konfipay do
       end
 
       before do
+        allow(sidekiq_redis_connection_dummy).to receive(:call)
         allow(sidekiq_options_dummy).to receive(:perform_async)
         allow(Konfipay::Jobs::InitializeTransfer).to receive(:set).and_return(sidekiq_options_dummy)
       end
@@ -195,7 +205,7 @@ RSpec.describe Konfipay do
             callback_class,
             callback_method,
             'credit_transfer',
-            payment_data,
+            redis_key,
             transaction_id,
             { 'api_key_name' => api_key_name }
           )
@@ -205,6 +215,8 @@ RSpec.describe Konfipay do
           start_transfer
           expect(Konfipay::Jobs::InitializeTransfer).to have_received(:set).with(queue: queue)
         end
+
+        it_behaves_like 'a redis serializer'
       end
 
       context 'with minimal arguments' do
@@ -221,6 +233,8 @@ RSpec.describe Konfipay do
           start_transfer
           expect(Konfipay::Jobs::InitializeTransfer).to have_received(:set).with(queue: :default)
         end
+
+        it_behaves_like 'a redis serializer'
       end
 
       # TODO: check arguments are checked
@@ -241,6 +255,7 @@ RSpec.describe Konfipay do
       end
 
       before do
+        allow(sidekiq_redis_connection_dummy).to receive(:call)
         allow(sidekiq_options_dummy).to receive(:perform_async)
         allow(Konfipay::Jobs::InitializeTransfer).to receive(:set).and_return(sidekiq_options_dummy)
       end
@@ -256,7 +271,7 @@ RSpec.describe Konfipay do
             callback_class,
             callback_method,
             'direct_debit',
-            payment_data,
+            redis_key,
             transaction_id,
             { 'api_key_name' => api_key_name }
           )
@@ -266,6 +281,8 @@ RSpec.describe Konfipay do
           start_debit
           expect(Konfipay::Jobs::InitializeTransfer).to have_received(:set).with(queue: queue)
         end
+
+        it_behaves_like 'a redis serializer'
       end
 
       context 'with minimal arguments' do
@@ -282,6 +299,8 @@ RSpec.describe Konfipay do
           start_debit
           expect(Konfipay::Jobs::InitializeTransfer).to have_received(:set).with(queue: :default)
         end
+
+        it_behaves_like 'a redis serializer'
       end
 
       # TODO: check arguments are checked
