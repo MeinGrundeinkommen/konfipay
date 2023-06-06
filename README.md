@@ -48,6 +48,39 @@ end
 
 ```
 
+### Multiple API keys
+
+You may want to use multiple api keys, if for some use case you need to connect from the same application to different Konfipay instances, or want to use multiple keys with different permissions.
+
+For that, you can define multiple keys like this:
+
+```ruby
+
+Konfipay.configure do |c|
+  c.api_keys = {
+    'default' => ENV.fetch('KONFIPAY_API_KEY', nil),
+    'special' => ENV.fetch('KONFIPAY_OTHER_KEY', nil)
+  }
+end
+
+```
+The "default" key will then used by, well, default. You can select a specific key for an operation by using the "api_key_name" argument:
+
+```ruby
+
+# rails c
+Konfipay.new_statements(
+  callback_class: "KonfipayCallbacks",
+  callback_method: "callback_for_new_statements",
+  api_key_name: "special"
+)
+
+```
+
+Note that you can't mix use of api_key and api_keys, define one or the other.
+In a pinch, you could also override "api_key" with the operation arguments but this is discouraged, since the actual key value would then be part of the Sidekiq job payload and may leak into logs etc.
+
+
 ## Usage
 
 Note: API calls handle Authentication "under the hood" by requesting a token from the API if needed, and will reauthenticate once on subsequent API calls with the same client instance. If an operation takes long, it's possible that the token
@@ -69,7 +102,9 @@ To use this, make sure sidekiq is running, then kick off the fetching like this,
 
 # rails c
 Konfipay.new_statements(
-  "KonfipayCallbacks", "callback_for_new_statements", nil, "optional iban to filter by"
+  callback_class: "KonfipayCallbacks",
+  callback_method: "callback_for_new_statements",
+  iban: "optional iban to filter by"
 )
 
 ```
@@ -79,22 +114,27 @@ or
 ```ruby
 
 Konfipay.statement_history(
-  "KonfipayCallbacks", "callback_for_history_statements", nil, "optional iban to filter by", "2022-01-15", "2022-01-31"
+  callback_class: "KonfipayCallbacks",
+  callback_method:"callback_for_history_statements",
+  queue: :critical,
+  iban: "optional iban to filter by",
+  from: "2022-01-15",
+  to: "2022-01-31"
 )
 
 ```
 
-You will notice that these methods immediately return just "true". This is because all operations are actually executed asynchronously as Jobs in Sidekiq (you can set the queue to be used for the job with the third argument, it defaults to :default).
+You will notice that these methods immediately return just "true". This is because all operations are actually executed asynchronously as Jobs in Sidekiq (you can set the queue to be used for the job with the queue argument, it defaults to :default).
 But where does the data end up, you ask?
 You need to set up a simple class with a class method where you will receive asynchronous updates for each operation:
 
 
 ```ruby
 
-# lib/konfipay_callbacks.rb # for example, a model works too, this class just needs to be loaded in the sidekiq process
+# lib/konfipay_callbacks.rb # for example, a model works too, this class just needs to be loaded in the Sidekiq process
 class KonfipayCallbacks
 
-  def self.callback_for_new_statements(statements, _transaction_id) # the second argument is unused at the moment, stay tuned
+  def self.callback_for_new_statements(statements, transaction_id)
     pp statements
   end
 end
@@ -130,11 +170,17 @@ Also, the workflow for processing credit transfers and direct debits in Konfipay
 
 # rails c
 Konfipay.initialize_credit_transfer(
-  "KonfipayCallbacks", "callback_for_initialize_credit_transfer", nil, { ... payment data ... }, "transaction id xyz123"
+  callback_class: "KonfipayCallbacks",
+  callback_method: "callback_for_initialize_credit_transfer",
+  payment_data: { ... payment data ... },
+  transaction_id: "transaction id xyz123"
 )
 
 Konfipay.initialize_direct_debit(
-  "KonfipayCallbacks", "callback_for_initialize_direct_debit", nil, { ... payment data ... }, "transaction id xyz123"
+  callback_class: "KonfipayCallbacks",
+  callback_method: "callback_for_initialize_direct_debit",
+  payment_data: { ... payment data ... },
+  transaction_id: "transaction id xyz123"
 )
 ```
 
