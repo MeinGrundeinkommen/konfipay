@@ -95,6 +95,12 @@ RSpec.describe Konfipay::Configuration do
 
             it_behaves_like 'raising an ArgumentError'
           end
+
+          context 'when a symbol' do
+            let(:value) { :noooooo }
+
+            it_behaves_like 'raising an ArgumentError'
+          end
         end
       end
 

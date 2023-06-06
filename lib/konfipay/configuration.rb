@@ -25,7 +25,7 @@ module Konfipay
     def check!
       %i[base_url api_client_name api_client_version].each do |string|
         value = send(string)
-        raise ArgumentError, "#{value.inspect} is not a valid #{string}!" if value.nil? || value.empty?
+        raise ArgumentError, "#{value.inspect} is not a valid #{string}!" if value.blank? || !value.is_a?(String)
       end
       raise ArgumentError, "#{logger.inspect} is not a working logger!" if !logger.nil? && !logger.respond_to?(:info)
 
@@ -48,8 +48,8 @@ module Konfipay
                 "A second key besides the 'default' key has to be set in api_keys. \
                 If you only use one, just use the normal api_key configuration"
         end
-        raise ArgumentError, 'Use only strings as keys in api_keys!' if @api_keys.keys.any?(Symbol)
-      elsif @api_key.blank?
+        raise ArgumentError, 'Use only strings as keys in api_keys!' unless @api_keys.keys.all?(String)
+      elsif @api_key.blank? || !@api_key.is_a?(String)
         raise ArgumentError, "#{@api_key.inspect} is not a valid api_key!"
       end
 
