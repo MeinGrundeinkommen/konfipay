@@ -48,7 +48,7 @@ RSpec.describe Konfipay::Jobs::InitializeTransfer do
 
     before do
       allow(Konfipay).to receive(:configuration).and_call_original
-      allow(sidekiq_redis_connection_dummy).to receive(:call).with('GETDEL', redis_key).and_return(payment_data_json)
+      allow(sidekiq_redis_connection_double).to receive(:call).with('GETDEL', redis_key).and_return(payment_data_json)
       allow(Konfipay::Operations::InitializeTransfer).to receive(:new).and_return(operation)
       allow(operation).to receive(:submit).with(
         'credit_transfer',
@@ -106,7 +106,7 @@ RSpec.describe Konfipay::Jobs::InitializeTransfer do
 
     context 'when payment_data is somehow missing' do
       it 'throws an exception' do
-        allow(sidekiq_redis_connection_dummy).to receive(:call).and_return(nil)
+        allow(sidekiq_redis_connection_double).to receive(:call).and_return(nil)
         expect { do_it }.to raise_error('Could not get payment data from redis at "konfipay/data/123xyz"!')
       end
     end

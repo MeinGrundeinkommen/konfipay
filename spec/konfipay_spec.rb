@@ -22,7 +22,7 @@ RSpec.describe Konfipay do
     shared_examples_for 'a redis serializer' do
       it 'puts the serialized payment_data into Redis' do
         subject
-        expect(sidekiq_redis_connection_dummy).to have_received(:call).with(*redis_params)
+        expect(sidekiq_redis_connection_double).to have_received(:call).with(*redis_params)
       end
     end
 
@@ -189,7 +189,7 @@ RSpec.describe Konfipay do
       end
 
       before do
-        allow(sidekiq_redis_connection_dummy).to receive(:call)
+        allow(sidekiq_redis_connection_double).to receive(:call)
         allow(sidekiq_options_dummy).to receive(:perform_async)
         allow(Konfipay::Jobs::InitializeTransfer).to receive(:set).and_return(sidekiq_options_dummy)
       end
@@ -255,7 +255,7 @@ RSpec.describe Konfipay do
       end
 
       before do
-        allow(sidekiq_redis_connection_dummy).to receive(:call)
+        allow(sidekiq_redis_connection_double).to receive(:call)
         allow(sidekiq_options_dummy).to receive(:perform_async)
         allow(Konfipay::Jobs::InitializeTransfer).to receive(:set).and_return(sidekiq_options_dummy)
       end

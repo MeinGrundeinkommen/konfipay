@@ -25,15 +25,19 @@ RSpec.configure do |config|
   end
 
   config.before do
-    @sidekiq_redis_pool_dummy = Class.new.new
-    @sidekiq_redis_connection_dummy = Class.new.new
-    allow(Sidekiq).to receive(:redis_pool).and_return(@sidekiq_redis_pool_dummy)
-    allow(@sidekiq_redis_pool_dummy).to receive(:with).and_yield(@sidekiq_redis_connection_dummy)
+    stub_sidekiq_redis_connection_double
+  end
+
+  def stub_sidekiq_redis_connection_double
+    @sidekiq_redis_pool_double = instance_double(ConnectionPool)
+    allow(Sidekiq).to receive(:redis_pool).and_return(@sidekiq_redis_pool_double)
+    @sidekiq_redis_connection_double = instance_double(Sidekiq::RedisClientAdapter::CompatClient)
+    allow(@sidekiq_redis_pool_double).to receive(:with).and_yield(@sidekiq_redis_connection_double)
   end
 
   # rubocop:disable Style/TrivialAccessors
-  def sidekiq_redis_connection_dummy
-    @sidekiq_redis_connection_dummy
+  def sidekiq_redis_connection_double
+    @sidekiq_redis_connection_double
   end
   # rubocop:enable Style/TrivialAccessors
 
