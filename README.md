@@ -186,6 +186,7 @@ Konfipay.initialize_direct_debit(
 
 See the method's descriptions on details about the payment data format.
 
+Note that the payment_data is not passed into the Sidekiq jobs directly, as that might accidentally leak the data into logs etc. if there are issues - also systems like the Sidekiq dashboard do not handle large job arguments well. Instead this gem saves the data temporarily directly in Redis (using the same connection as Sidekiq). In case something goes very wrong, the keys have a TTL of 2 weeks so they data will not clog up Redis indefinitely.
 
 
 For developing features or hacking on this gem, note that all business logic is implemented in the "Operation" classes, which

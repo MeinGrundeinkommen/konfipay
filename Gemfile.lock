@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    konfipay (1.7.0)
+    konfipay (1.8.0)
       activesupport
       camt_parser
       http

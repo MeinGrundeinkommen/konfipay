@@ -134,7 +134,7 @@ module Konfipay
         callback_class,
         callback_method,
         'credit_transfer',
-        payment_data,
+        store_payment_data_in_redis(payment_data, transaction_id),
         transaction_id,
         extract_config_options(api_key_name: api_key_name)
       )
@@ -185,7 +185,7 @@ module Konfipay
         callback_class,
         callback_method,
         'direct_debit',
-        payment_data,
+        store_payment_data_in_redis(payment_data, transaction_id),
         transaction_id,
         extract_config_options(api_key_name: api_key_name)
       )
@@ -197,6 +197,15 @@ module Konfipay
       # Make sure to be json-compatible and only pass on keys with values
       opts['api_key_name'] = api_key_name if api_key_name
       opts
+    end
+
+    def store_payment_data_in_redis(payment_data, transaction_id)
+      json = JSON.generate(payment_data)
+      key = "konfipay/data/#{transaction_id}"
+      Sidekiq.redis_pool.with do |conn|
+        conn.call('SET', key, json, ex: 2.weeks.to_i)
+      end
+      key
     end
   end
 end
