@@ -6,7 +6,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'pry'
-gem 'rspec', '~> 3.10'
+gem 'rspec', '~> 3.13'
 gem 'rubocop'
 gem 'rubocop-performance'
 gem 'rubocop-rspec'
