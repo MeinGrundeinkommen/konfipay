@@ -71,8 +71,9 @@ module Konfipay
     end
 
     def extract_fees(xml)
-      charges = xml.xpath('Chrgs')
-      return unless charges.any?
+      charges = xml.xpath('Chrgs/Rcrd')
+      charges = xml.xpath('Chrgs') if charges.none?
+      return if charges.none?
 
       charges.map do |charge|
         {

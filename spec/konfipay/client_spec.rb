@@ -287,54 +287,58 @@ RSpec.describe Konfipay::Client do
     let(:stubbed_url) { "https://portal.konfipay.de/api/v5/Document/Camt/#{r_id}" }
     let(:result) { client.camt_file(r_id) }
 
-    let(:camt_xml) { File.read('spec/examples/camt053/mixed_examples.xml') }
-
-    it_behaves_like 'api error handling', :get
-
     shared_examples_for 'success' do
       it 'returns a parsed camt file' do
         expect(result).to be_an_instance_of(CamtParser::Format053::Base)
       end
     end
 
-    context 'when konfipay first returns 401, then success' do
-      before do
-        stub_login_token_api_call!
-        stub_request(:get, stubbed_url)
-          .with(headers: request_headers)
-          .to_return(status: 401,
-                     body: nil,
-                     headers: response_is_auth_error)
-          .then
-          .to_return(status: 200,
-                     body: camt_xml,
-                     headers: content_type_xml)
-      end
+    shared_examples_for 'a camt file with format' do |format|
+      let(:camt_xml) { File.read("spec/examples/camt053/mixed_examples_#{format}.xml") }
+      it_behaves_like 'api error handling', :get
 
-      it_behaves_like 'success'
-    end
-
-    context 'when konfipay returns success' do
-      before do
-        stub_login_token_api_call!
-        stub_request(:get, stubbed_url)
-          .with(headers: request_headers)
-          .to_return(status: 200,
-                     body: camt_xml,
-                     headers: content_type_xml)
-      end
-
-      context 'without arguments' do
-        it_behaves_like 'success'
-      end
-
-      context 'with mark_as_read = false' do
-        let(:stubbed_url) { "https://portal.konfipay.de/api/v5/Document/Camt/#{r_id}?ack=false" }
-        let(:result) { client.camt_file(r_id, false) }
+      context 'when konfipay first returns 401, then success' do
+        before do
+          stub_login_token_api_call!
+          stub_request(:get, stubbed_url)
+            .with(headers: request_headers)
+            .to_return(status: 401,
+                       body: nil,
+                       headers: response_is_auth_error)
+            .then
+            .to_return(status: 200,
+                       body: camt_xml,
+                       headers: content_type_xml)
+        end
 
         it_behaves_like 'success'
       end
+
+      context 'when konfipay returns success' do
+        before do
+          stub_login_token_api_call!
+          stub_request(:get, stubbed_url)
+            .with(headers: request_headers)
+            .to_return(status: 200,
+                       body: camt_xml,
+                       headers: content_type_xml)
+        end
+
+        context 'without arguments' do
+          it_behaves_like 'success'
+        end
+
+        context 'with mark_as_read = false' do
+          let(:stubbed_url) { "https://portal.konfipay.de/api/v5/Document/Camt/#{r_id}?ack=false" }
+          let(:result) { client.camt_file(r_id, false) }
+
+          it_behaves_like 'success'
+        end
+      end
     end
+
+    it_behaves_like 'a camt file with format', '02'
+    it_behaves_like 'a camt file with format', '08'
   end
 
   describe 'acknowledge_camt_file' do
