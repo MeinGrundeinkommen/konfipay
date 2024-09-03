@@ -1,0 +1,177 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02 camt.053.001.02.xsd">
+  <BkToCstmrStmt>
+    <GrpHdr>
+      <MsgId>53D20220128T22384746522190N220000002</MsgId>
+      <CreDtTm>2022-01-28T22:31:41.0+01:00</CreDtTm>
+      <MsgPgntn>
+        <PgNb>001</PgNb>
+        <LastPgInd>true</LastPgInd>
+      </MsgPgntn>
+    </GrpHdr>
+    <Stmt>
+      <Id>4967C532022012822322001011165313801</Id>
+      <ElctrncSeqNb>220076002</ElctrncSeqNb>
+      <LglSeqNb>002</LglSeqNb>
+      <CreDtTm>2022-01-28T22:31:41.0+01:00</CreDtTm>
+      <FrToDt>
+        <FrDtTm>2022-01-28T00:00:00+01:00</FrDtTm>
+        <ToDtTm>2022-01-28T23:59:59+01:00</ToDtTm>
+      </FrToDt>
+      <Acct>
+        <Id>
+          <IBAN>DE02300606010002474689</IBAN>
+        </Id>
+        <Ccy>EUR</Ccy>
+        <Ownr>
+          <Nm>Unsere Organisation</Nm>
+        </Ownr>
+        <Svcr>
+          <FinInstnId>
+            <BIC>OURBIC123</BIC>
+            <Nm>Unsere Bank</Nm>
+            <Othr>
+              <Id>DE 123456789</Id>
+              <Issr>UmsStId</Issr>
+            </Othr>
+          </FinInstnId>
+        </Svcr>
+      </Acct>
+      <Bal>
+        <Tp>
+          <CdOrPrtry>
+            <Cd>PRCD</Cd>
+          </CdOrPrtry>
+        </Tp>
+        <Amt Ccy="EUR">2000.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt>
+          <Dt>2022-01-28</Dt>
+        </Dt>
+      </Bal>
+      <Bal>
+        <Tp>
+          <CdOrPrtry>
+            <Cd>CLBD</Cd>
+          </CdOrPrtry>
+        </Tp>
+        <Amt Ccy="EUR">1960.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <Dt>
+          <Dt>2022-01-28</Dt>
+        </Dt>
+      </Bal>
+      <Ntry>
+        <Amt Ccy="EUR">40.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <Sts>BOOK</Sts>
+        <BookgDt>
+          <Dt>2022-01-28</Dt>
+        </BookgDt>
+        <ValDt>
+          <Dt>2022-01-28</Dt>
+        </ValDt>
+        <AcctSvcrRef>2022012800353688000</AcctSvcrRef>
+        <BkTxCd>
+          <Domn>
+            <Cd>PMNT</Cd>
+            <Fmly>
+              <Cd>ICDT</Cd>
+              <SubFmlyCd>ESCT</SubFmlyCd>
+            </Fmly>
+          </Domn>
+          <Prtry>
+            <Cd>NTRF+191+08381</Cd>
+            <Issr>DK</Issr>
+          </Prtry>
+        </BkTxCd>
+        <NtryDtls>
+          <Btch>
+            <PmtInfId>Finanzprogramm S0006147</PmtInfId>
+            <NbOfTxs>2</NbOfTxs>
+          </Btch>
+          <TxDtls>
+            <Refs>
+              <MsgId>Finanzprogramm-Sammelüberweisung</MsgId>
+              <PmtInfId>Finanzprogramm xyz11111</PmtInfId>
+              <EndToEndId>Transfer-0001/09</EndToEndId>
+              <TxId>20220125873645439090200000010000001</TxId>
+            </Refs>
+            <AmtDtls>
+              <TxAmt>
+                <Amt Ccy="EUR">20.00</Amt>
+              </TxAmt>
+            </AmtDtls>
+            <BkTxCd>
+              <Prtry>
+                <Cd>NMSC+191+08381</Cd>
+                <Issr>DK</Issr>
+              </Prtry>
+            </BkTxCd>
+            <RltdPties>
+              <Dbtr>
+                <Nm>Unsere Organisation</Nm>
+              </Dbtr>
+              <DbtrAcct>
+                <Id>
+                  <IBAN>DE02300606010002474689</IBAN>
+                </Id>
+              </DbtrAcct>
+              <Cdtr>
+                <Nm>Donald Duck</Nm>
+              </Cdtr>
+              <CdtrAcct>
+                <Id>
+                  <IBAN>DE02701500000000594937</IBAN>
+                </Id>
+              </CdtrAcct>
+            </RltdPties>
+            <RmtInf>
+              <Ustrd>Auszahlung - Februar 2022 - 9. Monat</Ustrd>
+            </RmtInf>
+          </TxDtls>
+          <TxDtls>
+            <Refs>
+              <MsgId>Finanzprogramm-Sammelüberweisung</MsgId>
+              <PmtInfId>Finanzprogramm yxz111111</PmtInfId>
+              <EndToEndId>Transfer-0002/09</EndToEndId>
+              <TxId>20220124343547139090200000010000002</TxId>
+            </Refs>
+            <AmtDtls>
+              <TxAmt>
+                <Amt Ccy="EUR">20.00</Amt>
+              </TxAmt>
+            </AmtDtls>
+            <BkTxCd>
+              <Prtry>
+                <Cd>NMSC+191+08381</Cd>
+                <Issr>DK</Issr>
+              </Prtry>
+            </BkTxCd>
+            <RltdPties>
+              <Dbtr>
+                <Nm>Unsere Organisation</Nm>
+              </Dbtr>
+              <DbtrAcct>
+                <Id>
+                  <IBAN>DE02300606010002474689</IBAN>
+                </Id>
+              </DbtrAcct>
+              <Cdtr>
+                <Nm>Sir Isaac Newton</Nm>
+              </Cdtr>
+              <CdtrAcct>
+                <Id>
+                  <IBAN>DE88100900001234567892</IBAN>
+                </Id>
+              </CdtrAcct>
+            </RltdPties>
+            <RmtInf>
+              <Ustrd>Auszahlung - Februar 2022 - 9. Monat</Ustrd>
+            </RmtInf>
+          </TxDtls>
+        </NtryDtls>
+        <AddtlNtryInf>Überweisungsauftrag</AddtlNtryInf>
+      </Ntry>
+    </Stmt>
+  </BkToCstmrStmt>
+</Document>

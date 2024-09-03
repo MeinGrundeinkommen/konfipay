@@ -46,21 +46,6 @@ RSpec.describe Konfipay::Operations::FetchStatements do
     }
   end
 
-  let(:parsed_camt_file1) do
-    # This file is based on a real example, but anonymized. It contains several types of transactions:
-    # * a normal credit - someone sent us money via Dauerauftrag
-    # * a debit by our bank - they charge us for account fees
-    # * a debit collection - we request money from three different user accounts in one "batch"
-    # * a debit return - one of the debits has "bounced" as the account is no more (it is an ex-account)
-    # * a debit return - one of the debits is canceled without fees, a "Storno"
-    CamtParser::String.parse(File.read('spec/examples/camt053/mixed_examples.xml'))
-  end
-
-  let(:parsed_camt_file2) do
-    # Just another failed debit, just to have a second file
-    CamtParser::String.parse(File.read('spec/examples/camt053/failed_debit_with_charges.xml'))
-  end
-
   # rubocop:disable Layout/LineLength
   let(:expected_parsed_statement1) do
     [
@@ -215,150 +200,170 @@ RSpec.describe Konfipay::Operations::FetchStatements do
     }
   end
 
-  describe 'fetch new' do
-    let(:fetch_it) do
-      x = nil
-      operation.fetch('new') do |result|
-        x = result
-      end
-      x
+  shared_examples_for 'a camt.53 format' do |format|
+    let(:parsed_camt_file1) do
+      # This file is based on a real example, but anonymized. It contains several types of transactions:
+      # * a normal credit - someone sent us money via Dauerauftrag
+      # * a debit by our bank - they charge us for account fees
+      # * a debit collection - we request money from three different user accounts in one "batch"
+      # * a debit return - one of the debits has "bounced" as the account is no more (it is an ex-account)
+      # * a debit return - one of the debits is canceled without fees, a "Storno"
+      CamtParser::String.parse(File.read("spec/examples/camt053/mixed_examples_#{format}.xml"))
     end
 
-    it 'returns list of statements' do
-      expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
-      expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
-      expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
-      expect(client).to receive(:acknowledge_camt_file).with(r_id1).and_return(acknowledged_camt_file_json)
-      expect(client).to receive(:acknowledge_camt_file).with(r_id2).and_return(acknowledged_camt_file_json)
-      expect(fetch_it).to eq(expected_parsed_statements)
+    let(:parsed_camt_file2) do
+      # Just another failed debit, just to have a second file
+      CamtParser::String.parse(File.read("spec/examples/camt053/failed_debit_with_charges_#{format}.xml"))
     end
 
-    context 'when api returns empty list' do
-      it 'returns empty list' do
-        allow(client).to receive(:new_statements).with({}).and_return(nil)
-        expect(fetch_it).to eq([])
-      end
-    end
-
-    context 'when there is an error fetching the second camt file' do
-      it "doesn't acknowledge the files" do
-        expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
-        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
-        expect(client).to receive(:camt_file).with(r_id2, false).and_raise('timeout haha')
-        expect { fetch_it }.to raise_error('timeout haha')
-      end
-    end
-
-    context 'when there is an error processing the results' do
+    describe 'fetch new' do
       let(:fetch_it) do
         x = nil
-        operation.fetch('new') do |_result|
-          raise 'whups butter fingers'
-        end
-        x
-      end
-
-      it "doesn't acknowledge the files" do
-        expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
-        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
-        expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
-        expect { fetch_it }.to raise_error('whups butter fingers')
-      end
-    end
-
-    context "when an acknowledge doesn't work" do
-      it 'raises an error about it' do
-        expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
-        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
-        expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
-        expect(client).to receive(:acknowledge_camt_file).with(r_id1).and_return(
-          {
-            'rId' => 'not important',
-            'href' => 'not important',
-            'timestamp' => 'not important',
-            'iban' => 'not important',
-            'isNew' => true,
-            'format' => 'not important',
-            'fileName' => 'not important'
-          }
-        )
-        expect { fetch_it }.to raise_error("Tried to acknowledge #{r_id1} but was still shown as new after!")
-      end
-    end
-
-    context 'with filters' do
-      let(:fetch_it) do
-        x = nil
-        operation.fetch('new', { 'iban' => iban }) do |result|
+        operation.fetch('new') do |result|
           x = result
         end
         x
       end
 
-      it 'passes iban filter to client' do
-        expect(client).to receive(:new_statements).with({ 'iban' => iban }).and_return(statements_parsed_json)
+      it 'returns list of statements' do
+        expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
         expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
         expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
         expect(client).to receive(:acknowledge_camt_file).with(r_id1).and_return(acknowledged_camt_file_json)
         expect(client).to receive(:acknowledge_camt_file).with(r_id2).and_return(acknowledged_camt_file_json)
         expect(fetch_it).to eq(expected_parsed_statements)
       end
+
+      context 'when api returns empty list' do
+        it 'returns empty list' do
+          allow(client).to receive(:new_statements).with({}).and_return(nil)
+          expect(fetch_it).to eq([])
+        end
+      end
+
+      context 'when there is an error fetching the second camt file' do
+        it "doesn't acknowledge the files" do
+          expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
+          expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+          expect(client).to receive(:camt_file).with(r_id2, false).and_raise('timeout haha')
+          expect { fetch_it }.to raise_error('timeout haha')
+        end
+      end
+
+      context 'when there is an error processing the results' do
+        let(:fetch_it) do
+          x = nil
+          operation.fetch('new') do |_result|
+            raise 'whups butter fingers'
+          end
+          x
+        end
+
+        it "doesn't acknowledge the files" do
+          expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
+          expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+          expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+          expect { fetch_it }.to raise_error('whups butter fingers')
+        end
+      end
+
+      context "when an acknowledge doesn't work" do
+        it 'raises an error about it' do
+          expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
+          expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+          expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+          expect(client).to receive(:acknowledge_camt_file).with(r_id1).and_return(
+            {
+              'rId' => 'not important',
+              'href' => 'not important',
+              'timestamp' => 'not important',
+              'iban' => 'not important',
+              'isNew' => true,
+              'format' => 'not important',
+              'fileName' => 'not important'
+            }
+          )
+          expect { fetch_it }.to raise_error("Tried to acknowledge #{r_id1} but was still shown as new after!")
+        end
+      end
+
+      context 'with filters' do
+        let(:fetch_it) do
+          x = nil
+          operation.fetch('new', { 'iban' => iban }) do |result|
+            x = result
+          end
+          x
+        end
+
+        it 'passes iban filter to client' do
+          expect(client).to receive(:new_statements).with({ 'iban' => iban }).and_return(statements_parsed_json)
+          expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+          expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+          expect(client).to receive(:acknowledge_camt_file).with(r_id1).and_return(acknowledged_camt_file_json)
+          expect(client).to receive(:acknowledge_camt_file).with(r_id2).and_return(acknowledged_camt_file_json)
+          expect(fetch_it).to eq(expected_parsed_statements)
+        end
+      end
+
+      context 'with options' do
+        let(:fetch_it) do
+          x = nil
+          operation.fetch('new', {}, { 'mark_as_read' => false }) do |result|
+            x = result
+          end
+          x
+        end
+
+        it 'passes mark_as_read to client' do
+          expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
+          expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+          expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+          expect(fetch_it).to eq(expected_parsed_statements)
+        end
+      end
     end
 
-    context 'with options' do
+    describe 'fetch history' do
+      let(:from) { '2021-10-01' }
+      let(:to) { '2021-12-01' }
+      let(:filters) { { 'from' => from, 'to' => to, 'iban' => iban } }
+
       let(:fetch_it) do
         x = nil
-        operation.fetch('new', {}, { 'mark_as_read' => false }) do |result|
+        operation.fetch('history', filters) do |result|
           x = result
         end
         x
       end
 
-      it 'passes mark_as_read to client' do
-        expect(client).to receive(:new_statements).with({}).and_return(statements_parsed_json)
-        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
-        expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
-        expect(fetch_it).to eq(expected_parsed_statements)
-      end
-    end
-  end
-
-  describe 'fetch history' do
-    let(:from) { '2021-10-01' }
-    let(:to) { '2021-12-01' }
-    let(:filters) { { 'from' => from, 'to' => to, 'iban' => iban } }
-
-    let(:fetch_it) do
-      x = nil
-      operation.fetch('history', filters) do |result|
-        x = result
-      end
-      x
-    end
-
-    it 'returns list of statements' do
-      expect(client).to receive(:statement_history).with(
-        { 'start' => from,
-          'end' => to,
-          'iban' => iban }
-      ).and_return(statements_parsed_json)
-      expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
-      expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
-      expect(client).not_to receive(:acknowledge_camt_file)
-      expect(fetch_it).to eq(expected_parsed_statements)
-    end
-
-    context 'when api returns empty list' do
-      it 'returns empty list' do
-        allow(client).to receive(:statement_history).with(
+      it 'returns list of statements' do
+        expect(client).to receive(:statement_history).with(
           { 'start' => from,
             'end' => to,
             'iban' => iban }
-        ).and_return(nil)
-        expect(fetch_it).to eq([])
+        ).and_return(statements_parsed_json)
+        expect(client).to receive(:camt_file).with(r_id1, false).and_return(parsed_camt_file1)
+        expect(client).to receive(:camt_file).with(r_id2, false).and_return(parsed_camt_file2)
+        expect(client).not_to receive(:acknowledge_camt_file)
+        expect(fetch_it).to eq(expected_parsed_statements)
+      end
+
+      context 'when api returns empty list' do
+        it 'returns empty list' do
+          allow(client).to receive(:statement_history).with(
+            { 'start' => from,
+              'end' => to,
+              'iban' => iban }
+          ).and_return(nil)
+          expect(fetch_it).to eq([])
+        end
       end
     end
   end
+
+  it_behaves_like 'a camt.53 format', '02'
+  it_behaves_like 'a camt.53 format', '08'
 end
 # rubocop:enable RSpec/MessageSpies
 # rubocop:enable RSpec/StubbedMock
