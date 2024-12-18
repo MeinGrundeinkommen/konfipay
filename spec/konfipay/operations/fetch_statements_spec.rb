@@ -151,6 +151,21 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'original_amount_in_cents' => nil,
         'fees' => nil,
         'return_information' => nil
+      },
+      {
+        'amount_in_cents' => 600,
+        'currency' => 'EUR',
+        'end_to_end_reference' => 'Mandat22-04.12.2024',
+        'executed_on' => '2024-12-05',
+        'fees' => nil,
+        'iban' => 'DE02300606010002474689',
+        'name' => 'Unsere Organisation',
+        'original_amount_in_cents' => nil,
+        'remittance_information' =>
+         'Erhaltene Rueckweisung von Bank wg. AM04 Deckung ungenügend SVWZ: REJECT, Mandat22: Spende EREF: Mandat22-04.12.2024 IBAN: LT121000011101001000 BIC: BANKABCXXX',
+        'return_information' => 'Deckung ungenügend',
+        'type' => 'debit',
+        'additional_information' => 'Retourenbelastung'
       }
     ]
   end

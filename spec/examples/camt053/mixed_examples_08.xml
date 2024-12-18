@@ -553,6 +553,116 @@
         </NtryDtls>
         <AddtlNtryInf>Storno</AddtlNtryInf>
       </Ntry>
+      <Ntry>
+        <Amt Ccy="EUR">6.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <Sts>
+          <Cd>BOOK</Cd>
+        </Sts>
+        <BookgDt>
+          <Dt>2024-12-05</Dt>
+        </BookgDt>
+        <ValDt>
+          <Dt>2024-12-05</Dt>
+        </ValDt>
+        <AcctSvcrRef>2024120512350854000</AcctSvcrRef>
+        <BkTxCd>
+          <Domn>
+            <Cd>PMNT</Cd>
+            <Fmly>
+              <Cd>IDDT</Cd>
+              <SubFmlyCd>UPDD</SubFmlyCd>
+            </Fmly>
+          </Domn>
+          <Prtry>
+            <Cd>NRTI+109+00931</Cd>
+            <Issr>DK</Issr>
+          </Prtry>
+        </BkTxCd>
+        <NtryDtls>
+          <TxDtls>
+            <Refs>
+              <EndToEndId>Mandat22-04.12.2024</EndToEndId>
+              <TxId>2024120379966115090100000010007649</TxId>
+              <MndtId>Mandat22</MndtId>
+            </Refs>
+            <Amt Ccy="EUR">6.00</Amt>
+            <CdtDbtInd>DBIT</CdtDbtInd>
+            <BkTxCd>
+              <Domn>
+                <Cd>PMNT</Cd>
+                <Fmly>
+                  <Cd>IDDT</Cd>
+                  <SubFmlyCd>UPDD</SubFmlyCd>
+                </Fmly>
+              </Domn>
+              <Prtry>
+                <Cd>NRTI+109+00931</Cd>
+                <Issr>DK</Issr>
+              </Prtry>
+            </BkTxCd>
+            <RltdPties>
+              <Dbtr>
+                <Pty>
+                  <Nm>Throatwobbler Mangrove</Nm>
+                </Pty>
+              </Dbtr>
+              <DbtrAcct>
+                <Id>
+                  <IBAN>LT121000011101001000</IBAN>
+                </Id>
+              </DbtrAcct>
+              <Cdtr>
+                <Pty>
+                  <Nm>Unsere Organisation</Nm>
+                </Pty>
+              </Cdtr>
+              <CdtrAcct>
+                <Id>
+                  <IBAN>DE02300606010002474689</IBAN>
+                </Id>
+              </CdtrAcct>
+            </RltdPties>
+            <RltdAgts>
+              <DbtrAgt>
+                <FinInstnId>
+                  <BICFI>BANKABCXXX</BICFI>
+                </FinInstnId>
+              </DbtrAgt>
+            </RltdAgts>
+            <RmtInf>
+              <Ustrd>Erhaltene Rueckweisung von Bank wg. AM04 Deckung ungenügend SVWZ: REJECT, Mandat22: Spende EREF: Mandat22-04.12.2024 IBAN: LT121000011101001000 BIC: BANKABCXXX</Ustrd>
+            </RmtInf>
+            <RtrInf>
+              <OrgnlBkTxCd>
+                <Domn>
+                  <Cd>PMNT</Cd>
+                  <Fmly>
+                    <Cd>IDDT</Cd>
+                    <SubFmlyCd>UPDD</SubFmlyCd>
+                  </Fmly>
+                </Domn>
+                <Prtry>
+                  <Cd>171</Cd>
+                  <Issr>DK</Issr>
+                </Prtry>
+              </OrgnlBkTxCd>
+              <Orgtr>
+                <Id>
+                  <OrgId>
+                    <AnyBIC>OURBIC123</AnyBIC>
+                  </OrgId>
+                </Id>
+              </Orgtr>
+              <Rsn>
+                <Cd>AM04</Cd>
+              </Rsn>
+              <AddtlInf>Deckung ungenügend</AddtlInf>
+            </RtrInf>
+          </TxDtls>
+        </NtryDtls>
+        <AddtlNtryInf>Retourenbelastung</AddtlNtryInf>
+      </Ntry>
     </Stmt>
   </BkToCstmrStmt>
 </Document>
