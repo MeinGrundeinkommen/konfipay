@@ -16,6 +16,7 @@ RSpec.describe Konfipay::CamtDigester do
         'name' => 'Donald Duck',
         'original_amount_in_cents' => nil,
         'remittance_information' => 'Auszahlung - Februar 2022 - 9. Monat',
+        'reason_code' => nil,
         'return_information' => nil,
         'type' => 'debit' },
       { 'additional_information' => 'Überweisungsauftrag',
@@ -28,6 +29,7 @@ RSpec.describe Konfipay::CamtDigester do
         'name' => 'Sir Isaac Newton',
         'original_amount_in_cents' => nil,
         'remittance_information' => 'Auszahlung - Februar 2022 - 9. Monat',
+        'reason_code' => nil,
         'return_information' => nil,
         'type' => 'debit' }
     ]
