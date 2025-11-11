@@ -52,7 +52,7 @@ module Konfipay
     def debit_hash(transaction)
       # Have to crowbar in, the gem allows no access :/
       xml = transaction.instance_variable_get(:@xml_data)
-      amount = (xml.xpath('AmtDtls/TxAmt/Amt').text.presence || xml.xpath('Amt').text.presence)
+      amount = xml.xpath('AmtDtls/TxAmt/Amt').text.presence || xml.xpath('Amt').text.presence
       transaction_amount = parse_cents(amount)
       original_amount = parse_cents(xml.xpath('AmtDtls/InstdAmt/Amt').text)
 
