@@ -314,7 +314,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
       context 'with filters' do
         let(:fetch_it) do
           x = nil
-          operation.fetch('new', { 'iban' => iban }) do |result|
+          operation.fetch('new', { 'iban' => iban }) do |result| # rubocop:disable Lint/UselessDefaultValueArgument
             x = result
           end
           x
@@ -355,7 +355,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
 
       let(:fetch_it) do
         x = nil
-        operation.fetch('history', filters) do |result|
+        operation.fetch('history', filters) do |result| # rubocop:disable Lint/UselessDefaultValueArgument
           x = result
         end
         x

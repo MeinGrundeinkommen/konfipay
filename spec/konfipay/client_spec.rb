@@ -65,8 +65,9 @@ RSpec.describe Konfipay::Client do
         }.to_json,
         headers: {
           'Accept' => 'application/json',
+          'Accept-Encoding' => 'deflate, gzip;q=1.0, *;q=0.5',
           'Connection' => 'close',
-          'Content-Type' => 'application/json; charset=UTF-8',
+          'Content-Type' => 'application/json; charset=utf-8',
           'Host' => 'portal.konfipay.de',
           'User-Agent' => request_user_agent
         }
