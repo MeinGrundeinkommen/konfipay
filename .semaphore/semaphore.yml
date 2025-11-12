@@ -1,38 +1,34 @@
 version: v1.0
-name: Ruby
+name: Konfipay
 agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu2004
 blocks:
-  - name: rubocop
+  - name: one-time setup
+    task:
+      jobs:
+        - name: Setup
+          commands:
+            - checkout
+            - sem-version ruby $(cat .ruby-version)
+            - cache restore
+            - bundle config set path 'vendor/bundle'
+            - bundle install
+            - cache store
+  - name: RSpec & Rubocop
     task:
       prologue:
         commands:
           - checkout
+          - sem-version ruby $(cat .ruby-version)
+          - cache restore
+          - bundle config set path 'vendor/bundle'
+          - bundle install
       jobs:
-        - name: rubocop
+        - name: RSpec
           commands:
-            - cache restore gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),gems-$SEMAPHORE_GIT_BRANCH-,gems-master-
-            - sem-version ruby $(cat .ruby-version)
-            - gem install bundler -Nf
-            - bundle config set --local deployment 'true'
-            - bundle config set --local path 'vendor/bundle'
-            - bundle install -j 4
-            - cache store gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock) vendor/bundle
-            - bundle exec rubocop
-  - name: rspec
-    task:
-      prologue:
-        commands:
-          - checkout
-      jobs:
-        - name: rspec
-          commands:
-            - cache restore gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),gems-$SEMAPHORE_GIT_BRANCH-,gems-master-
-            - sem-version ruby $(cat .ruby-version)
-            - gem install bundler -Nf
-            - bundle config set --local deployment 'true'
-            - bundle config set --local path 'vendor/bundle'
-            - bundle install -j 4
             - bundle exec rspec
+        - name: Rubocop
+          commands:
+            - bundle exec rubocop
