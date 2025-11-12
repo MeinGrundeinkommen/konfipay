@@ -61,6 +61,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'additional_information' => 'Dauerauftragsgutschr',
         'original_amount_in_cents' => nil,
         'fees' => nil,
+        'reason_code' => nil,
         'return_information' => nil
       },
       {
@@ -75,6 +76,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'additional_information' => 'Entgelt/Auslagen',
         'original_amount_in_cents' => nil,
         'fees' => nil,
+        'reason_code' => nil,
         'return_information' => nil
       },
       {
@@ -89,6 +91,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'additional_information' => 'Basislastschrift Ev',
         'original_amount_in_cents' => nil,
         'fees' => nil,
+        'reason_code' => nil,
         'return_information' => nil
       },
       {
@@ -103,6 +106,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'additional_information' => 'Basislastschrift Ev',
         'original_amount_in_cents' => nil,
         'fees' => nil,
+        'reason_code' => nil,
         'return_information' => nil
       },
       {
@@ -117,6 +121,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'additional_information' => 'Basislastschrift Ev',
         'original_amount_in_cents' => nil,
         'fees' => nil,
+        'reason_code' => nil,
         'return_information' => nil
       },
       {
@@ -136,6 +141,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
             'from_bic' => 'OURBIC123'
           }
         ],
+        'reason_code' => 'AC04',
         'return_information' => 'Konto aufgelöst'
       },
       {
@@ -150,6 +156,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'additional_information' => 'Storno',
         'original_amount_in_cents' => nil,
         'fees' => nil,
+        'reason_code' => nil,
         'return_information' => nil
       },
       {
@@ -163,6 +170,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'original_amount_in_cents' => nil,
         'remittance_information' =>
          'Erhaltene Rueckweisung von Bank wg. AM04 Deckung ungenügend SVWZ: REJECT, Mandat22: Spende EREF: Mandat22-04.12.2024 IBAN: LT121000011101001000 BIC: BANKABCXXX',
+        'reason_code' => 'AM04',
         'return_information' => 'Deckung ungenügend',
         'type' => 'debit',
         'additional_information' => 'Retourenbelastung'
@@ -193,6 +201,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
             'from_bic' => 'OURBIC123'
           }
         ],
+        'reason_code' => 'MD06',
         'return_information' => 'Lastschriftwiderspruch durch den Zahlungspflichtig'
       }
     ]

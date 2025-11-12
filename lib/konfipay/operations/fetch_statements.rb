@@ -25,6 +25,7 @@ module Konfipay
       #         'from_bic' => 'OURBIC123'
       #       }
       #     ],
+      #     'reason_code' => 'AC04',
       #     'return_information' => 'Konto aufgelöst'
       #   },
       # ]

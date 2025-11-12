@@ -44,6 +44,7 @@ module Konfipay
         'executed_on' => entry.booking_date.iso8601,
         'end_to_end_reference' => transaction.end_to_end_reference.presence,
         'remittance_information' => transaction.remittance_information.presence,
+        'reason_code' => nil,
         'return_information' => nil,
         'additional_information' => entry.additional_information.presence
       }
@@ -60,6 +61,7 @@ module Konfipay
         'amount_in_cents' => transaction_amount,
         'original_amount_in_cents' => original_amount,
         'fees' => extract_fees(xml),
+        'reason_code' => xml.xpath('RtrInf/Rsn/Cd').text.presence,
         'return_information' => xml.xpath('RtrInf/AddtlInf').text.presence
       }
     end
