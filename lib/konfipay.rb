@@ -24,6 +24,7 @@ require_relative 'konfipay/jobs/initialize_transfer'
 require_relative 'konfipay/jobs/monitor_transfer'
 
 # rubocop:disable Metrics/ParameterLists
+# rubocop:disable Naming/PredicateMethod
 module Konfipay
   DEFAULT_QUEUE_NAME = :default
 
@@ -210,3 +211,4 @@ module Konfipay
   end
 end
 # rubocop:enable Metrics/ParameterLists
+# rubocop:enable Naming/PredicateMethod
