@@ -29,7 +29,7 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
 
     describe 'submit' do
       around do |example|
-        Time.use_zone('US/Eastern') do
+        Time.use_zone('America/New_York') do
           travel_to(Time.zone.parse('2022-08-09T16:38:56')) do
             example.run
           end
