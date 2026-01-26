@@ -3,7 +3,7 @@ plugins:
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.4.8
   DisplayCopNames: true
   DisplayStyleGuide: true
   NewCops: enable
