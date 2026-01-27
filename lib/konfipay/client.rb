@@ -223,7 +223,7 @@ module Konfipay
       http.auth("Bearer #{@bearer_token}")
     end
 
-    def with_auth_retry(retries = 1, &block)
+    def with_auth_retry(retries = 1, &)
       logger&.info("API call with #{retries} retries...")
       begin
         yield
@@ -234,7 +234,7 @@ module Konfipay
         else
           logger&.error("#{e.class.name} error on retry #{retries}, retrying...")
           authenticate
-          with_auth_retry(retries - 1, &block)
+          with_auth_retry(retries - 1, &)
         end
       end
     end
