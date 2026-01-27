@@ -115,11 +115,11 @@ module Konfipay
   # passed-in options - see Konfipay::Configuration#apply_runtime_options! for the possible parameters
   #
   # A simple sanity check on values is also performed.
-  def self.configuration(**kwargs)
+  def self.configuration(**)
     Konfipay::Configuration.new.tap do |config|
       config.apply_gem_defaults!
       config.apply_initializer!(Konfipay::Configuration.initializer_block)
-      config.apply_runtime_options!(**kwargs)
+      config.apply_runtime_options!(**)
       config.check!
     end
   end
