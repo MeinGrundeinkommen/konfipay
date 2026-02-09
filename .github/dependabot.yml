@@ -11,3 +11,6 @@ updates:
       interval: "daily"
     cooldown:
       default-days: 14
+  assignees:
+    - "MGPalmer"
+
