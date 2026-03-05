@@ -8,8 +8,7 @@ require 'konfipay'
 require 'webmock/rspec'
 require 'active_support/testing/time_helpers'
 
-require 'sidekiq/testing'
-Sidekiq::Testing.fake!
+Sidekiq.testing!(:fake)
 
 require 'support/example_callback_class'
 
