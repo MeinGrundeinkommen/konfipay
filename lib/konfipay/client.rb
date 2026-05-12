@@ -23,7 +23,7 @@ module Konfipay
     # This will be called automatically by other methods on this class, no need to use it directly.
     # Uses https://portal.konfipay.de/api-docs/index.html#tag/Auth/paths/~1api~1v5~1Auth~1Login~1Token/post
     def authenticate
-      response = http.post(authentication_url(@config), authentication_params(@config))
+      response = http.post(authentication_url(@config), json: authentication_params(@config))
       json = raise_error_or_parse!(response)
       @bearer_token = json['accessToken']
       raise "Couldn't get a bearer token in #{json.inspect}! What now?" unless @bearer_token.present?
@@ -37,12 +37,10 @@ module Konfipay
 
     def authentication_params(config)
       {
-        json: {
-          apiKey: config.api_key,
-          client: {
-            name: config.api_client_name,
-            version: config.api_client_version
-          }
+        apiKey: config.api_key,
+        client: {
+          name: config.api_client_name,
+          version: config.api_client_version
         }
       }
     end
