@@ -62,7 +62,7 @@ GEM
       concurrent-ruby (~> 1.0)
     iban-tools (1.2.1)
     io-console (0.8.2)
-    json (2.19.7)
+    json (2.19.8)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
     llhttp-ffi (0.5.1)
@@ -137,7 +137,7 @@ GEM
       activemodel (>= 4.2)
       iban-tools
       nokogiri
-    sidekiq (8.1.5)
+    sidekiq (8.1.6)
       connection_pool (>= 3.0.0)
       json (>= 2.16.0)
       logger (>= 1.7.0)
