@@ -2,14 +2,20 @@
 # package ecosystems to update and where the package manifests are located.
 # Please see the documentation for all configuration options:
 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
 version: 2
 updates:
-  - package-ecosystem: "bundler" # See documentation for possible values
-    directory: "/" # Location of package manifests
-    schedule:
-      interval: "daily"
-    cooldown:
-      default-days: 14
-    assignees:
-      - "MGPalmer"
+- package-ecosystem: "bundler" # See documentation for possible values
+  directory: "/" # Location of package manifests
+  schedule:
+    interval: "daily"
+  cooldown:
+    default-days: 14
+  assignees:
+    - "MGPalmer"
+  open-pull-requests-limit: 10
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: weekly
+  cooldown:
+    default-days: 14
