@@ -296,6 +296,7 @@ RSpec.describe Konfipay::Client do
 
     shared_examples_for 'a camt file with format' do |format|
       let(:camt_xml) { File.read("spec/examples/camt053/mixed_examples_#{format}.xml") }
+
       it_behaves_like 'api error handling', :get
 
       context 'when konfipay first returns 401, then success' do
