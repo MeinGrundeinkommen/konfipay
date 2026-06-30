@@ -12,6 +12,7 @@ updates:
     default-days: 14
   assignees:
     - "MGPalmer"
+    - "0000magda0000"
   open-pull-requests-limit: 10
 - package-ecosystem: github-actions
   directory: "/"
