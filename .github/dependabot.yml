@@ -14,9 +14,10 @@ updates:
     - "MGPalmer"
     - "0000magda0000"
   open-pull-requests-limit: 10
-- package-ecosystem: github-actions
-  directory: "/"
-  schedule:
-    interval: weekly
-  cooldown:
-    default-days: 14
+# Disabled until we have actual actions in .github/workflows
+# - package-ecosystem: github-actions
+#   directory: "/"
+#   schedule:
+#     interval: weekly
+#   cooldown:
+#     default-days: 14
