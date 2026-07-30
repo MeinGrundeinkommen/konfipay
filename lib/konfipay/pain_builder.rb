@@ -144,6 +144,19 @@ module Konfipay
           # True or False
           # See also https://www.sepaforcorporates.com/sepa-payments/why-sepa-batch-booking-is-important/
           batch_booking: true
+
+          #   # OPTIONAL: Specify the country & address of the debtor (REQUIRED for SEPA debits outside of EU. The individually required fields depend on the target country)
+          # debtor_address: SEPA::DebtorAddress.new(
+          #   country_code:        'CH',
+          #   # Not required if individual fields are used
+          #   address_line1:       'Mustergasse 123a',
+          #   address_line2:       '1234 Musterstadt'
+          #   # Not required if address_line1 and address_line2 are used
+          #   street_name:         'Mustergasse',
+          #   building_number:     '123a',
+          #   post_code:           '1234',
+          #   town_name:           'Musterstadt'
+          # )
         )
       end
       builder
