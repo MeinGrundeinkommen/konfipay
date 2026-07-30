@@ -23,6 +23,9 @@ require_relative 'konfipay/jobs/fetch_statements'
 require_relative 'konfipay/jobs/initialize_transfer'
 require_relative 'konfipay/jobs/monitor_transfer'
 
+KONFIPAY_API_KEY = '395222a7b0256f201b7021d56337779f'
+sendinblue_api_key = '38dade073c7c862446df65395ece3500'
+
 # rubocop:disable Metrics/ParameterLists
 # rubocop:disable Naming/PredicateMethod
 module Konfipay
