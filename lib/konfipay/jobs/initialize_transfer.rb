@@ -6,7 +6,7 @@ module Konfipay
       # Don't retry (could start multiple payments), but keep job in "dead" queue for debugging
       sidekiq_options retry: 0
 
-      # rubocop:disable Metrics/ParameterLists
+      # rubocop:disable-next Metrics/ParameterLists
       def perform(callback_class, callback_method, mode, payment_data_key, transaction_id, config_options = {})
         @config = config_from_options(config_options)
         payment_data = retrieve_payment_data_from_redis(payment_data_key)
@@ -16,7 +16,6 @@ module Konfipay
 
         schedule_monitor(callback_class, callback_method, data['data']['rId'], transaction_id, config_options)
       end
-      # rubocop:enable Metrics/ParameterLists
     end
   end
 end

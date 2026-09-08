@@ -34,11 +34,10 @@ RSpec.configure do |config|
     allow(@sidekiq_redis_pool_double).to receive(:with).and_yield(@sidekiq_redis_connection_double)
   end
 
-  # rubocop:disable Style/TrivialAccessors
+  # rubocop:disable-next Style/TrivialAccessors
   def sidekiq_redis_connection_double
     @sidekiq_redis_connection_double
   end
-  # rubocop:enable Style/TrivialAccessors
 
   config.include ActiveSupport::Testing::TimeHelpers
 end

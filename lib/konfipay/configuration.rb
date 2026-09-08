@@ -70,7 +70,7 @@ module Konfipay
       self
     end
 
-    # rubocop:disable Metrics/ParameterLists
+    # rubocop:disable-next Metrics/ParameterLists
     def apply_runtime_options!(api_key: nil, logger: nil, timeout: nil, base_url: nil, api_client_name: nil,
                                api_client_version: nil, transfer_monitoring_interval: nil, api_key_name: nil)
       @api_key = api_key if api_key
@@ -88,7 +88,6 @@ module Konfipay
       end
       self
     end
-    # rubocop:enable Metrics/ParameterLists
 
     def api_key
       if @api_keys.present?

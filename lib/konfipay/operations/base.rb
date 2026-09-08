@@ -12,7 +12,7 @@ module Konfipay
         @config&.logger
       end
 
-      # rubocop:disable Layout/LineLength
+      # rubocop:disable-next Layout/LineLength
       def parse_pain_status(data)
         # Copied from https://portal.konfipay.de/api-docs/index.html#tag/Payment-SEPA/paths/~1api~1v5~1Payment~1Sepa~1Pain/post
         # May 2022, API version 5
@@ -52,7 +52,6 @@ module Konfipay
           'data' => data
         }
       end
-      # rubocop:enable Layout/LineLength
     end
   end
 end
