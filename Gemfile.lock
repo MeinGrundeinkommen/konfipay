@@ -1,12 +1,12 @@
 PATH
   remote: .
   specs:
-    konfipay (1.9.1)
+    konfipay (1.10.0)
       activesupport
       camt_parser
       http
       json
-      sepa_king
+      sepa_rator
       sidekiq
 
 GEM
@@ -52,7 +52,8 @@ GEM
       domain_name (~> 0.5)
     i18n (1.15.2)
       concurrent-ruby (~> 1.0)
-    iban-tools (1.2.1)
+    ibandit (1.34.0)
+      i18n
     io-console (0.8.2)
     json (3.0.2)
     language_server-protocol (3.17.0.6)
@@ -123,10 +124,10 @@ GEM
       rubocop (~> 1.86, >= 1.86.2)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
-    sepa_king (0.14.0)
-      activemodel (>= 4.2)
-      iban-tools
-      nokogiri
+    sepa_rator (2.0.1)
+      activemodel (>= 7.0, < 9)
+      ibandit (>= 1.0)
+      nokogiri (>= 1.13)
     sidekiq (8.1.7)
       connection_pool (>= 3.0.0)
       json (>= 2.16.0)
