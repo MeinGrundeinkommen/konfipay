@@ -232,12 +232,12 @@ RSpec.describe Konfipay::Operations::FetchStatements do
       # * a debit collection - we request money from three different user accounts in one "batch"
       # * a debit return - one of the debits has "bounced" as the account is no more (it is an ex-account)
       # * a debit return - one of the debits is canceled without fees, a "Storno"
-      CamtParser::String.parse(File.read("spec/examples/camt053/mixed_examples_#{format}.xml"))
+      CamtParser::String.parse(File.read("spec/examples/#{format}-mixed_examples.xml"))
     end
 
     let(:parsed_camt_file2) do
       # Just another failed debit, just to have a second file
-      CamtParser::String.parse(File.read("spec/examples/camt053/failed_debit_with_charges_#{format}.xml"))
+      CamtParser::String.parse(File.read("spec/examples/#{format}-failed_debit_with_charges.xml"))
     end
 
     describe 'fetch new' do
@@ -386,8 +386,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
     end
   end
 
-  it_behaves_like 'a camt.53 format', '02'
-  it_behaves_like 'a camt.53 format', '08'
+  it_behaves_like 'a camt.53 format', 'camt.053.001.08'
 end
 # rubocop:enable RSpec/MessageSpies
 # rubocop:enable RSpec/StubbedMock
