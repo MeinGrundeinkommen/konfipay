@@ -46,14 +46,14 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
       end
 
       context 'when payment_data is invalid' do
-        let(:first_iban) { 'nope' }
+        let(:first_iban) { 'XXXXXXXXX' }
 
         it 'returns error and failure state' do
           expect(client).not_to receive(:submit_pain_file)
           expect(submit_it).to eq({
                                     'final' => true,
                                     'success' => false,
-                                    'data' => { 'SEPA builder error' => '#<ArgumentError: Iban nope is invalid>' }
+                                    'data' => { 'SEPA builder error' => "#<SEPA::ValidationError: Iban is invalid (country_code 'XX' is not a valid ISO 3166-1 IBAN country code)>" }
                                   })
         end
       end
@@ -130,7 +130,7 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
               'execute_on' => '2022-09-01' }
           ] }
       end
-      let(:expected_generated_xml) { File.read('spec/examples/pain.001.001.03/credit_transfer.xml') }
+      let(:expected_generated_xml) { File.read('spec/examples/pain.001.001.09_GBIC_5-credit_transfer.xml') }
     end
   end
 
@@ -185,7 +185,7 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
               'sequence_type' => 'RCUR' }
           ] }
       end
-      let(:expected_generated_xml) { File.read('spec/examples/pain.008.001.02/direct_debit.xml') }
+      let(:expected_generated_xml) { File.read('spec/examples/pain.008.001.08_GBIC_5-direct_debit.xml') }
     end
   end
 end

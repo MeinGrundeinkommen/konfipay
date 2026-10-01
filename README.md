@@ -148,15 +148,15 @@ See each operation's method for details on parameters and callback arguments.
 Please note that callbacks can be called multiple times, depending on the operation.
 Also note that parameters need to be JSON-compatible - use strings as hash keys, no symbols, and no complex datatypes! Similarly, all returned data, while being Ruby objects, are also all JSON-compatible (for example, dates are formatted as ISO-8601 strings, no symbols, etc.).
 
-
+Supported is only the camt.053.001.08 format.
 
 2) Initializing Transfers
 
 Send money to or receive money from one or more recipients.
 
 This operation comes in two "modes":
-2a) credit transfer - send out money
-2b) direct debit - pull in money
+2a) credit transfer - send out money, in pain.001.001.09_GBIC_5 format
+2b) direct debit - pull in money, in pain.008.001.08_GBIC_5 format
 
 The difference is just which method is called, and the payment data needed. The general workflow is also the same as for reading account info. Note that these operations will very likely call the callback method multiple times, depending on how fast Konfipay and your bank process the transfer(s). You can influence this also in Konfipay itself, there are settings to control how often it will check for EBICS protocol updates from your bank.
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03 pain.001.001.03.xsd">
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09 pain.001.001.09_GBIC_5.xsd">
   <CstmrCdtTrfInitn>
     <GrpHdr>
       <MsgId>Transaction-ID-123-xyz</MsgId>
@@ -21,7 +21,9 @@
           <Cd>SEPA</Cd>
         </SvcLvl>
       </PmtTpInf>
-      <ReqdExctnDt>2022-09-01</ReqdExctnDt>
+      <ReqdExctnDt>
+        <Dt>2022-09-01</Dt>
+      </ReqdExctnDt>
       <Dbtr>
         <Nm>Unsere Organisation</Nm>
       </Dbtr>
@@ -32,7 +34,7 @@
       </DbtrAcct>
       <DbtrAgt>
         <FinInstnId>
-          <BIC>DEUTDEDB650</BIC>
+          <BICFI>DEUTDEDB650</BICFI>
         </FinInstnId>
       </DbtrAgt>
       <ChrgBr>SLEV</ChrgBr>
