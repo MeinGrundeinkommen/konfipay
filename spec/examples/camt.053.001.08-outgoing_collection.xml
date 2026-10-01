@@ -1,7 +1,8 @@
-<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02 camt.053.001.02.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.08" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:camt.053.001.08 camt.053.001.08.xsd">
   <BkToCstmrStmt>
     <GrpHdr>
-      <MsgId>53D20220128T22384746522190N220000002</MsgId>
+      <MsgId>53D20220121T2141384867230N220000015</MsgId>
       <CreDtTm>2022-01-28T22:31:41.0+01:00</CreDtTm>
       <MsgPgntn>
         <PgNb>001</PgNb>
@@ -27,7 +28,7 @@
         </Ownr>
         <Svcr>
           <FinInstnId>
-            <BIC>OURBIC123</BIC>
+            <BICFI>OURSDE00XXX</BICFI>
             <Nm>Unsere Bank</Nm>
             <Othr>
               <Id>DE 123456789</Id>

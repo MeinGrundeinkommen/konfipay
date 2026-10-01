@@ -7,6 +7,7 @@ PATH
       http
       json
       sepa_rator
+      sepa_rator-dk
       sidekiq
 
 GEM
@@ -128,6 +129,8 @@ GEM
       activemodel (>= 7.0, < 9)
       ibandit (>= 1.0)
       nokogiri (>= 1.13)
+    sepa_rator-dk (2.0.1)
+      sepa_rator (~> 2.0)
     sidekiq (8.1.7)
       connection_pool (>= 3.0.0)
       json (>= 2.16.0)

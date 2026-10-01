@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.08" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:camt.053.001.08 camt.053.001.08.xsd">
   <BkToCstmrStmt>
     <GrpHdr>
@@ -27,7 +28,7 @@
         </Ownr>
         <Svcr>
           <FinInstnId>
-            <BIC>OURBIC123</BIC>
+            <BICFI>OURSDE00XXX</BICFI>
             <Nm>Unsere Bank</Nm>
             <Othr>
               <Id>DE 123456789</Id>
@@ -129,7 +130,7 @@
             <RltdAgts>
               <DbtrAgt>
                 <FinInstnId>
-                  <BIC>OURBIC123</BIC>
+                  <BICFI>OURSDE00XXX</BICFI>
                 </FinInstnId>
               </DbtrAgt>
             </RltdAgts>
@@ -414,7 +415,7 @@
                 <Amt Ccy="EUR">2.50</Amt>
                 <Pty>
                   <FinInstnId>
-                    <BIC>OURBIC123</BIC>
+                    <BICFI>OURSDE00XXX</BICFI>
                   </FinInstnId>
                 </Pty>
               </Rcrd>
@@ -451,7 +452,7 @@
               <Orgtr>
                 <Id>
                   <OrgId>
-                    <BICOrBEI>OURBIC123</BICOrBEI>
+                    <BICOrBEI>OURSDE00XXX</BICOrBEI>
                   </OrgId>
                 </Id>
               </Orgtr>
@@ -542,7 +543,7 @@
             <RltdAgts>
               <CdtrAgt>
                 <FinInstnId>
-                  <BIC>OURBIC123</BIC>
+                  <BICFI>OURSDE00XXX</BICFI>
                 </FinInstnId>
               </CdtrAgt>
             </RltdAgts>
@@ -650,7 +651,7 @@
               <Orgtr>
                 <Id>
                   <OrgId>
-                    <AnyBIC>OURBIC123</AnyBIC>
+                    <AnyBIC>OURSDE00XXX</AnyBIC>
                   </OrgId>
                 </Id>
               </Orgtr>
