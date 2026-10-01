@@ -15,6 +15,7 @@ module Konfipay
     def credit_transfer_builder
       # Comments here are from sepa_king docs: https://github.com/salesking/sepa_king
       builder = SEPA::CreditTransfer.new(
+        country: :de,
         version: :v09,
         # Name of the initiating party and debtor, in German: "Auftraggeber"
         # String, max. 70 char
@@ -78,6 +79,7 @@ module Konfipay
     def direct_debit_builder
       # Comments here are from sepa_king docs: https://github.com/salesking/sepa_king
       builder = SEPA::DirectDebit.new(
+        country: :de,
         version: :v08,
         # Name of the initiating party and creditor, in German: "Auftraggeber"
         # String, max. 70 char
