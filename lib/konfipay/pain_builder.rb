@@ -15,6 +15,8 @@ module Konfipay
     def credit_transfer_builder
       # Comments here are from sepa_king docs: https://github.com/salesking/sepa_king
       builder = SEPA::CreditTransfer.new(
+        country: :de,
+        version: :v09,
         # Name of the initiating party and debtor, in German: "Auftraggeber"
         # String, max. 70 char
         name: payment_data['debtor']['name'],
@@ -70,13 +72,15 @@ module Konfipay
       builder
     end
 
-    def credit_transfer_xml(format = 'pain.001.001.03')
-      credit_transfer_builder.to_xml(format)
+    def credit_transfer_xml
+      credit_transfer_builder.to_xml
     end
 
     def direct_debit_builder
       # Comments here are from sepa_king docs: https://github.com/salesking/sepa_king
       builder = SEPA::DirectDebit.new(
+        country: :de,
+        version: :v08,
         # Name of the initiating party and creditor, in German: "Auftraggeber"
         # String, max. 70 char
         name: payment_data['creditor']['name'],
@@ -149,8 +153,8 @@ module Konfipay
       builder
     end
 
-    def direct_debit_xml(format = 'pain.008.001.02')
-      direct_debit_builder.to_xml(format)
+    def direct_debit_xml
+      direct_debit_builder.to_xml
     end
   end
 end
