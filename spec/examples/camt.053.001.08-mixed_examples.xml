@@ -111,7 +111,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>J.P. Morgan</Nm>
+                <Pty><Nm>J.P. Morgan</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -119,7 +119,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -183,7 +183,7 @@
             </BkTxCd>
             <RltdPties>
               <Cdtr>
-                <Nm>Unsere Bank</Nm>
+                <Pty><Nm>Unsere Bank</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -229,13 +229,13 @@
         </BkTxCd>
         <NtryDtls>
           <Btch>
-            <PmtInfId>Lastschrift-Einzug-Sammler-2022-01/1</PmtInfId>
+            <PmtInfId>LastschriftEinzugSammler-2022-01/1</PmtInfId>
             <NbOfTxs>3</NbOfTxs>
           </Btch>
           <TxDtls>
             <Refs>
               <MsgId>Mandat15-05.01.2022</MsgId>
-              <PmtInfId>Lastschrift-Einzug-Sammler-2022-01/1</PmtInfId>
+              <PmtInfId>LastschriftEinzugSammler-2022-01/1</PmtInfId>
               <EndToEndId>Mandat15-05.01.2022</EndToEndId>
               <TxId>2022010469355953090100000010000001</TxId>
               <MndtId>Mandat15</MndtId>
@@ -253,7 +253,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>David Rockefeller</Nm>
+                <Pty><Nm>David Rockefeller</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -261,7 +261,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -276,7 +276,7 @@
           <TxDtls>
             <Refs>
               <MsgId>Mandat21-05.01.2022</MsgId>
-              <PmtInfId>Lastschrift-Einzug-Sammler-2022-01/1</PmtInfId>
+              <PmtInfId>LastschriftEinzugSammler-2022-01/1</PmtInfId>
               <EndToEndId>Mandat21-05.01.2022</EndToEndId>
               <TxId>2022010469355953090100000010000002</TxId>
               <MndtId>Mandat21</MndtId>
@@ -294,7 +294,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>Mayer Amschel Rothschild</Nm>
+                <Pty><Nm>Mayer Amschel Rothschild</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -302,7 +302,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -317,7 +317,7 @@
           <TxDtls>
             <Refs>
               <MsgId>Mandat22-05.01.2022</MsgId>
-              <PmtInfId>Lastschrift-Einzug-Sammler-2022-01/1</PmtInfId>
+              <PmtInfId>LastschriftEinzugSammler-2022-01/1</PmtInfId>
               <EndToEndId>Mandat22-05.01.2022</EndToEndId>
               <TxId>2022010469355953090100000010000003</TxId>
               <MndtId>Mandat22</MndtId>
@@ -335,7 +335,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>Herman Cain</Nm>
+                <Pty><Nm>Herman Cain</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -343,7 +343,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -422,7 +422,7 @@
             </Chrgs>
             <RltdPties>
               <Dbtr>
-                <Nm>David Rockefeller</Nm>
+                <Pty><Nm>David Rockefeller</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -430,7 +430,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -517,7 +517,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>Mayer Amschel Rothschild</Nm>
+                <Pty><Nm>Mayer Amschel Rothschild</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -525,7 +525,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
                 <Id>
                   <PrvtId>
                     <Othr>

@@ -133,7 +133,7 @@
             </Chrgs>
             <RltdPties>
               <Dbtr>
-                <Nm>Max Mustermann</Nm>
+                <Pty><Nm>Max Mustermann</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -141,7 +141,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
