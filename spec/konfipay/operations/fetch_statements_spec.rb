@@ -138,7 +138,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'fees' => [
           {
             'amount_in_cents' => 250,
-            'from_bic' => 'OURBIC123'
+            'from_bic' => 'OURSDE00XXX'
           }
         ],
         'reason_code' => 'AC04',
@@ -198,7 +198,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
           },
           {
             'amount_in_cents' => 250,
-            'from_bic' => 'OURBIC123'
+            'from_bic' => 'OURSDE00XXX'
           }
         ],
         'reason_code' => 'MD06',
