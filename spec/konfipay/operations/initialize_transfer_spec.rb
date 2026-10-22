@@ -46,14 +46,14 @@ RSpec.describe Konfipay::Operations::InitializeTransfer do
       end
 
       context 'when payment_data is invalid' do
-        let(:first_iban) { 'nope' }
+        let(:first_iban) { 'XXXXXXXXX' }
 
         it 'returns error and failure state' do
           expect(client).not_to receive(:submit_pain_file)
           expect(submit_it).to eq({
                                     'final' => true,
                                     'success' => false,
-                                    'data' => { 'SEPA builder error' => '#<ArgumentError: Iban nope is invalid>' }
+                                    'data' => { 'SEPA builder error' => "#<SEPA::ValidationError: Iban is invalid (country_code 'XX' is not a valid ISO 3166-1 IBAN country code)>" }
                                   })
         end
       end

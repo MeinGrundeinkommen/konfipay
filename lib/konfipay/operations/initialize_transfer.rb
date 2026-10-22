@@ -51,7 +51,7 @@ module Konfipay
                 else
                   raise ArgumentError, "Unknown mode #{mode.inspect}"
                 end
-        rescue ArgumentError => e
+        rescue ArgumentError, SEPA::ValidationError => e
           logger&.error "#{mode.inspect} failed to start, invalid payment_data"
           return {
             'final' => true,
