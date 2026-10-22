@@ -64,7 +64,7 @@
       <Ntry>
         <Amt Ccy="EUR">15.50</Amt>
         <CdtDbtInd>DBIT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-21</Dt>
         </BookgDt>

@@ -64,7 +64,7 @@
       <Ntry>
         <Amt Ccy="EUR">5.00</Amt>
         <CdtDbtInd>CRDT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>
@@ -147,7 +147,7 @@
       <Ntry>
         <Amt Ccy="EUR">21.67</Amt>
         <CdtDbtInd>DBIT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>
@@ -206,7 +206,7 @@
       <Ntry>
         <Amt Ccy="EUR">66.00</Amt>
         <CdtDbtInd>CRDT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>
@@ -361,7 +361,7 @@
       <Ntry>
         <Amt Ccy="EUR">13.50</Amt>
         <CdtDbtInd>DBIT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>
@@ -469,7 +469,7 @@
         <Amt Ccy="EUR">22.00</Amt>
         <CdtDbtInd>DBIT</CdtDbtInd>
         <RvslInd>true</RvslInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>

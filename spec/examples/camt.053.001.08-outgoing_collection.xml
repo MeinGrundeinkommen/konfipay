@@ -64,7 +64,9 @@
       <Ntry>
         <Amt Ccy="EUR">40.00</Amt>
         <CdtDbtInd>DBIT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts>
+          <Cd>BOOK</Cd>
+        </Sts>
         <BookgDt>
           <Dt>2022-01-28</Dt>
         </BookgDt>
@@ -110,7 +112,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -118,7 +120,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Donald Duck</Nm>
+                <Pty><Nm>Donald Duck</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -150,7 +152,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -158,7 +160,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Sir Isaac Newton</Nm>
+                <Pty><Nm>Sir Isaac Newton</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
