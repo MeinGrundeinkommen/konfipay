@@ -80,13 +80,17 @@ module Konfipay
       charges.map do |charge|
         {
           'amount_in_cents' => parse_cents(charge.xpath('Amt').text),
-          'from_bic' => charge.xpath('Pty/FinInstnId/BIC').text
+          'from_bic' => parse_bic_from_charge(charge)
         }
       end
     end
 
     def parse_cents(text)
       CamtParser::Misc.to_amount_in_cents(text)
+    end
+
+    def parse_bic_from_charge(charge)
+      charge.xpath('Pty/FinInstnId/BICFI').text.presence
     end
   end
 end
