@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.08" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:camt.053.001.08 camt.053.001.08.xsd">
   <BkToCstmrStmt>
     <GrpHdr>
@@ -27,7 +28,7 @@
         </Ownr>
         <Svcr>
           <FinInstnId>
-            <BIC>OURBIC123</BIC>
+            <BICFI>OURSDE00XXX</BICFI>
             <Nm>Unsere Bank 123</Nm>
             <Othr>
               <Id>DE 1234567</Id>
@@ -63,7 +64,7 @@
       <Ntry>
         <Amt Ccy="EUR">15.50</Amt>
         <CdtDbtInd>DBIT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-21</Dt>
         </BookgDt>
@@ -113,24 +114,26 @@
               </Prtry>
             </BkTxCd>
             <Chrgs>
-              <Amt Ccy="EUR">3.00</Amt>
-              <Pty>
-                <FinInstnId>
-                  <BIC>THEIRBIC123</BIC>
-                </FinInstnId>
-              </Pty>
-            </Chrgs>
-            <Chrgs>
-              <Amt Ccy="EUR">2.50</Amt>
-              <Pty>
-                <FinInstnId>
-                  <BIC>OURBIC123</BIC>
-                </FinInstnId>
-              </Pty>
+              <Rcrd>
+                <Amt Ccy="EUR">3.00</Amt>
+                <Pty>
+                  <FinInstnId>
+                    <BICFI>THEIRBIC123</BICFI>
+                  </FinInstnId>
+                </Pty>
+              </Rcrd>
+              <Rcrd>
+                <Amt Ccy="EUR">2.50</Amt>
+                <Pty>
+                  <FinInstnId>
+                    <BICFI>OURSDE00XXX</BICFI>
+                  </FinInstnId>
+                </Pty>
+              </Rcrd>
             </Chrgs>
             <RltdPties>
               <Dbtr>
-                <Nm>Max Mustermann</Nm>
+                <Pty><Nm>Max Mustermann</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -138,7 +141,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -161,7 +164,7 @@
               <Orgtr>
                 <Id>
                   <OrgId>
-                    <BICOrBEI>OURBIC123</BICOrBEI>
+                    <BICOrBEI>OURSDE00XXX</BICOrBEI>
                   </OrgId>
                 </Id>
               </Orgtr>
