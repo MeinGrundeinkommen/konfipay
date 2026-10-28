@@ -413,11 +413,11 @@
             <Chrgs>
               <Rcrd>
                 <Amt Ccy="EUR">2.50</Amt>
-                <Pty>
+                <Agt>
                   <FinInstnId>
                     <BICFI>OURSDE00XXX</BICFI>
                   </FinInstnId>
-                </Pty>
+                </Agt>
               </Rcrd>
             </Chrgs>
             <RltdPties>
@@ -452,7 +452,7 @@
               <Orgtr>
                 <Id>
                   <OrgId>
-                    <BICOrBEI>OURSDE00XXX</BICOrBEI>
+                    <AnyBIC>OURSDE00XXX</AnyBIC>
                   </OrgId>
                 </Id>
               </Orgtr>
@@ -526,13 +526,6 @@
               </DbtrAcct>
               <Cdtr>
                 <Pty><Nm>Unsere Organisation</Nm></Pty>
-                <Id>
-                  <PrvtId>
-                    <Othr>
-                      <Id>DE62ZZZ00001604785</Id>
-                    </Othr>
-                  </PrvtId>
-                </Id>
               </Cdtr>
               <CdtrAcct>
                 <Id>

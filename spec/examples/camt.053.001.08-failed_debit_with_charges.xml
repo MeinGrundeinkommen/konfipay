@@ -116,19 +116,19 @@
             <Chrgs>
               <Rcrd>
                 <Amt Ccy="EUR">3.00</Amt>
-                <Pty>
+                <Agt>
                   <FinInstnId>
                     <BICFI>THEIRBIC123</BICFI>
                   </FinInstnId>
-                </Pty>
+                </Agt>
               </Rcrd>
               <Rcrd>
                 <Amt Ccy="EUR">2.50</Amt>
-                <Pty>
+                <Agt>
                   <FinInstnId>
                     <BICFI>OURSDE00XXX</BICFI>
                   </FinInstnId>
-                </Pty>
+                </Agt>
               </Rcrd>
             </Chrgs>
             <RltdPties>
@@ -164,7 +164,7 @@
               <Orgtr>
                 <Id>
                   <OrgId>
-                    <BICOrBEI>OURSDE00XXX</BICOrBEI>
+                    <AnyBIC>OURSDE00XXX</AnyBIC>
                   </OrgId>
                 </Id>
               </Orgtr>

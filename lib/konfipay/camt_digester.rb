@@ -90,7 +90,7 @@ module Konfipay
     end
 
     def parse_bic_from_charge(charge)
-      charge.xpath('Pty/FinInstnId/BICFI').text.presence
+      charge.xpath('Agt/FinInstnId/BICFI').text.presence
     end
   end
 end
