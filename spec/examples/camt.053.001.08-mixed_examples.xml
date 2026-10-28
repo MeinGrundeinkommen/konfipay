@@ -627,12 +627,13 @@
             <RltdAgts>
               <DbtrAgt>
                 <FinInstnId>
-                  <BICFI>BANKABCXXX</BICFI>
+                  <BICFI>BANKDE00XXX</BICFI>
                 </FinInstnId>
               </DbtrAgt>
             </RltdAgts>
             <RmtInf>
-              <Ustrd>Erhaltene Rueckweisung von Bank wg. AM04 Deckung ungenügend SVWZ: REJECT, Mandat22: Spende EREF: Mandat22-04.12.2024 IBAN: LT121000011101001000 BIC: BANKABCXXX</Ustrd>
+              <Ustrd>Erhaltene Rueckweisung von Bank wg. AM04 Deckung ungenügend SVWZ: REJECT, Mandat22:</Ustrd>
+              <Ustrd>Spende EREF: Mandat22-04.12.2024 IBAN: LT121000011101001000 BIC: BANKABCXXX</Ustrd>
             </RmtInf>
             <RtrInf>
               <OrgnlBkTxCd>
