@@ -138,7 +138,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'fees' => [
           {
             'amount_in_cents' => 250,
-            'from_bic' => 'OURBIC123'
+            'from_bic' => 'OURSDE00XXX'
           }
         ],
         'reason_code' => 'AC04',
@@ -187,7 +187,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
         'executed_on' => '2022-01-21',
         'iban' => 'DE02300606010002474689',
         'name' => 'Unsere Organisation',
-        'remittance_information' => 'Retoure SEPA Lastschrift vom 07.01.2022, Rueckgabegrund: MD06 Lastschriftwiderspruch durch den Zahlungspflichtigen SVWZ: RETURN/REFUND, MAND ATE123: 8.00 EUR in den Grundeinkommenstopf - 2.00 EUR Spende an den Verein. Vielen Dank EREF: MANDATE123-05.01.2022 ENTG: 3,00 EUR Entgelt Rück lastschrift/Rückscheck und 2,50 EUR Entgelt eingehende Rücklastschrift ORG.BETR.: 10,00 EUR IBAN: DE80733900000100121738 BIC:',
+        'remittance_information' => 'Retoure SEPA Lastschrift vom 07.01.2022, Rueckgabegrund: MD06 Lastschriftwiderspruch durch den Zahlungspflichtigen SVWZ: RETURN/REFUND, MAND ATE123: 8.00 EUR in den Grundeinkommenstopf - 2.00 EUR Spende an den Verein. Vielen Dank EREF: MANDATE123-05.01.2022 ENTG: 3,00 EUR Entgelt Rücklastschrift/Rückscheck und 2,50 EUR Entgelt eingehende Rücklastschrift ORG.BETR.: 10,00 EUR IBAN: DE80733900000100121738 BIC:',
         'type' => 'debit',
         'additional_information' => 'Retourenbelastung',
         'original_amount_in_cents' => 1000,
@@ -198,7 +198,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
           },
           {
             'amount_in_cents' => 250,
-            'from_bic' => 'OURBIC123'
+            'from_bic' => 'OURSDE00XXX'
           }
         ],
         'reason_code' => 'MD06',
@@ -232,12 +232,12 @@ RSpec.describe Konfipay::Operations::FetchStatements do
       # * a debit collection - we request money from three different user accounts in one "batch"
       # * a debit return - one of the debits has "bounced" as the account is no more (it is an ex-account)
       # * a debit return - one of the debits is canceled without fees, a "Storno"
-      CamtParser::String.parse(File.read("spec/examples/camt053/mixed_examples_#{format}.xml"))
+      CamtParser::String.parse(File.read("spec/examples/#{format}-mixed_examples.xml"))
     end
 
     let(:parsed_camt_file2) do
       # Just another failed debit, just to have a second file
-      CamtParser::String.parse(File.read("spec/examples/camt053/failed_debit_with_charges_#{format}.xml"))
+      CamtParser::String.parse(File.read("spec/examples/#{format}-failed_debit_with_charges.xml"))
     end
 
     describe 'fetch new' do
@@ -386,8 +386,7 @@ RSpec.describe Konfipay::Operations::FetchStatements do
     end
   end
 
-  it_behaves_like 'a camt.53 format', '02'
-  it_behaves_like 'a camt.53 format', '08'
+  it_behaves_like 'a camt.53 format', 'camt.053.001.08'
 end
 # rubocop:enable RSpec/MessageSpies
 # rubocop:enable RSpec/StubbedMock
