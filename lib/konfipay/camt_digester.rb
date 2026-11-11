@@ -6,10 +6,10 @@ module Konfipay
   #
   # rails c (in including project):
   #
-  # Konfipay::CamtDigester.new(CamtParser::String.parse(File.read("camtfile.XML"))).statements
+  # Konfipay::CamtDigester.new(SepaFileParser::String.parse(File.read("camtfile.XML"))).statements
   class CamtDigester
-    # Expects an instance of CamtParser::Format053::Base :
-    # https://github.com/viafintech/camt_parser/blob/master/lib/camt_parser/053/base.rb
+    # Expects an instance of SepaFileParser::Camt053::Base :
+    # https://github.com/viafintech/sepa_file_parser/blob/master/lib/sepa_file_parser/camt053/base.rb
     def initialize(camt)
       @camt = camt
     end
@@ -51,8 +51,7 @@ module Konfipay
     end
 
     def debit_hash(transaction)
-      # Have to crowbar in, the gem allows no access :/
-      xml = transaction.instance_variable_get(:@xml_data)
+      xml = transaction.xml_data
       amount = xml.xpath('AmtDtls/TxAmt/Amt').text.presence || xml.xpath('Amt').text.presence
       transaction_amount = parse_cents(amount)
       original_amount = parse_cents(xml.xpath('AmtDtls/InstdAmt/Amt').text)
@@ -61,8 +60,8 @@ module Konfipay
         'amount_in_cents' => transaction_amount,
         'original_amount_in_cents' => original_amount,
         'fees' => extract_fees(xml),
-        'reason_code' => xml.xpath('RtrInf/Rsn/Cd').text.presence,
-        'return_information' => xml.xpath('RtrInf/AddtlInf').text.presence
+        'reason_code' => transaction.reason_code.presence,
+        'return_information' => transaction.return_information.additional_information.presence
       }
     end
 
@@ -86,7 +85,7 @@ module Konfipay
     end
 
     def parse_cents(text)
-      CamtParser::Misc.to_amount_in_cents(text)
+      SepaFileParser::Misc.to_amount_in_cents(text)
     end
 
     def parse_bic_from_charge(charge)
