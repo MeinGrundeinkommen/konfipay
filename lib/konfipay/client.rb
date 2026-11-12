@@ -302,7 +302,7 @@ module Konfipay
       @camt_schema ||= begin
         gem_root = Gem::Specification.find_by_name('konfipay').gem_dir
         schema_path = File.join(gem_root, 'spec', 'schemas', 'camt.053.001.08.xsd')
-        schema = Nokogiri::XML::Schema.new(File.read(schema_path))
+        Nokogiri::XML::Schema.new(File.read(schema_path))
       end
     end
 
