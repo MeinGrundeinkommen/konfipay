@@ -295,7 +295,7 @@ RSpec.describe Konfipay::Client do
     end
 
     shared_examples_for 'a camt file with format' do |format|
-      let(:camt_xml) { File.read("spec/examples/#{format}-mixed_examples.xml") }
+      let(:camt_xml) { File.read("spec/examples/valid/#{format}-mixed_examples.xml") }
 
       it_behaves_like 'api error handling', :get
 
@@ -335,6 +335,15 @@ RSpec.describe Konfipay::Client do
           let(:result) { client.camt_file(r_id, false) }
 
           it_behaves_like 'success'
+        end
+
+        context 'when the CAMT XML does not pass schema validation' do
+
+          let(:camt_xml) { File.read("spec/examples/invalid/empty.xml") }
+
+          it "raises an error" do
+            expect { result }.to raise_error(/Missing child element/)
+          end
         end
       end
     end
@@ -397,7 +406,7 @@ RSpec.describe Konfipay::Client do
 
   describe 'submit_pain_file' do
     let(:stubbed_url) { 'https://portal.konfipay.de/api/v5/Payment/Sepa/Pain' }
-    let(:pain_xml) { File.read('spec/examples/pain.001.001.09_GBIC_5-credit_transfer.xml') }
+    let(:pain_xml) { File.read('spec/examples/valid/pain.001.001.09_GBIC_5-credit_transfer.xml') }
     let(:expected_parsed_json) do
       {
         'rId' => '491c7a47-6aec-47b2-b3ef-488d2ca7f4d4',
