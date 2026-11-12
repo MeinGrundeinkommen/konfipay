@@ -290,7 +290,7 @@ RSpec.describe Konfipay::Client do
 
     shared_examples_for 'success' do
       it 'returns a parsed camt file' do
-        expect(result).to be_an_instance_of(CamtParser::Format053::Base)
+        expect(result).to be_an_instance_of(SepaFileParser::Camt053::Base)
       end
     end
 
