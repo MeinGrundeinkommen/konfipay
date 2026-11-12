@@ -338,10 +338,9 @@ RSpec.describe Konfipay::Client do
         end
 
         context 'when the CAMT XML does not pass schema validation' do
+          let(:camt_xml) { File.read('spec/examples/invalid/empty.xml') }
 
-          let(:camt_xml) { File.read("spec/examples/invalid/empty.xml") }
-
-          it "raises an error" do
+          it 'raises an error' do
             expect { result }.to raise_error(/Missing child element/)
           end
         end

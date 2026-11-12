@@ -300,12 +300,13 @@ module Konfipay
     def parse_xml(string)
       if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.08')
 
-        schema_path = "spec/schemas/camt.053.001.08.xsd"
+        schema_path = 'spec/schemas/camt.053.001.08.xsd'
         schema = Nokogiri::XML::Schema.new(File.read(schema_path))
         errors = schema.validate(Nokogiri::XML::Document.parse(string))
         raise errors.inspect unless errors.blank?
+
         SepaFileParser::String.parse(string)
-        
+
       # on some calls (400 on pain_file_info), konfipay returns an xml error response instead of json
       # <ErrorItemContainer xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
       #   <ErrorItems>
