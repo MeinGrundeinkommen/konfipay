@@ -148,7 +148,7 @@ See each operation's method for details on parameters and callback arguments.
 Please note that callbacks can be called multiple times, depending on the operation.
 Also note that parameters need to be JSON-compatible - use strings as hash keys, no symbols, and no complex datatypes! Similarly, all returned data, while being Ruby objects, are also all JSON-compatible (for example, dates are formatted as ISO-8601 strings, no symbols, etc.).
 
-Supported is only the camt.053.001.08 format.
+Supported is only the camt.053.001.08 format. The XML from the server is validated against the CAMT XSD Schema.
 
 2) Initializing Transfers
 

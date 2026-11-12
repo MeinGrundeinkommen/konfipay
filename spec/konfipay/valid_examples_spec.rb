@@ -20,7 +20,7 @@ RSpec.describe 'example file' do
   # Note that the sepa_rator gem automatically validates the generated
   # actual SEPA PAIN XML which gets sent to Konfipay, so no need to
   # double-validate that.
-  Dir.glob('spec/examples/*.xml').each do |xml_path|
+  Dir.glob('spec/examples/valid/*.xml').each do |xml_path|
     describe xml_path do
       # rubocop:disable-next RSpec/LeakyLocalVariable
       schema_path = "spec/schemas/#{File.basename(xml_path).split('-').first}.xsd"

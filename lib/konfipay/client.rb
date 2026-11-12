@@ -9,6 +9,7 @@ module Konfipay
     class Unauthorized < Error; end
     class BadRequest < Error; end
     class Forbidden < Error; end
+    class XMLInvalid < Error; end
 
     def initialize(config = Konfipay.configuration)
       @config = config
@@ -297,9 +298,21 @@ module Konfipay
       JSON.parse(string)
     end
 
+    def camt_schema
+      @camt_schema ||= begin
+        gem_root = Gem::Specification.find_by_name('konfipay').gem_dir
+        schema_path = File.join(gem_root, 'spec', 'schemas', 'camt.053.001.08.xsd')
+        Nokogiri::XML::Schema.new(File.read(schema_path))
+      end
+    end
+
     def parse_xml(string)
       if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.08')
+        errors = camt_schema.validate(Nokogiri::XML::Document.parse(string))
+        raise XMLInvalid, errors.inspect unless errors.blank?
+
         SepaFileParser::String.parse(string)
+
       # on some calls (400 on pain_file_info), konfipay returns an xml error response instead of json
       # <ErrorItemContainer xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
       #   <ErrorItems>
