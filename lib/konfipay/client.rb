@@ -300,7 +300,8 @@ module Konfipay
     def parse_xml(string)
       if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.08')
 
-        schema_path = 'spec/schemas/camt.053.001.08.xsd'
+        gem_root = Gem::Specification.find_by_name('konfipay').gem_dir
+        schema_path = File.join(gem_root, 'spec', 'schemas', 'camt.053.001.08.xsd')
         schema = Nokogiri::XML::Schema.new(File.read(schema_path))
         errors = schema.validate(Nokogiri::XML::Document.parse(string))
         raise errors.inspect unless errors.blank?
