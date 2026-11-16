@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.08" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:camt.053.001.08 camt.053.001.08.xsd">
   <BkToCstmrStmt>
     <GrpHdr>
@@ -27,7 +28,7 @@
         </Ownr>
         <Svcr>
           <FinInstnId>
-            <BIC>OURBIC123</BIC>
+            <BICFI>OURSDE00XXX</BICFI>
             <Nm>Unsere Bank</Nm>
             <Othr>
               <Id>DE 123456789</Id>
@@ -63,7 +64,7 @@
       <Ntry>
         <Amt Ccy="EUR">5.00</Amt>
         <CdtDbtInd>CRDT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>
@@ -110,7 +111,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>J.P. Morgan</Nm>
+                <Pty><Nm>J.P. Morgan</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -118,7 +119,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -129,7 +130,7 @@
             <RltdAgts>
               <DbtrAgt>
                 <FinInstnId>
-                  <BIC>OURBIC123</BIC>
+                  <BICFI>OURSDE00XXX</BICFI>
                 </FinInstnId>
               </DbtrAgt>
             </RltdAgts>
@@ -146,7 +147,7 @@
       <Ntry>
         <Amt Ccy="EUR">21.67</Amt>
         <CdtDbtInd>DBIT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>
@@ -182,7 +183,7 @@
             </BkTxCd>
             <RltdPties>
               <Cdtr>
-                <Nm>Unsere Bank</Nm>
+                <Pty><Nm>Unsere Bank</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -205,7 +206,7 @@
       <Ntry>
         <Amt Ccy="EUR">66.00</Amt>
         <CdtDbtInd>CRDT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>
@@ -228,13 +229,13 @@
         </BkTxCd>
         <NtryDtls>
           <Btch>
-            <PmtInfId>Lastschrift-Einzug-Sammler-2022-01/1</PmtInfId>
+            <PmtInfId>LastschriftEinzugSammler-2022-01/1</PmtInfId>
             <NbOfTxs>3</NbOfTxs>
           </Btch>
           <TxDtls>
             <Refs>
               <MsgId>Mandat15-05.01.2022</MsgId>
-              <PmtInfId>Lastschrift-Einzug-Sammler-2022-01/1</PmtInfId>
+              <PmtInfId>LastschriftEinzugSammler-2022-01/1</PmtInfId>
               <EndToEndId>Mandat15-05.01.2022</EndToEndId>
               <TxId>2022010469355953090100000010000001</TxId>
               <MndtId>Mandat15</MndtId>
@@ -252,7 +253,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>David Rockefeller</Nm>
+                <Pty><Nm>David Rockefeller</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -260,7 +261,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -275,7 +276,7 @@
           <TxDtls>
             <Refs>
               <MsgId>Mandat21-05.01.2022</MsgId>
-              <PmtInfId>Lastschrift-Einzug-Sammler-2022-01/1</PmtInfId>
+              <PmtInfId>LastschriftEinzugSammler-2022-01/1</PmtInfId>
               <EndToEndId>Mandat21-05.01.2022</EndToEndId>
               <TxId>2022010469355953090100000010000002</TxId>
               <MndtId>Mandat21</MndtId>
@@ -293,7 +294,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>Mayer Amschel Rothschild</Nm>
+                <Pty><Nm>Mayer Amschel Rothschild</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -301,7 +302,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -316,7 +317,7 @@
           <TxDtls>
             <Refs>
               <MsgId>Mandat22-05.01.2022</MsgId>
-              <PmtInfId>Lastschrift-Einzug-Sammler-2022-01/1</PmtInfId>
+              <PmtInfId>LastschriftEinzugSammler-2022-01/1</PmtInfId>
               <EndToEndId>Mandat22-05.01.2022</EndToEndId>
               <TxId>2022010469355953090100000010000003</TxId>
               <MndtId>Mandat22</MndtId>
@@ -334,7 +335,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>Herman Cain</Nm>
+                <Pty><Nm>Herman Cain</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -342,7 +343,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -360,7 +361,7 @@
       <Ntry>
         <Amt Ccy="EUR">13.50</Amt>
         <CdtDbtInd>DBIT</CdtDbtInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>
@@ -412,16 +413,16 @@
             <Chrgs>
               <Rcrd>
                 <Amt Ccy="EUR">2.50</Amt>
-                <Pty>
+                <Agt>
                   <FinInstnId>
-                    <BIC>OURBIC123</BIC>
+                    <BICFI>OURSDE00XXX</BICFI>
                   </FinInstnId>
-                </Pty>
+                </Agt>
               </Rcrd>
             </Chrgs>
             <RltdPties>
               <Dbtr>
-                <Nm>David Rockefeller</Nm>
+                <Pty><Nm>David Rockefeller</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -429,7 +430,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -451,7 +452,7 @@
               <Orgtr>
                 <Id>
                   <OrgId>
-                    <BICOrBEI>OURBIC123</BICOrBEI>
+                    <AnyBIC>OURSDE00XXX</AnyBIC>
                   </OrgId>
                 </Id>
               </Orgtr>
@@ -468,7 +469,7 @@
         <Amt Ccy="EUR">22.00</Amt>
         <CdtDbtInd>DBIT</CdtDbtInd>
         <RvslInd>true</RvslInd>
-        <Sts>BOOK</Sts>
+        <Sts><Cd>BOOK</Cd></Sts>
         <BookgDt>
           <Dt>2022-01-05</Dt>
         </BookgDt>
@@ -516,7 +517,7 @@
             </BkTxCd>
             <RltdPties>
               <Dbtr>
-                <Nm>Mayer Amschel Rothschild</Nm>
+                <Pty><Nm>Mayer Amschel Rothschild</Nm></Pty>
               </Dbtr>
               <DbtrAcct>
                 <Id>
@@ -524,14 +525,7 @@
                 </Id>
               </DbtrAcct>
               <Cdtr>
-                <Nm>Unsere Organisation</Nm>
-                <Id>
-                  <PrvtId>
-                    <Othr>
-                      <Id>DE62ZZZ00001604785</Id>
-                    </Othr>
-                  </PrvtId>
-                </Id>
+                <Pty><Nm>Unsere Organisation</Nm></Pty>
               </Cdtr>
               <CdtrAcct>
                 <Id>
@@ -542,7 +536,7 @@
             <RltdAgts>
               <CdtrAgt>
                 <FinInstnId>
-                  <BIC>OURBIC123</BIC>
+                  <BICFI>OURSDE00XXX</BICFI>
                 </FinInstnId>
               </CdtrAgt>
             </RltdAgts>
@@ -626,12 +620,13 @@
             <RltdAgts>
               <DbtrAgt>
                 <FinInstnId>
-                  <BICFI>BANKABCXXX</BICFI>
+                  <BICFI>BANKDE00XXX</BICFI>
                 </FinInstnId>
               </DbtrAgt>
             </RltdAgts>
             <RmtInf>
-              <Ustrd>Erhaltene Rueckweisung von Bank wg. AM04 Deckung ungenügend SVWZ: REJECT, Mandat22: Spende EREF: Mandat22-04.12.2024 IBAN: LT121000011101001000 BIC: BANKABCXXX</Ustrd>
+              <Ustrd>Erhaltene Rueckweisung von Bank wg. AM04 Deckung ungenügend SVWZ: REJECT, Mandat22:</Ustrd>
+              <Ustrd>Spende EREF: Mandat22-04.12.2024 IBAN: LT121000011101001000 BIC: BANKABCXXX</Ustrd>
             </RmtInf>
             <RtrInf>
               <OrgnlBkTxCd>
@@ -650,7 +645,7 @@
               <Orgtr>
                 <Id>
                   <OrgId>
-                    <AnyBIC>OURBIC123</AnyBIC>
+                    <AnyBIC>OURSDE00XXX</AnyBIC>
                   </OrgId>
                 </Id>
               </Orgtr>
