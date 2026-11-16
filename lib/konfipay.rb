@@ -5,7 +5,7 @@ require 'active_support/core_ext'
 require 'http'
 require 'sepa_rator'
 require 'sepa_rator-dk'
-require 'camt_parser'
+require 'sepa_file_parser'
 require 'sidekiq'
 
 require_relative 'konfipay/version'
