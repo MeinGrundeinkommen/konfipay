@@ -9,6 +9,7 @@ module Konfipay
     class Unauthorized < Error; end
     class BadRequest < Error; end
     class Forbidden < Error; end
+    class XMLInvalid < Error; end
 
     def initialize(config = Konfipay.configuration)
       @config = config
@@ -107,8 +108,8 @@ module Konfipay
     # Get and parse a single camt.053 document with given r_id from endpoint:
     # https://portal.konfipay.de/api-docs/index.html#tag/Document-Camt/paths/~1api~1v5~1Document~1Camt~1{rId}/get
     # If mark_as_read = false, will not mark the document as read, i.e. keep as "new".
-    # Returns an instance of CamtParser::Format053::Base :
-    # https://github.com/viafintech/camt_parser/blob/master/lib/camt_parser/053/base.rb
+    # Returns an instance of SepaFileParser::Camt053::Base :
+    # https://github.com/viafintech/sepa_file_parser/blob/master/lib/sepa_file_parser/camt053/base.rb
     # Can raise various network errors.
     def camt_file(r_id, mark_as_read = true) # rubocop:disable Style/OptionalBooleanParameter
       params = {}
@@ -297,10 +298,21 @@ module Konfipay
       JSON.parse(string)
     end
 
+    def camt_schema
+      @camt_schema ||= begin
+        gem_root = Gem::Specification.find_by_name('konfipay').gem_dir
+        schema_path = File.join(gem_root, 'spec', 'schemas', 'camt.053.001.08.xsd')
+        Nokogiri::XML::Schema.new(File.read(schema_path))
+      end
+    end
+
     def parse_xml(string)
-      if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.02') ||
-         string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.08')
-        CamtParser::String.parse(string)
+      if string.include?('urn:iso:std:iso:20022:tech:xsd:camt.053.001.08')
+        errors = camt_schema.validate(Nokogiri::XML::Document.parse(string))
+        raise XMLInvalid, errors.inspect unless errors.blank?
+
+        SepaFileParser::String.parse(string)
+
       # on some calls (400 on pain_file_info), konfipay returns an xml error response instead of json
       # <ErrorItemContainer xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
       #   <ErrorItems>

@@ -32,9 +32,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activesupport'
-  spec.add_dependency 'camt_parser'
   spec.add_dependency 'http'
   spec.add_dependency 'json'
+  spec.add_dependency 'sepa_file_parser'
   spec.add_dependency 'sepa_rator'
   spec.add_dependency 'sepa_rator-dk'
   spec.add_dependency 'sidekiq'
