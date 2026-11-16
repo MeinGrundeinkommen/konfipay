@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Konfipay
-  VERSION = '1.11.0'
+  VERSION = '1.13.0'
 end

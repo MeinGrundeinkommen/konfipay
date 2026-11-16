@@ -41,7 +41,7 @@ RSpec.describe Konfipay::CamtDigester do
       # It contains an entry with a credit collection with two transactions - i.e.
       # "our" side sent out money to two recipients in one go, and this shows up in our
       # account as a debit with two transactions.
-      SepaFileParser::String.parse(File.read("spec/examples/#{format}-outgoing_collection.xml"))
+      SepaFileParser::String.parse(File.read("spec/examples/valid/#{format}-outgoing_collection.xml"))
     end
 
     it 'parses statements correctly' do
